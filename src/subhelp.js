@@ -1,0 +1,22 @@
+"use strict";
+
+import React, { Component } from 'react'
+import classnames from 'classnames'
+
+class SubHelp extends Component {
+    render(){
+
+        let helpClasses = classnames({
+            'form__help': true,
+            'form__help--sub': true
+            })
+
+        if (this.props.help)
+            return (<div className={ helpClasses }>{ this.props.help }</div>)
+        else
+            return null
+
+    }
+}
+
+module.exports = SubHelp
