@@ -6,82 +6,130 @@ import Select from './select'
 class MultipleSelect extends Component{
     constructor(props) {
         super(props)
-        this.state = {
-            value: null,
-            selectedList: []
-        }
+        // Add support for options added via search function
+        // When a user amend the search criteria in the select component, the
+        // option list will change, meaning there wouldn't be an option to match
+        // the currently selected value. To avoid that issue, we build a cached
+        // list of all the options currently added to the selected list
+        this.cachedOptions = []
         this._updateValue = this._updateValue.bind(this)
     }
+
+    /*
+     * Override the update value from "select"
+     */
     _updateValue(name, value){
-        console.log("updateValue", name, value)
-        console.log("Current options", this.props.options)
-        let selected = this._getSelectedOption(value)
-        this._addSelected(selected)
-        console.log("selected", selected)
+        // Create a copy of props.value
+        let newValue = [].concat(this.props.value)
+        newValue.push(value)
+        this.props.updateValue(this.props.name, newValue)
+        this.cachedOptions.push(this._getOption(value))
     }
-    _getSelectedOption(value){
+
+    /*
+     * Get an option given a value
+     */
+    _getOption(value){
         for(let option of this.props.options){
-            if(option.value === value){
+            if(option.value === value)
                 return option
+        }
+    }
+
+    /*
+     * Create a list of options with or without being tagged
+     */
+    _getOptions(tagged){
+        let options = []
+        let optionValues = []
+        let optionList = this.cachedOptions.concat(this.props.options)
+        for(let option of optionList){
+            // Add the option if it's tagged
+            if(tagged === true && this.props.value.indexOf(option.value) !== -1){
+                // Avoid duplicates
+                if(optionValues.indexOf(option.value) === -1){
+                    options.push(option)
+                    optionValues.push(option.value)
+                }
+            }else if (tagged === false && this.props.value.indexOf(option.value) === -1){
+                // Avoid duplicates
+                if(optionValues.indexOf(option.value) === -1){
+                    options.push(option)
+                    optionValues.push(option.value)
+                }
             }
         }
-        return null
+        return options
     }
-    _addSelected(option){
-        let currentList = this.state.selectedList
-        currentList.push(option)
-        this.setState({
-            selectedList: currentList
-        }, ()=>{
-            this.props.updateValue(this.props.name, this._makeValueList())
-        })
-    }
+
+    /*
+     * Clear a new value list without the submitted option
+     */
     _clearOption(option, e){
         e.preventDefault()
-        let newList = []
-        for(let opt of this.state.selectedList){
-            console.log(opt.value, option.value, opt.value !== option.value)
-            if(opt.value !== option.value){
-                newList.push(opt)
+        let newValue = []
+        for(let opt of this.props.value){
+            if(opt !== option.value){
+                newValue.push(opt)
             }
         }
-        this.setState({
-            selectedList: newList
-        }, ()=>{
-            this.props.updateValue(this.props.name, this._makeValueList())
-        })
+        this.props.updateValue(this.props.name, newValue)
     }
-    _makeValueList(){
-        let valueList = []
-        for(let opt of this.state.selectedList){
-            valueList.push(opt.value)
-        }
-        return valueList
-    }
+
     render(){
         let selectedItem = null
-        if(this.state.selectedList.length){
+        if(this.props.value.length){
             let inc = 0
-            selectedItem = this.state.selectedList.map((option)=>{
+            selectedItem = this._getOptions(true).map((option)=>{
                 inc++
-                return (<div key={ inc } className="label">
+                return (<div key={ inc } className="tag">
                     { option.label }
-                    <a href="#" onClick={ this._clearOption.bind(this, option) }>&times;</a>
+                    <a
+                        href="#"
+                        className="tag__clear"
+                        onClick={ this._clearOption.bind(this, option) }>
+                        &times;
+                    </a>
                     </div>)
             })
         }
-        return (<div>
+        return (<div className={ this.props.class }>
                 <Select
                     name={ this.props.name }
-                    value={ this.state.value }
+                    value={ this.props.value }
                     updateValue={ this._updateValue }
                     error={ this.props.error }
-                    options={ this.props.options }
+                    options={ this._getOptions(false) }
                     searchOptions={ this.props.searchOptions }
                     />
                 { selectedItem }
             </div>)
     }
+}
+
+MultipleSelect.propTypes = {
+    // String
+    name: React.PropTypes.string,
+    label: React.PropTypes.string,
+    help: React.PropTypes.string,
+    placeholder: React.PropTypes.string,
+    noOptionPlaceholder: React.PropTypes.string,
+    noResultsPlaceholder: React.PropTypes.string,
+    searchingPlaceholder: React.PropTypes.string,
+    class: React.PropTypes.string,
+
+    // Array
+    error: React.PropTypes.array,
+    options: React.PropTypes.array,
+    defaultOptions: React.PropTypes.array,
+    value: React.PropTypes.array,
+
+    // Function
+    updateValue: React.PropTypes.func,
+    searchOptions: React.PropTypes.func,
+    assignValue: React.PropTypes.func,
+    handleFocus: React.PropTypes.func,
+    handleBlur: React.PropTypes.func
 }
 
 module.exports = MultipleSelect
