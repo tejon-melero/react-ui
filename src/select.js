@@ -163,7 +163,7 @@ class Select extends Component {
                     id={ inputId }
                     className="form__select"
                     type={ this.props.type }
-                    value={ inputValue }
+                    value={ inputValue || "" }
                     name={ this.props.name + 'selector' }
                     placeholder={ this.props.placeholder }
                     onChange={ this._handleChange }
