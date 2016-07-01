@@ -120,4 +120,4 @@ Checkbox.defaultProps = {
     }
 }
 
-module.exports = Checkbox
+export default Checkbox

@@ -147,4 +147,4 @@ MultipleSelect.propTypes = {
     handleBlur: React.PropTypes.func
 }
 
-module.exports = MultipleSelect
+export default MultipleSelect

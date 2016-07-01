@@ -265,4 +265,4 @@ TextInput.defaultProps = {
     datePicker: false
 }
 
-module.exports = TextInput
+export default TextInput

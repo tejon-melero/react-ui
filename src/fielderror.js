@@ -28,4 +28,4 @@ class FieldError extends Component {
     }
 }
 
-module.exports = FieldError
+export default FieldError

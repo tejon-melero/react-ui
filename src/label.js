@@ -19,4 +19,4 @@ class Label extends Component {
     }
 }
 
-module.exports = Label
+export default Label

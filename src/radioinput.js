@@ -151,4 +151,4 @@ RadioInput.defaultProps = {
     options: []
 }
 
-module.exports = RadioInput
+export default RadioInput

@@ -29,4 +29,4 @@ class Help extends Component {
     }
 }
 
-module.exports = Help
+export default Help

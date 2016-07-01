@@ -76,4 +76,4 @@ class MultipleCheckbox extends Component {
     }
 }
 
-module.exports = MultipleCheckbox
+export default MultipleCheckbox

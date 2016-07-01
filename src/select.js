@@ -625,4 +625,4 @@ Select.defaultProps = {
 }
 
 
-module.exports = Select
+export default Select

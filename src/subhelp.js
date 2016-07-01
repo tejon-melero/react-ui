@@ -19,4 +19,4 @@ class SubHelp extends Component {
     }
 }
 
-module.exports = SubHelp
+export default SubHelp

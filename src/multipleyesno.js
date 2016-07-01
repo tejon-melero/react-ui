@@ -49,10 +49,10 @@ class MultipleYesNo extends Component {
         let optionList = null
         if(this.props.options){
             optionList = this.props.options.map((option)=>{
-                return <Option 
-                    option={option} 
-                    key={option.value} 
-                    onSelect={this._onOptionSelect} 
+                return <Option
+                    option={option}
+                    key={option.value}
+                    onSelect={this._onOptionSelect}
                     currentValue={this._getCurrentValue(option.value)}/>
             })
         }
@@ -85,32 +85,32 @@ class Option extends Component{
                 <td className="table-cell">{this.props.option.label}</td>
                 <td className="table-cell">
                     <label htmlFor={`${this.props.option.value}-YES`}>
-                        <input 
-                            type="radio" 
-                            value="1" 
+                        <input
+                            type="radio"
+                            value="1"
                             id={`${this.props.option.value}-YES`}
                             name={`${this.props.option.value}`}
                             onChange={this._handleChange}
                             checked={this.props.currentValue === "1"}
                             />
-                        Yes 
+                        Yes
                     </label>
                 </td>
                 <td className="table-cell">
                     <label htmlFor={`${this.props.option.value}-NO`}>
-                        <input 
-                            type="radio" 
-                            value="2" 
+                        <input
+                            type="radio"
+                            value="2"
                             id={`${this.props.option.value}-NO`}
                             name={`${this.props.option.value}`}
                             onChange={this._handleChange}
                             checked={this.props.currentValue === "2"}
                             />
-                        No 
+                        No
                     </label>
                 </td>
             </tr>)
     }
 }
 
-module.exports = MultipleYesNo
+export default MultipleYesNo

@@ -57,4 +57,4 @@ Button.defaultProps = {
     }
 }
 
-module.exports = Button
+export default Button
