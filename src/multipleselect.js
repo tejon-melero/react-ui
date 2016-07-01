@@ -19,11 +19,15 @@ class MultipleSelect extends Component{
      * Override the update value from "select"
      */
     _updateValue(name, value){
-        // Create a copy of props.value
-        let newValue = [].concat(this.props.value)
-        newValue.push(value)
-        this.props.updateValue(this.props.name, newValue)
-        this.cachedOptions.push(this._getOption(value))
+        if(value){
+            // Create a copy of props.value
+            let newValue = [].concat(this.props.value)
+            newValue.push(value)
+            this.props.updateValue(this.props.name, newValue)
+            let newOption = this._getOption(value)
+            if(newOption)
+                this.cachedOptions.push(newOption)
+        }
     }
 
     /*
@@ -96,11 +100,22 @@ class MultipleSelect extends Component{
         return (<div className={ this.props.class }>
                 <Select
                     name={ this.props.name }
+                    label={ this.props.label }
                     value={ this.props.value }
+                    help={ this.props.help }
+                    placeholder={ this.props.placeholder }
+                    noOptionPlaceholder={ this.props.noOptionPlaceholder }
+                    noResultsPlaceholder={ this.props.noResultsPlaceholder }
+                    searchingPlaceholder={ this.props.searchingPlaceholder }
+                    class={ this.props.class }
                     updateValue={ this._updateValue }
                     error={ this.props.error }
                     options={ this._getOptions(false) }
                     searchOptions={ this.props.searchOptions }
+                    defaultOptions={ this.props.defaultOptions }
+                    assignValue={ this.props.assignValue }
+                    handleFocus={ this.props.handleFocus}
+                    handleBlur={ this.props.handleBlur }
                     />
                 { selectedItem }
             </div>)
