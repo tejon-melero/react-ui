@@ -1,7 +1,7 @@
 /**
  * Recusrive function to detect errors in nested objects.
  */
-var errorChecker = function(errors) {
+let errorChecker = function(errors) {
     if (! window.errorFound) {
         window.errorFound = false
     }
