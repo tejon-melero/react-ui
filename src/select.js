@@ -196,7 +196,7 @@ class Select extends Component {
          * with the value as a query argument
          */
         if (this.props.searchOptions){
-            if(inputValue){
+            if(inputValue && inputValue.length >= this.props.minCharSearch){
                 this.setState({
                     searching: true
                 })
@@ -599,10 +599,13 @@ Select.propTypes = {
 
     // Function
     updateValue: React.PropTypes.func,
+
     searchOptions: React.PropTypes.func,
+    minCharSearch: React.PropTypes.number,
+
     assignValue: React.PropTypes.func,
     handleFocus: React.PropTypes.func,
-    handleBlur: React.PropTypes.func
+    handleBlur: React.PropTypes.func,
 }
 
 Select.defaultProps = {
@@ -618,6 +621,7 @@ Select.defaultProps = {
     noOptionPlaceholder: 'No options available',
     noResultsPlaceholder: 'No results found',
     searchingPlaceholder: '<span class="loader loader--small"></span> Searching...',
+    minCharSearch: 2
 }
 
 
