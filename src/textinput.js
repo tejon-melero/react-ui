@@ -48,7 +48,7 @@ class TextInput extends Component {
                     id={ inputId }
                     className="form__text form__textarea"
                     type={ this.props.type }
-                    value={ value }
+                    value={ value || ""  }
                     name={ this.props.name }
                     placeholder={ this.props.placeholder }
                     onChange={ this.handleChange }
@@ -61,7 +61,7 @@ class TextInput extends Component {
                     id={ inputId }
                     className="form__text"
                     type={ this.props.type }
-                    value={ value }
+                    value={ value || ""  }
                     name={ this.props.name }
                     placeholder={ this.props.placeholder }
                     onChange={ this.handleChange }
