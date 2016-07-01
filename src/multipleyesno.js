@@ -104,7 +104,7 @@ class Option extends Component {
                             name={ `${this.props.option.value}` }
                             onChange={ this._handleChange }
                             checked={ this.props.currentValue === "1" }
-                            />
+                        />
                         Yes
                     </label>
                 </td>
@@ -117,7 +117,7 @@ class Option extends Component {
                             name={ `${this.props.option.value}` }
                             onChange={ this._handleChange }
                             checked={ this.props.currentValue === "2" }
-                            />
+                        />
                         No
                     </label>
                 </td>

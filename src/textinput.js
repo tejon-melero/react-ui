@@ -231,7 +231,7 @@ class TextInput extends Component {
 
             if (pDP.left < mouseX < pDP.right && pDP.top < mouseY < pDP.bottom) {
                 // nothing, waiting for else
-            } else if (pFC.left < mouseX < pFC.right && pFC.top < mouseY < pFC.bottom){
+            } else if (pFC.left < mouseX < pFC.right && pFC.top < mouseY < pFC.bottom) {
                 // nothing, waiting for else
             } else {
                 this._datePickerON = false
