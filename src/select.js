@@ -47,7 +47,7 @@ class Select extends Component {
              newState.focusedOption = this._getFocusedOption(nextProps.value)
 
              if (! nextProps.value) {
-                 newState.inputValue = ""
+                 newState.inputValue = ''
              }
         }
 
@@ -78,7 +78,7 @@ class Select extends Component {
         let inputId = `id_${this.props.name}`
         let inputValue = null
 
-        if (typeof this.state.inputValue === "string") {
+        if (typeof this.state.inputValue === 'string') {
             inputValue = this.state.inputValue
         } else {
             inputValue = this._getOptionLabel(this.props.value)
@@ -575,9 +575,9 @@ class Select extends Component {
          */
         if (this.state.searching === true) {
             return this.props.searchingPlaceholder
-        } else if(this.props.searchOptions && this.state.inputValue === "") {
+        } else if(this.props.searchOptions && this.state.inputValue === '') {
             return this.props.noOptionPlaceholder
-        } else if(this.props.searchOptions && typeof this.state.inputValue === "string") {
+        } else if(this.props.searchOptions && typeof this.state.inputValue === 'string') {
             return this.props.noResultsPlaceholder
         } else {
             return this.props.noOptionPlaceholder

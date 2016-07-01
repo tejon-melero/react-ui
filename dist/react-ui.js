@@ -119,9 +119,6 @@
 	exports.MultipleCheckbox = _multiplecheckbox2.default;
 	exports.MultipleSelect = _multipleselect2.default;
 
-
-	console.log(MultipleSelect.propTypes);
-
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
@@ -4730,8 +4727,8 @@
 	        value: function render() {
 	            if (this.props.children) {
 	                var labelClasses = (0, _classnames2.default)({
-	                    "form__label": true,
-	                    "form__label--inline": this.props.inline
+	                    'form__label': true,
+	                    'form__label--inline': this.props.inline
 	                });
 
 	                return _react2.default.createElement(
@@ -5484,9 +5481,9 @@
 	             */
 	            if (_this.state.searching === true) {
 	                return _this.props.searchingPlaceholder;
-	            } else if (_this.props.searchOptions && _this.state.inputValue === "") {
+	            } else if (_this.props.searchOptions && _this.state.inputValue === '') {
 	                return _this.props.noOptionPlaceholder;
-	            } else if (_this.props.searchOptions && typeof _this.state.inputValue === "string") {
+	            } else if (_this.props.searchOptions && typeof _this.state.inputValue === 'string') {
 	                return _this.props.noResultsPlaceholder;
 	            } else {
 	                return _this.props.noOptionPlaceholder;
@@ -5530,7 +5527,7 @@
 	                newState.focusedOption = this._getFocusedOption(nextProps.value);
 
 	                if (!nextProps.value) {
-	                    newState.inputValue = "";
+	                    newState.inputValue = '';
 	                }
 	            }
 
@@ -5565,7 +5562,7 @@
 	            var inputId = 'id_' + this.props.name;
 	            var inputValue = null;
 
-	            if (typeof this.state.inputValue === "string") {
+	            if (typeof this.state.inputValue === 'string') {
 	                inputValue = this.state.inputValue;
 	            } else {
 	                inputValue = this._getOptionLabel(this.props.value);
@@ -5658,7 +5655,7 @@
 	                    { className: controlClasses, ref: 'form-control' },
 	                    _react2.default.createElement('input', {
 	                        type: 'hidden',
-	                        value: this.props.value,
+	                        value: this.props.value || '',
 	                        name: this.props.name
 	                    }),
 	                    _react2.default.createElement('input', {

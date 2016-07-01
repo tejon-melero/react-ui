@@ -7,10 +7,10 @@ class Label extends Component {
     render() {
         if (this.props.children) {
             let labelClasses = classnames({
-                "form__label": true,
-                "form__label--inline": this.props.inline
+                'form__label': true,
+                'form__label--inline': this.props.inline
             })
-            
+
             return (
                 <label className={ labelClasses }>
                     { this.props.children }
