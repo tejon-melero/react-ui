@@ -156,7 +156,7 @@ class Select extends Component {
             <div className={ controlClasses } ref="form-control">
                 <input
                     type="hidden"
-                    value={ this.props.value }
+                    value={ this.props.value || "" }
                     name={ this.props.name }
                 />
                 <input
