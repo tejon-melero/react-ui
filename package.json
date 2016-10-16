@@ -3,9 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "description": "UI Components for React",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "build": "webpack"
+    "prebuild": "rimraf lib dist",
+    "build:main": "babel -d lib ./src",
+    "build:umd": "webpack --output-filename index.umd.js",
+    "build:umd.min": "webpack --output-filename index.umd.min.js -p",
+    "build": "npm-run-all --parallel build:*"
   },
   "author": {
     "name": "Guillaume Piot",
@@ -18,12 +22,19 @@
     }
   ],
   "license": "ISC",
+  "files": [
+      "dist",
+      "lib"
+  ],
+  "peerDependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
   "dependencies": {
-    "classnames": "^2.2.5",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2"
+    "classnames": "^2.2.5"
   },
   "devDependencies": {
+    "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
     "babel-eslint": "^7.0.0",
     "babel-loader": "^6.2.5",
@@ -32,6 +43,10 @@
     "babel-preset-stage-0": "^6.16.0",
     "eslint": "^3.7.1",
     "eslint-plugin-react": "^6.4.1",
+    "npm-run-all": "^3.1.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "rimraf": "^2.5.4",
     "webpack": "^1.13.2"
   }
 }
