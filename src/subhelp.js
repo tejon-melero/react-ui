@@ -3,16 +3,16 @@ import classnames from 'classnames'
 
 class SubHelp extends Component {
     render() {
-        let helpClasses = classnames({
+        const helpClasses = classnames({
             'form__help': true,
-            'form__help--sub': true
+            'form__help--sub': true,
         })
 
         if (this.props.help) {
-            return (<div className={ helpClasses }>{ this.props.help }</div>)
-        } else {
-            return null
+            return <div className={ helpClasses }>{ this.props.help }</div>
         }
+
+        return null
     }
 }
 

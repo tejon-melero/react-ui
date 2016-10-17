@@ -6,25 +6,34 @@ class MultipleSelect extends Component {
         super(props)
 
         // Add support for options added via search function
-        // When a user amends the search criteria in the select component, the
+        // When a user amend the search criteria in the select component, the
         // option list will change, meaning there wouldn't be an option to match
         // the currently selected value. To avoid that issue, we build a cached
         // list of all the options currently added to the selected list
         this.cachedOptions = []
+        this._updateValue = this._updateValue.bind(this)
     }
 
     /*
      * Override the update value from "select"
      */
-    _updateValue = (name, value) => {
+    _updateValue(data, cb) {
+        for (const key in data) {
+            this._updateValueSingle(key, data[key], cb)
+        }
+    }
+
+    _updateValueSingle(key, value, cb) {
         if (value) {
             // Create a copy of props.value
-            let newValue = [].concat(this.props.value)
+            const newValue = [ ...this.props.value ]
+
             newValue.push(value)
 
-            this.props.updateValue(this.props.name, newValue)
+            this.props.updateValue({ [this.props.name]: newValue }, cb)
 
-            let newOption = this._getOption(value)
+            const newOption = this._getOption(value)
+
             if (newOption) {
                 this.cachedOptions.push(newOption)
             }
@@ -35,22 +44,24 @@ class MultipleSelect extends Component {
      * Get an option given a value
      */
     _getOption(value) {
-        for (let option of this.props.options) {
+        for (const option of this.props.options) {
             if (option.value === value) {
                 return option
             }
         }
+
+        return null
     }
 
     /*
      * Create a list of options with or without being tagged
      */
     _getOptions(tagged) {
-        let options = []
-        let optionValues = []
-        let optionList = this.cachedOptions.concat(this.props.options)
+        const options = []
+        const optionValues = []
+        const optionList = [ ...this.cachedOptions, ...this.props.options ]
 
-        for (let option of optionList) {
+        for (const option of optionList) {
             // Add the option if it's tagged
             if (tagged === true && this.props.value.indexOf(option.value) !== -1) {
                 // Avoid duplicates
@@ -76,58 +87,56 @@ class MultipleSelect extends Component {
     _clearOption(option, e) {
         e.preventDefault()
 
-        let newValue = []
+        const newValue = []
 
-        for (let opt of this.props.value) {
+        for (const opt of this.props.value) {
             if (opt !== option.value) {
                 newValue.push(opt)
             }
         }
 
-        this.props.updateValue(this.props.name, newValue)
+        this.props.updateValue({ [this.props.name]: newValue })
     }
 
     render() {
         let selectedItem = null
 
         if (this.props.value.length) {
-            let inc = 0
-
-            selectedItem = this._getOptions(true).map((option) => {
-                inc++
-                return (
-                    <div key={ inc } className="tag">
+            selectedItem = this._getOptions(true).map(
+                (option, index) => (
+                    <div className="tag" key={ index }>
                         { option.label }
                         <a
-                            href="#"
                             className="tag__clear"
-                            onClick={ this._clearOption.bind(this, option) }>
+                            href="#"
+                            onClick={ this._clearOption.bind(this, option) }
+                        >
                             &times;
                         </a>
                     </div>
                 )
-            })
+            )
         }
         return (
             <div className={ this.props.class }>
                 <Select
-                    name={ this.props.name }
-                    label={ this.props.label }
-                    value={ this.props.value }
+                    assignValue={ this.props.assignValue }
+                    class={ this.props.class }
+                    defaultOptions={ this.props.defaultOptions }
+                    error={ this.props.error }
+                    handleBlur={ this.props.handleBlur }
+                    handleFocus={ this.props.handleFocus }
                     help={ this.props.help }
-                    placeholder={ this.props.placeholder }
+                    label={ this.props.label }
+                    name={ this.props.name }
                     noOptionPlaceholder={ this.props.noOptionPlaceholder }
                     noResultsPlaceholder={ this.props.noResultsPlaceholder }
-                    searchingPlaceholder={ this.props.searchingPlaceholder }
-                    class={ this.props.class }
-                    updateValue={ this._updateValue }
-                    error={ this.props.error }
                     options={ this._getOptions(false) }
+                    placeholder={ this.props.placeholder }
                     searchOptions={ this.props.searchOptions }
-                    defaultOptions={ this.props.defaultOptions }
-                    assignValue={ this.props.assignValue }
-                    handleFocus={ this.props.handleFocus}
-                    handleBlur={ this.props.handleBlur }
+                    searchingPlaceholder={ this.props.searchingPlaceholder }
+                    updateValue={ this._updateValue }
+                    value={ this.props.value }
                 />
                 { selectedItem }
             </div>
@@ -136,25 +145,23 @@ class MultipleSelect extends Component {
 }
 
 MultipleSelect.propTypes = {
-    name: React.PropTypes.string,
-    label: React.PropTypes.string,
+    assignValue: React.PropTypes.func,
+    class: React.PropTypes.string,
+    defaultOptions: React.PropTypes.array,
+    error: React.PropTypes.array,
+    handleBlur: React.PropTypes.func,
+    handleFocus: React.PropTypes.func,
     help: React.PropTypes.string,
-    placeholder: React.PropTypes.string,
+    label: React.PropTypes.string,
+    name: React.PropTypes.string,
     noOptionPlaceholder: React.PropTypes.string,
     noResultsPlaceholder: React.PropTypes.string,
-    searchingPlaceholder: React.PropTypes.string,
-    class: React.PropTypes.string,
-
-    error: React.PropTypes.array,
     options: React.PropTypes.array,
-    defaultOptions: React.PropTypes.array,
-    value: React.PropTypes.array,
-
-    updateValue: React.PropTypes.func,
+    placeholder: React.PropTypes.string,
     searchOptions: React.PropTypes.func,
-    assignValue: React.PropTypes.func,
-    handleFocus: React.PropTypes.func,
-    handleBlur: React.PropTypes.func
+    searchingPlaceholder: React.PropTypes.string,
+    updateValue: React.PropTypes.func,
+    value: React.PropTypes.array,
 }
 
 export default MultipleSelect

@@ -3,29 +3,32 @@ import classnames from 'classnames'
 
 class FieldError extends Component {
     render() {
-        let errorClasses = classnames({
+        if (! this.props.error) {
+            return null
+        }
+
+        // TODO: work this into styles, as padding and margin shouldn't be in the code, see Cotidia/react-ui#1
+        const BOTTOM_MARGIN = 6
+
+        const errorClasses = classnames({
             'form__error': true,
             'form__error--tooltip': true,
-            'form__error--tooltip-on': this.props.on
+            'form__error--tooltip-on': this.props.on,
         })
 
-        var errorStyle = null
+        let errorStyle = null
 
         if (this.props.position) {
             errorStyle = {
-                bottom: this.props.position + 6
+                bottom: this.props.position + BOTTOM_MARGIN,
             }
         }
 
-        if (this.props.error) {
-            return (
-                <div className={ errorClasses } style={ errorStyle }>
-                    { this.props.error }
-                </div>
-            )
-        } else {
-            return null
-        }
+        return (
+            <div className={ errorClasses } style={ errorStyle }>
+                { this.props.error }
+            </div>
+        )
     }
 }
 

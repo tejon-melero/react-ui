@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import classnames from 'classnames'
 import Label from './label'
 import FieldError from './fielderror'
-import Help from './help'
 import SubHelp from './subhelp'
 
 class Checkbox extends Component {
@@ -10,46 +9,68 @@ class Checkbox extends Component {
         super(props)
 
         this.state = {
-            value: props.value
+            value: props.value,
         }
 
-        this.handleChange = this.handleChange.bind(this)
-        this.handleFocus = this.handleFocus.bind(this)
-        this.handleBlur = this.handleBlur.bind(this)
+        this._handleChange = this._handleChange.bind(this)
+        this._handleFocus = this._handleFocus.bind(this)
+        this._handleBlur = this._handleBlur.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            value: nextProps.value
+            value: nextProps.value,
         })
     }
 
-    render() {
-        let value = this.state.value
-        let input_id = `id_${this.props.name}`
+    _handleChange(e) {
+        let value = true
 
-        let groupClasses = classnames({
+        if (e.target.value === 'true') {
+            value = false
+        }
+
+        this.setState({
+            value,
+        })
+
+        this.props.updateValue({ [this.props.name]: value })
+    }
+
+    _handleFocus() {
+        this.props.handleFocus && this.props.handleFocus()
+    }
+
+    _handleBlur() {
+        this.props.handleBlur && this.props.handleBlur()
+    }
+
+    render() {
+        const value = this.state.value
+        const input_id = `id_${ this.props.name }`
+
+        const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.error,
         })
 
-        let controlClasses = classnames({
+        const controlClasses = classnames({
             'form__control': true,
-            'form__control--checkbox': true
+            'form__control--checkbox': true,
         })
 
-        let field = (
+        const field = (
             <input
-                ref="input"
-                id={ input_id }
+                checked={ value === true }
                 className="form__checkbox"
+                id={ input_id }
+                name={ this.props.name }
+                onBlur={ this._handleBlur }
+                onChange={ this._handleChange }
+                onFocus={ this._handleFocus }
+                ref="input"
                 type="checkbox"
                 value={ value }
-                checked={ value == true }
-                name={ this.props.name }
-                onChange={ this.handleChange }
-                onFocus={ this.handleFocus }
-                onBlur={ this.handleBlur }
             />
         )
 
@@ -57,7 +78,8 @@ class Checkbox extends Component {
             <div className={ groupClasses }>
                 <FieldError error={ this.props.error }
                     on={ this.state.showTooltip }
-                    position={ this.state.tooltipPosition } />
+                    position={ this.state.tooltipPosition }
+                />
                 <div className={ controlClasses } ref="form-control">
                     <Label for={ input_id }>
                         { field }
@@ -68,43 +90,16 @@ class Checkbox extends Component {
             </div>
         )
     }
-
-    handleChange(e) {
-        let value = true
-
-        if (e.target.value === 'true') {
-            value = false
-        }
-
-        this.setState({
-            value: value
-        })
-
-        this.props.updateValue(this.props.name, value)
-    }
-
-    handleFocus(e) {
-        if (this.props.handleFocus) {
-            this.props.handleFocus()
-        }
-    }
-
-    handleBlur(e) {
-        if (this.props.handleBlur) {
-            this.props.handleBlur()
-        }
-    }
-
 }
 
 Checkbox.defaultProps = {
-    name: null,
-    label: null,
-    value: false,
-    help: null,
     error: null,
+    help: null,
     initial: '',
-    updateValue: (name, value) => { return }
+    label: null,
+    name: null,
+    updateValue: () => {},
+    value: false,
 }
 
 export default Checkbox

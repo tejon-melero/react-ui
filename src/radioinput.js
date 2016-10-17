@@ -5,10 +5,6 @@ import FieldError from './fielderror'
 import Help from './help'
 import SubHelp from './subhelp'
 
-/**
- * Select box
- * with drop down scrollable, and can be navigated with top and button arrow keys
- */
 class RadioInput extends Component {
     constructor(props) {
         super(props)
@@ -21,15 +17,18 @@ class RadioInput extends Component {
             options: this.props.options || [],
             available_options: null,
         }
+
+        this._handleChange = this._handleChange.bind(this)
+        this._handleFocus = this._handleFocus.bind(this)
+        this._handleBlur = this._handleBlur.bind(this)
     }
 
-    // If props gets updated we change the state value
     componentWillReceiveProps(nextProps) {
         let newState = {}
 
         if (nextProps.value !== this.state.value) {
             newState = {
-                value: nextProps.value
+                value: nextProps.value,
             }
         }
 
@@ -42,17 +41,40 @@ class RadioInput extends Component {
         }
     }
 
-    render() {
-        let value = this.state.value
-        let input_id = `id_${this.props.name}`
+    /*
+     * Handle a radio value choice
+     */
+    _handleChange(value) {
+        this.setState(
+            { value },
+            () => { this.props.updateValue({ [this.props.name]: value }) }
+        )
+    }
 
-        let groupClasses = classnames({
-            'form__group':true,
-            'form__group--error':this.props.error
+    /*
+     * Handle focus
+     */
+    _handleFocus(e) {
+        this.props.handleFocus && this.props.handleFocus(e)
+    }
+
+    /*
+     * Handle focus
+     */
+    _handleBlur(e) {
+        this.props.handleBlur && this.props.handleBlur(e)
+    }
+
+    render() {
+        const input_id = `id_${ this.props.name }`
+
+        const groupClasses = classnames({
+            'form__group': true,
+            'form__group--error': this.props.error,
         })
 
-        let controlClasses = classnames({
-            'form__control': true
+        const controlClasses = classnames({
+            'form__control': true,
         })
 
         /*
@@ -61,23 +83,22 @@ class RadioInput extends Component {
         let optionList = null
 
         if (this.state.options.length > 0) {
-            let count = 0
-            optionList = this.state.options.map((item) => {
-                count++
-                let option_id = `${input_id}-${count}`
+            optionList = this.state.options.map((item, index) => {
+                const option_id = `${ input_id }-${ index }`
+
                 return (
                     <li key={ item.value }>
                         <label htmlFor={ option_id }>
                             <input
-                                id={ option_id }
+                                checked={ item.value === this.state.value }
                                 className="form__radio"
+                                id={ option_id }
+                                name={ this.props.name }
+                                onBlur={ this._handleBlur }
+                                onChange={ () => this._handleChange(item.value) }
+                                onFocus={ this._handleFocus }
                                 type="radio"
                                 value={ item.value }
-                                name={ this.props.name }
-                                onChange={ this.handleChange.bind(this, item.value) }
-                                onFocus={ this.handleFocus.bind(this) }
-                                onBlur={ this.handleBlur.bind(this) }
-                                checked={ item.value == this.state.value }
                             />
                             <span className="control-radio__label">{ item.label }</span>
                         </label>
@@ -89,54 +110,33 @@ class RadioInput extends Component {
         return (
             <div className={ groupClasses }>
                 <Label>{ this.props.label }</Label>
-                <FieldError error={ this.props.error } on={ this.state.showTooltip } position={ this.state.tooltipPosition } />
+                <FieldError
+                    error={ this.props.error }
+                    on={ this.state.showTooltip }
+                    position={ this.state.tooltipPosition }
+                />
                 <div className={ controlClasses } ref="form-control">
                     <ul className="control-radio__options" >{ optionList }</ul>
-                    <Help help={ this.props.help } on={ this.state.showTooltip && !this.props.error } position={ this.state.tooltipPosition } />
-                    <SubHelp help={ this.props.sub_help } />
+                    <Help
+                        help={ this.props.help }
+                        on={ this.state.showTooltip && !this.props.error }
+                        position={ this.state.tooltipPosition }
+                    />
+                    <SubHelp help={ this.props.sub_help }/>
                 </div>
             </div>
         )
     }
-
-    /*
-     * Handle a radio value choice
-     */
-    handleChange(value, e) {
-        this.setState({
-            value: value
-        })
-
-        this.props.updateValue(this.props.name, value)
-    }
-
-    /*
-     * Handle focus
-     */
-    handleFocus(e) {
-        if (this.props.handleFocus) {
-            this.props.handleFocus(e)
-        }
-    }
-
-    /*
-     * Handle focus
-     */
-    handleBlur(e) {
-        if (this.props.handleBlur) {
-            this.props.handleBlur(e)
-        }
-    }
 }
 
 RadioInput.defaultProps = {
-    name: 'select',
-    value: null,
-    label: null,
-    help: null,
     error: null,
-    updateValue: (name, value) => { return },
-    options: []
+    help: null,
+    label: null,
+    name: 'select',
+    options: [],
+    updateValue: () => {},
+    value: null,
 }
 
 export default RadioInput

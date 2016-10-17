@@ -1,47 +1,36 @@
 import React, { Component } from 'react'
-import classnames from 'classnames'
-import Label from './label'
-import FieldError from './fielderror'
-import Help from './help'
-import SubHelp from './subhelp'
 import Checkbox from './checkbox'
 
-/*
- * A list of checkboxes options
- */
 class MultipleCheckbox extends Component {
     constructor(props) {
         super(props)
-
-        this.state = {
-            data: []
-        }
-
-        if (props.value) {
-            this.state.data = props.value
-        } else {
-            this.state.data = {}
-        }
 
         this._onOptionSelect = this._onOptionSelect.bind(this)
         this._getCurrentValue = this._getCurrentValue.bind(this)
     }
 
-    _onOptionSelect(key, value, cb) {
-        let data = this.state.data
+    _onOptionSelect(data, cb) {
+        const newData = [ ...this.props.value ]
 
-        if (value === true) {
-            if (this.state.data.indexOf(key) === -1) {
-                data.push(key)
+        for (const key in data) {
+            // if we're "setting" the value...
+            if (data[key] === true) {
+                // if it doesn't exist already, add it in
+                if (newData.indexOf(key) === -1) {
+                    newData.push(key)
+                }
+            } else {
+                // we're "unsetting" the value...
+                const index = newData.indexOf(key)
+
+                // if the item does exist, remove it
+                if (index !== -1) {
+                    newData.splice(index, 1)
+                }
             }
-        } else {
-            let index = this.state.data.indexOf(key);
-            this.state.data.splice(index, 1);
         }
 
-        this.setState({ data }, () => {
-            this.props.updateValue(this.props.name, this.state.data)
-        })
+        this.props.updateValue({ [this.props.name]: newData }, cb)
     }
 
     _getCurrentValue(key) {
@@ -60,17 +49,17 @@ class MultipleCheckbox extends Component {
         let optionList = null
 
         if (this.props.options) {
-            optionList = this.props.options.map((option) => {
-                return (
+            optionList = this.props.options.map(
+                (option) => (
                     <Checkbox
-                        key={option.value}
-                        name={option.value}
-                        label={option.label}
-                        updateValue={this._onOptionSelect}
-                        value={this._getCurrentValue(option.value)}
+                        key={ option.value }
+                        label={ option.label }
+                        name={ option.value }
+                        updateValue={ this._onOptionSelect }
+                        value={ this._getCurrentValue(option.value) }
                     />
                 )
-            })
+            )
         }
 
         let error = null
@@ -83,7 +72,7 @@ class MultipleCheckbox extends Component {
             )
         }
 
-        return <div>{ error }{ optionList }</div>
+        return (<div>{ error }{ optionList }</div>)
     }
 }
 

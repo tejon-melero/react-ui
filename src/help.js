@@ -3,29 +3,32 @@ import classnames from 'classnames'
 
 class Help extends Component {
     render() {
-        let helpClasses = classnames({
+        if (! this.props.help) {
+            return null
+        }
+
+        // TODO: work this into styles, as padding and margin shouldn't be in the code, see Cotidia/react-ui#1
+        const BOTTOM_MARGIN = 6
+
+        const helpClasses = classnames({
             'form__help': true,
             'form__help--tooltip': true,
-            'form__help--tooltip-on': this.props.on
+            'form__help--tooltip-on': this.props.on,
         })
 
-        var helpStyle = null
+        let helpStyle = null
 
         if (this.props.position) {
             helpStyle = {
-                bottom: this.props.position + 6
+                bottom: this.props.position + BOTTOM_MARGIN,
             }
         }
 
-        if (this.props.help) {
-            return (
-                <div className={ helpClasses } style={ helpStyle }>
-                    { this.props.help }
-                </div>
-            )
-        } else {
-            return null
-        }
+        return (
+            <div className={ helpClasses } style={ helpStyle }>
+                { this.props.help }
+            </div>
+        )
     }
 }
 

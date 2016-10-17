@@ -2,35 +2,29 @@ import React, { Component } from 'react'
 import classnames from 'classnames'
 
 class Button extends Component {
-    constructor(props) {
-        super(props)
-    }
-
-    handleClick = (e) => {
-        this.props.onClick(e)
-    }
-
     render() {
-        let buttonClasses = classnames({
+        const buttonClasses = classnames({
             'btn': true,
-            'btn--primary': this.props.status == 'primary',
-            'btn--create': this.props.status == 'create',
-            'btn--change': this.props.status == 'change',
-            'btn--cancel': this.props.status == 'cancel',
-            'btn--delete': this.props.status == 'delete',
-            'btn--full-width': !!this.props.fullWidth,
-            'btn--large': !!this.props.large,
-            'btn--margin-bottom': !!this.props.marginBottom,
-            'btn--loading': this.props.loading
+            'btn--primary': this.props.status === 'primary',
+            'btn--create': this.props.status === 'create',
+            'btn--change': this.props.status === 'change',
+            'btn--cancel': this.props.status === 'cancel',
+            'btn--delete': this.props.status === 'delete',
+            'btn--full-width': Boolean(this.props.fullWidth),
+            'btn--large': Boolean(this.props.large),
+            'btn--margin-bottom': Boolean(this.props.marginBottom),
+            'btn--loading': this.props.loading,
         })
 
-        let button = (
+        const button = (
             <button
-                type={ this.props.type }
-                onClick={ this.handleClick }
                 className={ buttonClasses }
-                disabled={ this.props.disabled || this.props.loading }>
-                <span className="btn__text">{ this.props.children || "submit" }</span>
+                disabled={ this.props.disabled || this.props.loading }
+                onClick={ (e) => this.props.onClick(e) }
+                onMouseDown={ (e) => this.props.onMouseDown(e) }
+                type={ this.props.type }
+            >
+                <span className="btn__text">{ this.props.children || 'Submit' }</span>
             </button>
         )
 
@@ -49,10 +43,11 @@ class Button extends Component {
 }
 
 Button.defaultProps = {
-    type: 'submit',
-    loading: false,
     disabled: false,
-    onClick: (e) => e.preventDefault()
+    loading: false,
+    onClick: (e) => e.preventDefault(),
+    onMouseDown: (e) => e.preventDefault(),
+    type: 'submit',
 }
 
 export default Button
