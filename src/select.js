@@ -181,11 +181,6 @@ class Select extends Component {
      * Assigned the value upstream
      */
     _assignValue(option) {
-        // If we have a custom function, use it instead
-        if (this.props.assignValue) {
-            this.props.assignValue(option, this)
-        }
-
         this.setState({
             value: option.value,
             inputValue: null,
@@ -622,7 +617,6 @@ class Select extends Component {
 }
 
 Select.propTypes = {
-    assignValue: React.PropTypes.func,
     defaultOptions: React.PropTypes.array,
     error: React.PropTypes.array,
     handleBlur: React.PropTypes.func,
