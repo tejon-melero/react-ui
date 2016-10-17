@@ -253,7 +253,7 @@
     "react/jsx-max-props-per-line": 0, //Limit maximum of props on a single line in JSX
     "react/jsx-no-bind": 0, // prevent usage of .bind() and arrow functions in JSX props
     "react/jsx-no-duplicate-props": 1, //Prevent duplicate properties in JSX
-    "react/jsx-no-literals": 0, //Prevent usage of unwrapped JSX strings
+    "react/jsx-no-literals": 1, //Prevent usage of unwrapped JSX strings
     "react/jsx-no-undef": 1, //Disallow undeclared variables in JSX
     "react/jsx-pascal-case": 1, // Enforce PascalCase for user-defined JSX components
     "react/jsx-sort-props": 1, //Enforce props alphabetical sorting
