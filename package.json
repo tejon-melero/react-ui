@@ -23,15 +23,17 @@
   ],
   "license": "ISC",
   "files": [
-      "dist",
-      "lib"
+    "dist",
+    "lib"
   ],
   "peerDependencies": {
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },
   "dependencies": {
-    "classnames": "^2.2.5"
+    "classnames": "^2.2.5",
+    "moment": "^2.15.1",
+    "moment-range": "^2.2.0"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",
