@@ -6,8 +6,7 @@ import Help from './help'
 import SubHelp from './subhelp'
 
 /*
- * Select box with drop down scrollable, and can be navigated with top and
- * button arrow keys
+ * Select box with drop down scrollable, and can be navigated with up/down arrow keys.
  */
 class Select extends Component {
     constructor(props) {
@@ -82,15 +81,10 @@ class Select extends Component {
 
         this.setState({ inputValue })
 
-        /*
-         * If a search function is provided then we need to call it
-         * with the value as a query argument
-         */
+        // If a search function is provided then we need to call it with the value as a query argument
         if (this.props.searchOptions) {
             if (inputValue && inputValue.length >= this.props.minCharSearch) {
-                this.setState({
-                    searching: true,
-                })
+                this.setState({ searching: true })
 
                 if (this.searchTimeout) {
                     clearTimeout(this.searchTimeout)
@@ -474,10 +468,7 @@ class Select extends Component {
      * it's a search select or standard fixed list
      */
     _getNoOptionPlaceholder = () => {
-        /*
-         * If we have an option search function, then we will be either
-         * "type in" or no search results
-         */
+        // If we have an option search function, then we will be either "type in" or no search results
         if (this.state.searching === true) {
             return this.props.searchingPlaceholder
         }
@@ -496,9 +487,9 @@ class Select extends Component {
     render() {
         const inputId = `id_${ this.props.name }`
 
-        // I know this code looks equivalent to the above but it's not quite - this variable is just concerned with what
-        // should be displayed, not what we should be using to search on, also we don't care about the inputValue if it
-        // is empty - in that case we prefer the currently selected value (if it exists)
+        // displayValue is just concerned with what should be displayed, not what we should be
+        // using to search on, also we don't care about the inputValue if it is empty - in that
+        // case we prefer the currently selected value (if it exists)
         let displayValue = ''
         let actualValue = this.props.value
 
@@ -517,17 +508,13 @@ class Select extends Component {
             actualValue = ''
         }
 
-        /*
-         * Define the classes for the form group
-         */
+        // Define the classes for the form group
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.error,
         })
 
-        /*
-         * Define the classes for the form control
-         */
+        // Define the classes for the form control
         const controlClasses = classnames({
             'form__control': true,
             'form__control--select': true,
