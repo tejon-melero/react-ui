@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import classnames from 'classnames'
-import {
-    Button,
-    Label,
-    SubHelp,
-    TextInput,
-} from '.'
+
+import Button from './button'
+import Label from './label'
+import SubHelp from './subhelp'
+import TextInput from './textinput'
 
 class MultipleTextInput extends Component {
     constructor(props) {
