@@ -500,11 +500,21 @@ class Select extends Component {
         // should be displayed, not what we should be using to search on, also we don't care about the inputValue if it
         // is empty - in that case we prefer the currently selected value (if it exists)
         let displayValue = ''
+        let actualValue = this.props.value
 
         if (this.state.inputValue && this.state.inputValue.length) {
             displayValue = this.state.inputValue
         } else {
             displayValue = this._getOptionLabel(this.props.value)
+        }
+
+        // Ensure the values we will place in the inputs are usable strings (i.e. not null)
+        if (! (displayValue && displayValue.length)) {
+            displayValue = ''
+        }
+
+        if (! (actualValue && actualValue.length)) {
+            actualValue = ''
         }
 
         /*
@@ -587,7 +597,7 @@ class Select extends Component {
                     <input
                         name={ this.props.name }
                         type="hidden"
-                        value={ this.props.value }
+                        value={ actualValue }
                     />
                     <input
                         className="form__select"
