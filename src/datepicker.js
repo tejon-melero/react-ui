@@ -93,7 +93,7 @@ export default class DatePicker extends Component {
         this.props.onChange && this.props.onChange(day.format(this.props.dateFormat || 'YYYY-MM-DD'))
     }
 
-    nextMonth(e) {
+    nextMonth = (e) => {
         e.preventDefault()
 
         let month = this.state.month + 1
@@ -111,7 +111,7 @@ export default class DatePicker extends Component {
         })
     }
 
-    previousMonth(e) {
+    previousMonth = (e) => {
         e.preventDefault()
 
         let month = this.state.month - 1
