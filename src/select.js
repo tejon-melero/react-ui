@@ -279,7 +279,7 @@ class Select extends Component {
                         focused: false,
                         label: _label.replace(
                             match,
-                            `<span class='control-select__option--highlighted'>${ match }</span>`
+                            `<span class="control-select__option--highlighted">${ match }</span>`
                         ),
                         value: option.value,
                     })
