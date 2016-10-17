@@ -130,6 +130,8 @@ class Select extends Component {
             focused: false,
         })
 
+        this.refs.text_input.blur()
+
         this.props.handleBlur && this.props.handleBlur(e)
     }
 
