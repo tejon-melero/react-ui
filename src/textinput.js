@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
+
 import classnames from 'classnames'
-import Label from './label'
+import moment from 'moment'
+
+import DatePicker from './datepicker'
 import FieldError from './fielderror'
 import Help from './help'
+import Label from './label'
 import SubHelp from './subhelp'
-// DatePicker = require './datepicker.coffee'
 
 class TextInput extends Component {
     constructor(props) {
@@ -64,16 +67,16 @@ class TextInput extends Component {
             tooltipPosition,
         }
 
-        // if (this.props.datePicker === true) {
-        //     if ((position.top + position.height / 2) < window.innerHeight / 2) {
-        //         newState.datePickerAlignment = 'bottom'
-        //     } else {
-        //         newState.datePickerAlignment = 'top'
-        //     }
-        //
-        //     this._listenDatePickerClick()
-        //     this._datePickerON = true
-        // }
+        if (this.props.datePicker === true) {
+            if ((position.top + position.height / 2) < window.innerHeight / 2) {
+                newState.datePickerAlignment = 'bottom'
+            } else {
+                newState.datePickerAlignment = 'top'
+            }
+
+            this._listenDatePickerClick()
+            this._datePickerON = true
+        }
 
         this.setState(newState)
 
@@ -228,19 +231,17 @@ class TextInput extends Component {
         }
 
         if (this.props.datePicker) {
-            // throw new Error('Datepicker component does not work.')
-
-            // helpUI = (
-            //     <DatePicker
-            //         alignment={ this.state.datePickerAlignment }
-            //         date={ moment(value) }
-            //         dateFormat={ this.props.dateFormat || null }
-            //         onChange={ this.handleDateChange }
-            //         position={ this.state.tooltipPosition }
-            //         ref="datepicker"
-            //         weekDayStart={ this.props.weekDayStart || null }
-            //     />
-            // )
+            helpUI = (
+                <DatePicker
+                    alignment={ this.state.datePickerAlignment }
+                    date={ moment(value) }
+                    dateFormat={ this.props.dateFormat || null }
+                    onChange={ this.handleDateChange }
+                    position={ this.state.tooltipPosition }
+                    ref="datepicker"
+                    weekDayStart={ this.props.weekDayStart || null }
+                />
+            )
         } else {
             helpUI = (
                 <Help help={ this.props.help }
