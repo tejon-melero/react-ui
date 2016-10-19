@@ -311,7 +311,6 @@ export default class Select extends Component {
                     // Create a new option dict with highlighted match
                     options.push({
                         classes: option.classes,
-                        focused: false,
                         label: _label.replace(
                             match,
                             `<span class="control-select__option--highlighted">${ match }</span>`
