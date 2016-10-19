@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import classnames from 'classnames'
 import Label from './label'
 import FieldError from './fielderror'
@@ -8,7 +8,45 @@ import SubHelp from './subhelp'
 /*
  * Select box with drop down scrollable, and can be navigated with up/down arrow keys.
  */
-class Select extends Component {
+export default class Select extends Component {
+    static propTypes = {
+        defaultOptions: PropTypes.array,
+        error: PropTypes.array,
+        getFilteredOptions: PropTypes.func,
+        handleBlur: PropTypes.func,
+        handleFocus: PropTypes.func,
+        help: PropTypes.string,
+        label: PropTypes.string,
+        minCharSearch: PropTypes.number,
+        name: PropTypes.string,
+        noOptionPlaceholder: PropTypes.string,
+        noResultsPlaceholder: PropTypes.string,
+        options: PropTypes.array,
+        placeholder: PropTypes.string,
+        searchOptions: PropTypes.func,
+        searchingPlaceholder: PropTypes.string,
+        subHelp: PropTypes.string,
+        type: PropTypes.string,
+        updateValue: PropTypes.func,
+        value: PropTypes.any,
+    }
+
+    static defaultProps = {
+        defaultOptions: null,
+        error: null,
+        help: null,
+        label: null,
+        minCharSearch: 3,
+        name: 'select',
+        noOptionPlaceholder: 'No options available',
+        noResultsPlaceholder: 'No results found',
+        options: [],
+        placeholder: 'Select item',
+        searchingPlaceholder: '<span class="loader loader--small"></span> Searching...',
+        updateValue: () => {},
+        value: null,
+    }
+
     constructor(props) {
         super(props)
 
@@ -515,7 +553,6 @@ class Select extends Component {
         const controlClasses = classnames({
             'form__control': true,
             'form__control--select': true,
-            'form__control--select-success': this.props.success,
             'form__control--select-error': this.props.error,
             'control-select': true,
             'control-select--focus': this.state.focused,
@@ -612,44 +649,8 @@ class Select extends Component {
                         position={ this.state.tooltipPosition }
                     />
                 </div>
-                <SubHelp help={ this.props.sub_help }/>
+                <SubHelp help={ this.props.subHelp }/>
             </div>
         )
     }
 }
-
-Select.propTypes = {
-    defaultOptions: React.PropTypes.array,
-    error: React.PropTypes.array,
-    handleBlur: React.PropTypes.func,
-    handleFocus: React.PropTypes.func,
-    help: React.PropTypes.string,
-    label: React.PropTypes.string,
-    minCharSearch: React.PropTypes.number,
-    name: React.PropTypes.string,
-    noOptionPlaceholder: React.PropTypes.string,
-    noResultsPlaceholder: React.PropTypes.string,
-    options: React.PropTypes.array,
-    placeholder: React.PropTypes.string,
-    searchOptions: React.PropTypes.func,
-    searchingPlaceholder: React.PropTypes.string,
-    updateValue: React.PropTypes.func,
-}
-
-Select.defaultProps = {
-    defaultOptions: null,
-    error: null,
-    help: null,
-    label: null,
-    minCharSearch: 2,
-    name: 'select',
-    noOptionPlaceholder: 'No options available',
-    noResultsPlaceholder: 'No results found',
-    options: [],
-    placeholder: 'Select item',
-    searchingPlaceholder: '<span class="loader loader--small"></span> Searching...',
-    updateValue: () => {},
-    value: null,
-}
-
-export default Select
