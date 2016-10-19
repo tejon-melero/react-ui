@@ -74,12 +74,14 @@ export default class Select extends Component {
     componentWillReceiveProps(nextProps) {
         const newState = {}
 
+        // If we have different options coming in and there is a searchOptions callback specified,
+        // then we can assume that we were searching and these new props have ended the search (by
+        // returning results).
         if (nextProps.options !== this.props.options && this.props.searchOptions) {
-            this.setState({
-                searching: false,
-            })
+            newState.searching = false
         }
 
+        // If the value has changed, refresh our idea of which option should be focussed.
         if (nextProps.value !== this.props.value) {
             newState.focusedOption = this._getFocusedOption(nextProps.value)
 
@@ -88,6 +90,8 @@ export default class Select extends Component {
             }
         }
 
+        // If we have different options coming in, refresh our idea of which option should be
+        // focussed based on the new value and new options.
         if (nextProps.options !== this.props.options) {
             newState.focusedOption = this._getFocusedOption(nextProps.value, nextProps.options)
         }
@@ -96,6 +100,9 @@ export default class Select extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        // TODO: work out whether this is premature optimisation and whether we can remove it for
+        // code-cleanliness reasons.
+
         if (nextProps.value !== this.props.value) {
             return true
         }
