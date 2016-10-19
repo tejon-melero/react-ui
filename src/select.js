@@ -240,13 +240,6 @@ export default class Select extends Component {
     }
 
     /*
-     * Insert raw HTML inside a node
-     */
-    _insertHTML(html) {
-        return { __html: html }
-    }
-
-    /*
      * Get an option label from its value
      */
     _getOptionLabel = (value) => {
@@ -594,18 +587,14 @@ export default class Select extends Component {
                             key={ item.value }
                             onMouseDown={ this._handleMouseDown.bind(this, item) }
                         >
-                            <span dangerouslySetInnerHTML={ this._insertHTML(item.label) } />
+                            <span dangerouslySetInnerHTML={{ __html: item.label }} />
                         </div>
                     )
                 })
             } else {
                 optionList = (
                     <div className="control-select__option">
-                        <span
-                            dangerouslySetInnerHTML={
-                                this._insertHTML(this._getNoOptionPlaceholder())
-                            }
-                        />
+                        <span dangerouslySetInnerHTML={{ __html: this._getNoOptionPlaceholder() }} />
                     </div>
                 )
             }
