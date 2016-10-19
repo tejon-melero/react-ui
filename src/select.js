@@ -60,14 +60,14 @@ export default class Select extends Component {
             // The value currently inputted by the user in the text field
             inputValue: null,
 
-            // Whether the field is currently in focused due to user interaction
-            focused: false,
+            // Whether the field is currently focussed due to user interaction
+            focussed: false,
 
             // Tnis applies only when a search function is provided
             searching: false,
 
             // This option currently focussed on the list
-            focusedOption: this._getFocusedOption(props.value),
+            focussedOption: this._getFocussedOption(props.value),
         }
     }
 
@@ -83,7 +83,7 @@ export default class Select extends Component {
 
         // If the value has changed, refresh our idea of which option should be focussed.
         if (nextProps.value !== this.props.value) {
-            newState.focusedOption = this._getFocusedOption(nextProps.value)
+            newState.focussedOption = this._getFocussedOption(nextProps.value)
 
             if (! nextProps.value) {
                 newState.inputValue = ''
@@ -93,7 +93,7 @@ export default class Select extends Component {
         // If we have different options coming in, refresh our idea of which option should be
         // focussed based on the new value and new options.
         if (nextProps.options !== this.props.options) {
-            newState.focusedOption = this._getFocusedOption(nextProps.value, nextProps.options)
+            newState.focussedOption = this._getFocussedOption(nextProps.value, nextProps.options)
         }
 
         this.setState(newState)
@@ -159,7 +159,7 @@ export default class Select extends Component {
         this.setState({
             showTooltip: true,
             tooltipPosition,
-            focused: true,
+            focussed: true,
         })
 
         this.props.handleFocus && this.props.handleFocus(e)
@@ -172,7 +172,7 @@ export default class Select extends Component {
         this.setState({
             showTooltip: false,
             inputValue: '',
-            focused: false,
+            focussed: false,
         })
 
         this.refs.text_input.blur()
@@ -205,7 +205,7 @@ export default class Select extends Component {
             case KEY_TAB:
                 break
             case KEY_ENTER:
-                this._selectFocusedOption()
+                this._selectFocussedOption()
                 break
             case KEY_UP:
                 this._focusPreviousOption()
@@ -233,7 +233,7 @@ export default class Select extends Component {
             inputValue: null,
             tooltipPosition: null,
             showTooltip: false,
-            focused: false,
+            focussed: false,
         })
 
         this.props.updateValue({ [this.props.name]: option.value })
@@ -278,7 +278,7 @@ export default class Select extends Component {
         if (e.target.className !== 'form__select') {
             this.setState({
                 tooltipPosition: null,
-                focused: false,
+                focussed: false,
             })
         }
     }
@@ -343,27 +343,25 @@ export default class Select extends Component {
             options = this.filteredOptions
         }
 
-        const index = this._getFocusedOptionIndex('down', options)
-        let focusedOption = null
+        const index = this._getFocussedOptionIndex('down', options)
+        let focussedOption = null
 
         if (index < options.length - 1 || index === null) {
             let i = 0
 
             for (const option of options) {
                 if (index === null && i === 0) {
-                    focusedOption = option
+                    focussedOption = option
                     break
                 } else if (index !== null && index + 1 === i) {
-                    focusedOption = option
+                    focussedOption = option
                     break
                 }
 
                 i++
             }
 
-            this.setState({
-                focusedOption,
-            })
+            this.setState({ focussedOption })
         }
     }
 
@@ -377,43 +375,41 @@ export default class Select extends Component {
             options = this.filteredOptions
         }
 
-        const index = this._getFocusedOptionIndex('up', options)
-        let focusedOption = null
+        const index = this._getFocussedOptionIndex('up', options)
+        let focussedOption = null
 
         if (index > 0) {
             let i = 0
 
             for (const option of options) {
                 if (index !== null && index - 1 === i) {
-                    focusedOption = option
+                    focussedOption = option
                     break
                 }
 
                 i++
             }
 
-            this.setState({
-                focusedOption,
-            })
+            this.setState({ focussedOption })
         }
     }
 
     /*
-     * Returns the index of the focused option, || null if none
+     * Returns the index of the focussed option or null if there is none.
      */
-    _getFocusedOptionIndex = (direction, options) => {
+    _getFocussedOptionIndex = (direction, options) => {
         if (! options) {
             options = this.props.options
         }
 
-        if (! this.state.focusedOption) {
+        if (! this.state.focussedOption) {
             return null
         }
 
         let i = 0
 
         for (const option of options) {
-            if (option.value === this.state.focusedOption.value) {
+            if (option.value === this.state.focussedOption.value) {
                 this._setOptionScrollValue(option.value, direction, options)
                 return i
             }
@@ -425,24 +421,24 @@ export default class Select extends Component {
     }
 
     /*
-     * Submit the value that is currently focused
+     * Submit the value that is currently focussed
      */
-    _selectFocusedOption = () => {
-        if (!this.state.focusedOption) {
+    _selectFocussedOption = () => {
+        if (!this.state.focussedOption) {
             return
         }
 
         for (const option of this.props.options) {
-            if (option.value === this.state.focusedOption.value) {
+            if (option.value === this.state.focussedOption.value) {
                 this._assignValue(option)
             }
         }
     }
 
     /*
-     * Find the focused option from the current value
+     * Find the focussed option from the current value
      */
-    _getFocusedOption = (value, options) => {
+    _getFocussedOption = (value, options) => {
         if (! options) {
             options = this.props.options
         }
@@ -561,7 +557,7 @@ export default class Select extends Component {
             'form__control--select': true,
             'form__control--select-error': this.props.error,
             'control-select': true,
-            'control-select--focus': this.state.focused,
+            'control-select--focus': this.state.focussed,
         })
 
         // Define the position of the option list
@@ -574,7 +570,7 @@ export default class Select extends Component {
         // Define the list of options available to choose from
         let optionList = null
 
-        if (this.state.focused) {
+        if (this.state.focussed) {
             const options = this._filterOptions(this.state.inputValue)
 
             if (options.length > 0) {
@@ -582,7 +578,7 @@ export default class Select extends Component {
                     const classes = {
                         'control-select__option': true,
                         'control-select__option--focused':
-                            this.state.focusedOption && (item.value === this.state.focusedOption.value),
+                            this.state.focussedOption && (item.value === this.state.focussedOption.value),
                         'control-select__option--selected': this.props.value === item.value,
                     }
 
