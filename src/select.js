@@ -18,33 +18,25 @@ export default class Select extends Component {
         help: PropTypes.string,
         label: PropTypes.string,
         minCharSearch: PropTypes.number,
-        name: PropTypes.string,
+        name: PropTypes.string.isRequired,
         noOptionPlaceholder: PropTypes.string,
         noResultsPlaceholder: PropTypes.string,
-        options: PropTypes.array,
+        options: PropTypes.array.isRequired,
         placeholder: PropTypes.string,
         searchOptions: PropTypes.func,
         searchingPlaceholder: PropTypes.string,
         subHelp: PropTypes.string,
         type: PropTypes.string,
-        updateValue: PropTypes.func,
-        value: PropTypes.any,
+        updateValue: PropTypes.func.isRequired,
+        value: PropTypes.any.isRequired,
     }
 
     static defaultProps = {
-        defaultOptions: null,
-        error: null,
-        help: null,
-        label: null,
         minCharSearch: 3,
-        name: 'select',
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
-        options: [],
         placeholder: 'Select item',
         searchingPlaceholder: '<span class="loader loader--small"></span> Searching...',
-        updateValue: () => {},
-        value: null,
     }
 
     constructor(props) {
@@ -614,7 +606,7 @@ export default class Select extends Component {
                     <input
                         className="form__select"
                         id={ inputId }
-                        name={ `${ this.props.name } selector` }
+                        name={ `${ this.props.name }_selector` }
                         onBlur={ this._handleBlur }
                         onChange={ this._handleChange }
                         onClick={ this._handleFocus }
@@ -623,7 +615,7 @@ export default class Select extends Component {
                         onTouchStart={ this._handleFocus }
                         placeholder={ this.props.placeholder }
                         ref="text_input"
-                        type={ this.props.type }
+                        type={ this.props.type || 'text' }
                         value={ displayValue }
                     />
                     <div className="control-select__options" ref="option-list" style={ optionsStyle }>
