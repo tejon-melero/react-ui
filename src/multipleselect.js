@@ -23,6 +23,11 @@ export default class MultipleSelect extends Component {
         value: PropTypes.arrayOf(PropTypes.any).isRequired,
     }
 
+    /**
+     * Add value(s) to the currently-selected values.
+     *
+     * @returns void
+     */
     _updateValue = (data) => {
         const newValue = [ ...this.props.value ]
 
@@ -33,22 +38,28 @@ export default class MultipleSelect extends Component {
         this.props.updateValue({ [this.props.name]: newValue })
     }
 
-    /*
+    /**
      * Get the list of options we have available for selection.
+     *
+     * @returns Object[] The options that aren't selected.
      */
     _getAvailableOptions() {
         return this.props.options.filter((item) => (! this.props.value.includes(item.value)))
     }
 
-    /*
-     * Get the list of options we have available for selection.
+    /**
+     * Get the list of options that are currently selected.
+     *
+     * @returns Object[] The currently-selected options.
      */
     _getSelectedOptions() {
         return this.props.options.filter((item) => this.props.value.includes(item.value))
     }
 
-    /*
+    /**
      * Remove the given option from our selected options.
+     *
+     * @returns void
      */
     _removeOption(option, e) {
         e.preventDefault()
@@ -79,7 +90,6 @@ export default class MultipleSelect extends Component {
         return (
             <div className={ this.props.class }>
                 <Select
-                    class={ this.props.class }
                     defaultOptions={ this.props.defaultOptions }
                     error={ this.props.error }
                     getFilteredOptions={ this.props.getFilteredOptions }
