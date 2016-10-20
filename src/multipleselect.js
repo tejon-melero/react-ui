@@ -20,123 +20,61 @@ export default class MultipleSelect extends Component {
         searchOptions: PropTypes.func,
         searchingPlaceholder: PropTypes.string,
         type: PropTypes.string,
+        value: PropTypes.arrayOf(PropTypes.any).isRequired,
     }
 
-    state = {
-        cachedOptions: [],
-    }
+    _updateValue = (data) => {
+        const newValue = [ ...this.props.value ]
 
-    /*
-     * Override the update value from "select"
-     */
-    _updateValue = (data, cb) => {
         for (const key in data) {
-            this._updateValueSingle(key, data[key], cb)
-        }
-    }
-
-    _updateValueSingle(key, value, cb) {
-        if (value) {
-            // Create a copy of props.value
-            const newValue = [ ...this.props.value ]
-
-            // And add the new value to it
-            newValue.push(value)
-
-            this.props.updateValue({ [this.props.name]: newValue }, cb)
-
-            // Now add the value as an option to our list of cached options
-            const newOption = this._getOption(value)
-
-            if (newOption) {
-                this.setState((state) => {
-                    return {
-                        cachedOptions: [
-                            ...state.cachedOptions,
-                            newOption,
-                        ],
-                    }
-                })
-            }
-        }
-    }
-
-    /*
-     * Get an option given a value
-     */
-    _getOption(value) {
-        for (const option of this.props.options) {
-            if (option.value === value) {
-                return option
-            }
-        }
-
-        return null
-    }
-
-    /*
-     * Create a list of options with or without being tagged
-     */
-    _getOptions(tagged) {
-        const options = []
-        const optionValues = []
-        const optionList = [ ...this.state.cachedOptions, ...this.props.options ]
-
-        for (const option of optionList) {
-            // Add the option if it's tagged
-            if (tagged === true && this.props.value.indexOf(option.value) !== -1) {
-                // Avoid duplicates
-                if (optionValues.indexOf(option.value) === -1) {
-                    options.push(option)
-                    optionValues.push(option.value)
-                }
-            } else if (tagged === false && this.props.value.indexOf(option.value) === -1) {
-                // Avoid duplicates
-                if (optionValues.indexOf(option.value) === -1) {
-                    options.push(option)
-                    optionValues.push(option.value)
-                }
-            }
-        }
-
-        return options
-    }
-
-    /*
-     * Clear a new value list without the submitted option
-     */
-    _clearOption(option, e) {
-        e.preventDefault()
-
-        const newValue = []
-
-        for (const opt of this.props.value) {
-            if (opt !== option.value) {
-                newValue.push(opt)
-            }
+            newValue.push(data[key])
         }
 
         this.props.updateValue({ [this.props.name]: newValue })
     }
 
+    /*
+     * Get the list of options we have available for selection.
+     */
+    _getAvailableOptions() {
+        return this.props.options.filter((item) => (! this.props.value.includes(item.value)))
+    }
+
+    /*
+     * Get the list of options we have available for selection.
+     */
+    _getSelectedOptions() {
+        return this.props.options.filter((item) => this.props.value.includes(item.value))
+    }
+
+    /*
+     * Remove the given option from our selected options.
+     */
+    _removeOption(option, e) {
+        e.preventDefault()
+
+        this.props.updateValue({
+            [this.props.name]: this.props.value.filter((item) => (item !== option.value)),
+        })
+    }
+
     render() {
-        let selectedItem = null
+        let selectedItems = null
 
         if (this.props.value.length) {
-            selectedItem = this._getOptions(true).map(
-                (option, index) => (
-                    <div className="tag" key={ index }>
-                        { option.label }
-                        <a
-                            className="tag__clear"
-                            href="#"
-                            onClick={ this._clearOption.bind(this, option) }
-                        >
-                            { '×' }
-                        </a>
-                    </div>
-                )
-            )
+            selectedItems = this._getSelectedOptions().map((option) => (
+                <div className="tag" key={ option.value }>
+                    { option.label }
+                    { ' ' }
+                    <a
+                        className="tag__clear"
+                        href="#"
+                        onClick={ this._removeOption.bind(this, option) }
+                    >
+                        { '×' }
+                    </a>
+                </div>
+            ))
         }
         return (
             <div className={ this.props.class }>
@@ -153,7 +91,7 @@ export default class MultipleSelect extends Component {
                     name={ this.props.name }
                     noOptionPlaceholder={ this.props.noOptionPlaceholder }
                     noResultsPlaceholder={ this.props.noResultsPlaceholder }
-                    options={ this._getOptions(false) }
+                    options={ this._getAvailableOptions() }
                     placeholder={ this.props.placeholder }
                     searchOptions={ this.props.searchOptions }
                     searchingPlaceholder={ this.props.searchingPlaceholder }
@@ -161,7 +99,8 @@ export default class MultipleSelect extends Component {
                     updateValue={ this._updateValue }
                     value={ this.props.value }
                 />
-                { selectedItem }
+
+                { selectedItems }
             </div>
         )
     }
