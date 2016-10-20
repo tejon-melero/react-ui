@@ -6,7 +6,7 @@ const BOTTOM_MARGIN = 6
 
 export default class Help extends Component {
     static propTypes = {
-        help: PropTypes.node.isRequired,
+        help: PropTypes.node,
         on: PropTypes.bool,
         position: PropTypes.number,
     }

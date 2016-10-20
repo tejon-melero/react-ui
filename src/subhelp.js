@@ -3,7 +3,7 @@ import classnames from 'classnames'
 
 export default class SubHelp extends Component {
     static propTypes = {
-        help: PropTypes.node.isRequired,
+        help: PropTypes.node,
     }
 
     render() {

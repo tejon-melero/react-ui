@@ -6,8 +6,8 @@ const BOTTOM_MARGIN = 6
 
 export default class FieldError extends Component {
     static propTypes = {
-        error: PropTypes.string.isRequired,
-        on: PropTypes.boolean,
+        error: PropTypes.string,
+        on: PropTypes.bool,
         position: PropTypes.number,
     }
 
