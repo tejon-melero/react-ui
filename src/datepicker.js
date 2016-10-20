@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import moment from 'moment'
 
 import 'moment-range'
@@ -8,8 +8,18 @@ const VERTICAL_PADDING_PX = 6
 const WEEKS_TO_DISPLAY = 6
 
 export default class DatePicker extends Component {
-    defaultProps = {
+    static propTypes = {
+        alignment: PropTypes.oneOf([ 'top', 'bottom' ]),
+        date: PropTypes.instanceOf(moment).isRequired,
+        dateFormat: PropTypes.string,
+        onChange: PropTypes.func,
+        position: PropTypes.bool,
+        weekDayStart: PropTypes.number,
+    }
+
+    static defaultProps = {
         date: moment(),
+        position: false,
         weekDayStart: 0,
     }
 
@@ -85,12 +95,12 @@ export default class DatePicker extends Component {
         return calendar
     }
 
-    setDate(day, e) {
+    setDate(date, e) {
         e.preventDefault()
 
-        this.setState({ date: day })
+        this.setState({ date })
 
-        this.props.onChange && this.props.onChange(day.format(this.props.dateFormat || 'YYYY-MM-DD'))
+        this.props.onChange && this.props.onChange(date.format(this.props.dateFormat || 'YYYY-MM-DD'))
     }
 
     nextMonth = (e) => {

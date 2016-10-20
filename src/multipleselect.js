@@ -1,23 +1,35 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
+
+import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
+
 import Select from './select'
 
-class MultipleSelect extends Component {
-    constructor(props) {
-        super(props)
+export default class MultipleSelect extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
+        ...focussablePropTypes,
+        ...hasOptionsPropTypes,
 
-        // Add support for options added via search function
-        // When a user amend the search criteria in the select component, the
-        // option list will change, meaning there wouldn't be an option to match
-        // the currently selected value. To avoid that issue, we build a cached
-        // list of all the options currently added to the selected list
-        this.cachedOptions = []
-        this._updateValue = this._updateValue.bind(this)
+        class: PropTypes.string,
+        defaultOptions: PropTypes.array,
+        getFilteredOptions: PropTypes.func,
+        minCharSearch: PropTypes.number,
+        noOptionPlaceholder: PropTypes.string,
+        noResultsPlaceholder: PropTypes.string,
+        placeholder: PropTypes.string,
+        searchOptions: PropTypes.func,
+        searchingPlaceholder: PropTypes.string,
+        type: PropTypes.string,
+    }
+
+    state = {
+        cachedOptions: [],
     }
 
     /*
      * Override the update value from "select"
      */
-    _updateValue(data, cb) {
+    _updateValue = (data, cb) => {
         for (const key in data) {
             this._updateValueSingle(key, data[key], cb)
         }
@@ -28,14 +40,23 @@ class MultipleSelect extends Component {
             // Create a copy of props.value
             const newValue = [ ...this.props.value ]
 
+            // And add the new value to it
             newValue.push(value)
 
             this.props.updateValue({ [this.props.name]: newValue }, cb)
 
+            // Now add the value as an option to our list of cached options
             const newOption = this._getOption(value)
 
             if (newOption) {
-                this.cachedOptions.push(newOption)
+                this.setState((state) => {
+                    return {
+                        cachedOptions: [
+                            ...state.cachedOptions,
+                            newOption,
+                        ],
+                    }
+                })
             }
         }
     }
@@ -59,7 +80,7 @@ class MultipleSelect extends Component {
     _getOptions(tagged) {
         const options = []
         const optionValues = []
-        const optionList = [ ...this.cachedOptions, ...this.props.options ]
+        const optionList = [ ...this.state.cachedOptions, ...this.props.options ]
 
         for (const option of optionList) {
             // Add the option if it's tagged
@@ -111,7 +132,7 @@ class MultipleSelect extends Component {
                             href="#"
                             onClick={ this._clearOption.bind(this, option) }
                         >
-                            &times;
+                            { '×' }
                         </a>
                     </div>
                 )
@@ -120,14 +141,15 @@ class MultipleSelect extends Component {
         return (
             <div className={ this.props.class }>
                 <Select
-                    assignValue={ this.props.assignValue }
                     class={ this.props.class }
                     defaultOptions={ this.props.defaultOptions }
                     error={ this.props.error }
+                    getFilteredOptions={ this.props.getFilteredOptions }
                     handleBlur={ this.props.handleBlur }
                     handleFocus={ this.props.handleFocus }
                     help={ this.props.help }
                     label={ this.props.label }
+                    minCharSearch={ this.props.minCharSearch }
                     name={ this.props.name }
                     noOptionPlaceholder={ this.props.noOptionPlaceholder }
                     noResultsPlaceholder={ this.props.noResultsPlaceholder }
@@ -135,6 +157,7 @@ class MultipleSelect extends Component {
                     placeholder={ this.props.placeholder }
                     searchOptions={ this.props.searchOptions }
                     searchingPlaceholder={ this.props.searchingPlaceholder }
+                    type={ this.props.type }
                     updateValue={ this._updateValue }
                     value={ this.props.value }
                 />
@@ -143,25 +166,3 @@ class MultipleSelect extends Component {
         )
     }
 }
-
-MultipleSelect.propTypes = {
-    assignValue: React.PropTypes.func,
-    class: React.PropTypes.string,
-    defaultOptions: React.PropTypes.array,
-    error: React.PropTypes.array,
-    handleBlur: React.PropTypes.func,
-    handleFocus: React.PropTypes.func,
-    help: React.PropTypes.string,
-    label: React.PropTypes.string,
-    name: React.PropTypes.string,
-    noOptionPlaceholder: React.PropTypes.string,
-    noResultsPlaceholder: React.PropTypes.string,
-    options: React.PropTypes.array,
-    placeholder: React.PropTypes.string,
-    searchOptions: React.PropTypes.func,
-    searchingPlaceholder: React.PropTypes.string,
-    updateValue: React.PropTypes.func,
-    value: React.PropTypes.array,
-}
-
-export default MultipleSelect

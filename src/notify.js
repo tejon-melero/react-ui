@@ -1,8 +1,12 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import reactUpdate from 'react-addons-update'
 
 export default class Notify extends Component {
-    defaultProps = {
+    static propTypes = {
+        duration: PropTypes.number,
+    }
+
+    static defaultProps = {
         duration: 3000,
     }
 
@@ -23,6 +27,10 @@ export default class Notify extends Component {
                 elm.style.top = 0
             }
         }
+    }
+
+    componentDidUnmount() {
+        document.removeEventListener('reactUINotification', this.pushNotification)
     }
 
     pushNotification = (e) => {

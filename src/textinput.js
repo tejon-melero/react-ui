@@ -1,8 +1,10 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
 import classnames from 'classnames'
 import moment from 'moment'
+
+import { formControlPropTypes, focussablePropTypes } from './Utils'
 
 import DatePicker from './datepicker'
 import FieldError from './fielderror'
@@ -10,24 +12,33 @@ import Help from './help'
 import Label from './label'
 import SubHelp from './subhelp'
 
-class TextInput extends Component {
-    constructor(props) {
-        super(props)
+export default class TextInput extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
+        ...focussablePropTypes,
 
-        this.state = {
-            value: props.value || '',
-            showTooltip: false,
-            tooltipPosition: null,
-        }
+        dateFormat: PropTypes.string,
+        datePicker: PropTypes.bool,
+        disabled: PropTypes.bool,
+        onKeyPress: PropTypes.func,
+        placeholder: PropTypes.string,
+        rows: PropTypes.number,
+        success: PropTypes.bool,
+        type: PropTypes.string, // oneOf?
+        weekDayStart: PropTypes.number,
     }
 
-    /*
-     * If props gets updated we change the state value
-     */
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            value: nextProps.value || '',
-        })
+    static defaultProps = {
+        datePicker: false,
+        placeholder: '',
+        rows: 6,
+        type: 'text',
+        weekDayStart: 0,
+    }
+
+    state = {
+        showTooltip: false,
+        tooltipPosition: null,
     }
 
     /*
@@ -38,19 +49,11 @@ class TextInput extends Component {
 
         if (this.props.type === 'email') {
             if (this._isEmailValid(value)) {
-                this.setState({
-                    error: null,
-                })
+                this.setState({ error: null })
             } else {
-                this.setState({
-                    error: 'Please enter a valid email address.',
-                })
+                this.setState({ error: 'Please enter a valid email address.' })
             }
         }
-
-        this.setState({
-            value,
-        })
 
         this.props.updateValue({ [this.props.name]: value })
     }
@@ -118,7 +121,7 @@ class TextInput extends Component {
      */
     _listenDatePickerClick() {
         this._listener = (e) => this.checkDatePickerPosition(e)
-        document.addEventListener('click', this._listener, false)
+        document.addEventListener('click', this._listener)
     }
 
     /*
@@ -126,7 +129,7 @@ class TextInput extends Component {
      */
 
     _stopListenDatePickerClick() {
-        document.removeEventListener('click', this._listener, false)
+        document.removeEventListener('click', this._listener)
     }
 
     /*
@@ -169,7 +172,7 @@ class TextInput extends Component {
      * Define the HTML for the field
      */
     render() {
-        const value = this.state.value
+        const value = this.props.value || ''
         const inputId = `id_${ this.props.name }`
 
         const groupClasses = classnames({
@@ -244,7 +247,8 @@ class TextInput extends Component {
             )
         } else {
             helpUI = (
-                <Help help={ this.props.help }
+                <Help
+                    help={ this.props.help }
                     on={ this.state.showTooltip && !this.props.error }
                     position={ this.state.tooltipPosition }
                 />
@@ -257,31 +261,16 @@ class TextInput extends Component {
                     { this.props.label }
                 </Label>
                 <div className={ controlClasses } ref="form-control">
-                    <FieldError error={ this.props.error }
+                    <FieldError
+                        error={ this.props.error }
                         on={ this.state.showTooltip }
                         position={ this.state.tooltipPosition }
                     />
                     { field }
                     { helpUI }
                 </div>
-                <SubHelp help={ this.props.sub_help }/>
+                <SubHelp help={ this.props.subHelp }/>
             </div>
         )
     }
 }
-
-TextInput.defaultProps = {
-    datePicker: false,
-    error: null,
-    help: null,
-    initial: '',
-    label: null,
-    name: 'email',
-    onKeyPress: () => {},
-    placeholder: null,
-    type: 'text',
-    updateValue: () => {},
-    value: '',
-}
-
-export default TextInput

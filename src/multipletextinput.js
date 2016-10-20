@@ -1,21 +1,33 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
+
 import classnames from 'classnames'
+
+import { formControlPropTypes, focussablePropTypes } from './Utils'
 
 import Button from './button'
 import Label from './label'
 import SubHelp from './subhelp'
 import TextInput from './textinput'
 
-class MultipleTextInput extends Component {
+export default class MultipleTextInput extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
+        ...focussablePropTypes,
+
+        type: PropTypes.string,
+        value: PropTypes.arrayOf(PropTypes.string).isRequired,
+    }
+
+    static defaultProps = {
+        type: 'text',
+    }
+
     constructor(props) {
         super(props)
 
         this.state = {
             value: props.value,
         }
-
-        this._updateValue = this._updateValue.bind(this)
-        this._addNewField = this._addNewField.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -24,11 +36,11 @@ class MultipleTextInput extends Component {
         })
     }
 
-    _updateValue(data) {
+    _updateValue = (data) => {
         const newData = [ ...this.state.value ]
 
         for (const field in data) {
-            // remove the prefix from the field name
+            // Remove the prefix from the field name
             const index = field.slice(this.props.name.length + 2)
 
             newData[index] = data[field]
@@ -37,8 +49,10 @@ class MultipleTextInput extends Component {
         this.props.updateValue({ [this.props.name]: newData })
     }
 
-    _addNewField() {
-        this.setState({ value: [ ...this.state.value, '' ] })
+    _addNewField = () => {
+        this.setState((state) => {
+            return { value: [ ...state.value, '' ] }
+        })
     }
 
     render() {
@@ -56,6 +70,7 @@ class MultipleTextInput extends Component {
             fields = value.map((item, index) => (
                 <TextInput
                     handleBlur={ this.props.handleBlur }
+                    handleFocus={ this.props.handleFocus }
                     key={ index }
                     name={ `${ this.props.name }__${ index }` }
                     type={ this.props.type }
@@ -78,24 +93,13 @@ class MultipleTextInput extends Component {
                             onClick={ this._addNewField }
                             status="create"
                         >
-                            Add another
+                            { 'Add another' }
                         </Button>
                     </div>
                 </div>
 
-                <SubHelp help={ this.props.sub_help } />
+                <SubHelp help={ this.props.subHelp } />
             </div>
         )
     }
 }
-
-MultipleTextInput.propTypes = {
-    updateValue: React.PropTypes.func,
-    value: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-}
-
-MultipleTextInput.defaultProps = {
-    updateValue: () => {},
-}
-
-export default MultipleTextInput

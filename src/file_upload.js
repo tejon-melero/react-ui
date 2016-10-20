@@ -1,17 +1,19 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 
 const FIVE_MEBIBYTES = 5242880
 
 class FileUpload extends Component {
     static propTypes = {
-        data: React.PropTypes.object,
-        errorAction: React.PropTypes.func.isRequired,
-        errors: React.PropTypes.array,
-        helpText: React.PropTypes.node,
-        name: React.PropTypes.string.isRequired,
-        updateValue: React.PropTypes.func.isRequired,
-        uploadAction: React.PropTypes.func.isRequired,
-        value: React.PropTypes.string,
+        data: PropTypes.object,
+        errorAction: PropTypes.func.isRequired,
+        errors: PropTypes.array,
+        helpText: PropTypes.node,
+        maxFilesize: PropTypes.number,
+        maxFilesizeHuman: PropTypes.string,
+        name: PropTypes.string.isRequired,
+        updateValue: PropTypes.func.isRequired,
+        uploadAction: PropTypes.func.isRequired,
+        value: PropTypes.string,
     }
 
     static defaultProps = {
@@ -19,29 +21,32 @@ class FileUpload extends Component {
         errors: [],
         helpText: (
             <p>
-                Please upload the file in PDF format.
-                The file size must not exceed 5MB.
+                { 'Please upload the file in PDF format. ' }
+                { 'The file size must not exceed 5MB.' }
             </p>
         ),
+        maxFilesize: FIVE_MEBIBYTES,
+        maxFilesizeHuman: '5MB',
         value: null,
     }
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            progress: null,
-        }
+    state = {
+        progress: null,
     }
 
     _onFileChange = (e) => {
         if (e.target.files.length) {
             const file = e.target.files[0]
 
-            if (file.size > FIVE_MEBIBYTES) {
-                this.props.errorAction({ [ this.props.name ]: [ 'The file size must be less than 5MB' ] })
+            if (file.size > this.props.maxFilesize) {
+                this.props.errorAction({
+                    [ this.props.name ]: [
+                        `The file size must be less than ${ this.props.maxFilesizeHuman }`,
+                    ],
+                })
             } else {
                 this.setState({ progress: 0 })
+
                 this.props.uploadAction(
                     e.target.files[0],
                     this.props.data,
@@ -79,7 +84,7 @@ class FileUpload extends Component {
                     href={ this.props.value }
                     target="_blank"
                 >
-                    Download file
+                    { 'Download file' }
                 </a>
             )
         } else {

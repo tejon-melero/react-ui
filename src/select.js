@@ -1,5 +1,9 @@
 import React, { Component, PropTypes } from 'react'
+
 import classnames from 'classnames'
+
+import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
+
 import Label from './label'
 import FieldError from './fielderror'
 import Help from './help'
@@ -10,25 +14,19 @@ import SubHelp from './subhelp'
  */
 export default class Select extends Component {
     static propTypes = {
+        ...formControlPropTypes,
+        ...hasOptionsPropTypes,
+        ...focussablePropTypes,
+
         defaultOptions: PropTypes.array,
-        error: PropTypes.array,
         getFilteredOptions: PropTypes.func,
-        handleBlur: PropTypes.func,
-        handleFocus: PropTypes.func,
-        help: PropTypes.string,
-        label: PropTypes.string,
         minCharSearch: PropTypes.number,
-        name: PropTypes.string.isRequired,
         noOptionPlaceholder: PropTypes.string,
         noResultsPlaceholder: PropTypes.string,
-        options: PropTypes.array.isRequired,
         placeholder: PropTypes.string,
         searchOptions: PropTypes.func,
         searchingPlaceholder: PropTypes.string,
-        subHelp: PropTypes.string,
         type: PropTypes.string,
-        updateValue: PropTypes.func.isRequired,
-        value: PropTypes.any.isRequired,
     }
 
     static defaultProps = {

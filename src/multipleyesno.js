@@ -1,26 +1,20 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 
-/*
- * A list of Yes/No options
- */
+import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
 
-class MultipleYesNo extends Component {
+export default class MultipleYesNo extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
+        ...hasOptionsPropTypes,
+    }
+
     constructor(props) {
         super(props)
 
-        let data = {}
-
-        if (props.value) {
-            data = props.value
-        }
-
-        this.state = { data }
-
-        this._onOptionSelect = this._onOptionSelect.bind(this)
-        this._getCurrentValue = this._getCurrentValue.bind(this)
+        this.state = { data: props.value }
     }
 
-    _onOptionSelect(data) {
+    _onOptionSelect = (data) => {
         const newData = { ...this.state.data }
 
         for (const key in data) {
@@ -28,11 +22,11 @@ class MultipleYesNo extends Component {
         }
 
         this.setState({ data: newData }, () => {
-            this.props.updateValue({ [this.props.name]: this.state.data })
+            this.props.updateValue({ [this.props.name]: newData })
         })
     }
 
-    _getCurrentValue(key) {
+    _getCurrentValue = (key) => {
         if (this.props.value) {
             for (const k in this.props.value) {
                 if (key === k) {
@@ -81,6 +75,15 @@ class MultipleYesNo extends Component {
 }
 
 class Option extends Component {
+    static propTypes = {
+        currentValue: PropTypes.number.isRequired,
+        onSelect: PropTypes.func.isRequired,
+        option: PropTypes.shape({
+            value: PropTypes.any.isRequired,
+            label: PropTypes.node.isRequired,
+        }).isRequired,
+    }
+
     constructor(props) {
         super(props)
 
@@ -98,33 +101,30 @@ class Option extends Component {
             <tr className="table-row">
                 <td className="table-cell">{ this.props.option.label }</td>
                 <td className="table-cell">
-                    <label htmlFor={ `${ this.props.option.value }-YES` }>
+                    <label>
                         <input
                             checked={ this.props.currentValue === '1' }
-                            id={ `${ this.props.option.value }-YES` }
-                            name={ `${ this.props.option.value }` }
+                            name={ this.props.option.value }
                             onChange={ this._handleChange }
                             type="radio"
                             value="1"
                         />
-                        Yes
+                        { 'Yes' }
                     </label>
                 </td>
                 <td className="table-cell">
-                    <label htmlFor={ `${ this.props.option.value }-NO` }>
+                    <label>
                         <input
                             checked={ this.props.currentValue === '2' }
-                            id={ `${ this.props.option.value }-NO` }
-                            name={ `${ this.props.option.value }` }
+                            name={ this.props.option.value }
                             onChange={ this._handleChange }
                             type="radio"
                             value="2"
                         />
-                        No
+                        { 'No' }
                     </label>
                 </td>
-            </tr>)
+            </tr>
+        )
     }
 }
-
-export default MultipleYesNo

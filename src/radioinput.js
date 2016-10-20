@@ -1,11 +1,21 @@
 import React, { Component } from 'react'
+
 import classnames from 'classnames'
+
+import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
+
 import Label from './label'
 import FieldError from './fielderror'
 import Help from './help'
 import SubHelp from './subhelp'
 
-class RadioInput extends Component {
+export default class RadioInput extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
+        ...hasOptionsPropTypes,
+        ...focussablePropTypes,
+    }
+
     constructor(props) {
         super(props)
 
@@ -17,19 +27,13 @@ class RadioInput extends Component {
             options: this.props.options || [],
             available_options: null,
         }
-
-        this._handleChange = this._handleChange.bind(this)
-        this._handleFocus = this._handleFocus.bind(this)
-        this._handleBlur = this._handleBlur.bind(this)
     }
 
     componentWillReceiveProps(nextProps) {
-        let newState = {}
+        const newState = {}
 
         if (nextProps.value !== this.state.value) {
-            newState = {
-                value: nextProps.value,
-            }
+            newState.value = nextProps.value
         }
 
         if (this.props.options.length !== nextProps.options.length) {
@@ -41,27 +45,18 @@ class RadioInput extends Component {
         }
     }
 
-    /*
-     * Handle a radio value choice
-     */
-    _handleChange(value) {
+    _handleChange = (value) => {
         this.setState(
             { value },
             () => { this.props.updateValue({ [this.props.name]: value }) }
         )
     }
 
-    /*
-     * Handle focus
-     */
-    _handleFocus(e) {
+    _handleFocus = (e) => {
         this.props.handleFocus && this.props.handleFocus(e)
     }
 
-    /*
-     * Handle focus
-     */
-    _handleBlur(e) {
+    _handleBlur = (e) => {
         this.props.handleBlur && this.props.handleBlur(e)
     }
 
@@ -122,21 +117,9 @@ class RadioInput extends Component {
                         on={ this.state.showTooltip && !this.props.error }
                         position={ this.state.tooltipPosition }
                     />
-                    <SubHelp help={ this.props.sub_help }/>
+                    <SubHelp help={ this.props.subHelp }/>
                 </div>
             </div>
         )
     }
 }
-
-RadioInput.defaultProps = {
-    error: null,
-    help: null,
-    label: null,
-    name: 'select',
-    options: [],
-    updateValue: () => {},
-    value: null,
-}
-
-export default RadioInput

@@ -1,52 +1,33 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
+
 import classnames from 'classnames'
+
+import { formControlPropTypes, focussablePropTypes } from './Utils'
+
 import Label from './label'
-import FieldError from './fielderror'
 import SubHelp from './subhelp'
 
-class Checkbox extends Component {
-    constructor(props) {
-        super(props)
+export default class Checkbox extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
+        ...focussablePropTypes,
 
-        this.state = {
-            value: props.value,
-        }
-
-        this._handleChange = this._handleChange.bind(this)
-        this._handleFocus = this._handleFocus.bind(this)
-        this._handleBlur = this._handleBlur.bind(this)
+        value: PropTypes.bool.isRequired,
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            value: nextProps.value,
-        })
+    _handleChange = () => {
+        this.props.updateValue({ [this.props.name]: ! this.props.value })
     }
 
-    _handleChange(e) {
-        let value = true
-
-        if (e.target.value === 'true') {
-            value = false
-        }
-
-        this.setState({
-            value,
-        })
-
-        this.props.updateValue({ [this.props.name]: value })
-    }
-
-    _handleFocus() {
+    _handleFocus = () => {
         this.props.handleFocus && this.props.handleFocus()
     }
 
-    _handleBlur() {
+    _handleBlur = () => {
         this.props.handleBlur && this.props.handleBlur()
     }
 
     render() {
-        const value = this.state.value
         const input_id = `id_${ this.props.name }`
 
         const groupClasses = classnames({
@@ -61,45 +42,28 @@ class Checkbox extends Component {
 
         const field = (
             <input
-                checked={ value === true }
+                checked={ this.props.value }
                 className="form__checkbox"
                 id={ input_id }
                 name={ this.props.name }
                 onBlur={ this._handleBlur }
                 onChange={ this._handleChange }
                 onFocus={ this._handleFocus }
-                ref="input"
                 type="checkbox"
-                value={ value }
+                value={ 1 }
             />
         )
 
         return (
             <div className={ groupClasses }>
-                <FieldError error={ this.props.error }
-                    on={ this.state.showTooltip }
-                    position={ this.state.tooltipPosition }
-                />
-                <div className={ controlClasses } ref="form-control">
+                <div className={ controlClasses }>
                     <Label for={ input_id }>
                         { field }
                         { this.props.label }
                     </Label>
-                    <SubHelp help={ this.props.help }/>
+                    <SubHelp help={ this.props.subHelp }/>
                 </div>
             </div>
         )
     }
 }
-
-Checkbox.defaultProps = {
-    error: null,
-    help: null,
-    initial: '',
-    label: null,
-    name: null,
-    updateValue: () => {},
-    value: false,
-}
-
-export default Checkbox

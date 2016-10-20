@@ -1,7 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import classnames from 'classnames'
 
-class SubHelp extends Component {
+export default class SubHelp extends Component {
+    static propTypes = {
+        help: PropTypes.node.isRequired,
+    }
+
     render() {
         const helpClasses = classnames({
             'form__help': true,
@@ -15,5 +19,3 @@ class SubHelp extends Component {
         return null
     }
 }
-
-export default SubHelp

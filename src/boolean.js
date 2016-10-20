@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
+
 import classnames from 'classnames'
 
-class Boolean extends Component {
-    constructor(props) {
-        super(props)
+import { formControlPropTypes } from './Utils'
 
-        this._handleChange = this._handleChange.bind(this)
+export default class Boolean extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
     }
 
-    _handleChange(e) {
+    _handleChange = (e) => {
         const value = (e.target.value === '1')
 
         this.props.updateValue({ [this.props.name]: value })
@@ -48,7 +49,7 @@ class Boolean extends Component {
                                         type="radio"
                                         value="1"
                                     />
-                                    Yes
+                                    { 'Yes' }
                                 </label>
                             </td>
                             <td className="table-cell" width="80">
@@ -61,7 +62,7 @@ class Boolean extends Component {
                                         type="radio"
                                         value="0"
                                     />
-                                    No
+                                    { 'No' }
                                 </label>
                             </td>
                         </tr>
@@ -71,5 +72,3 @@ class Boolean extends Component {
         )
     }
 }
-
-export default Boolean

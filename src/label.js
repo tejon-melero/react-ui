@@ -1,7 +1,16 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import classnames from 'classnames'
 
-class Label extends Component {
+export default class Label extends Component {
+    static propTypes = {
+        children: PropTypes.arrayOf(PropTypes.node),
+        inline: PropTypes.bool,
+    }
+
+    static defaultProps = {
+        inline: false,
+    }
+
     render() {
         if (! this.props.children) {
             return null
@@ -19,5 +28,3 @@ class Label extends Component {
         )
     }
 }
-
-export default Label

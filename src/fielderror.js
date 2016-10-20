@@ -1,14 +1,24 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import classnames from 'classnames'
 
-class FieldError extends Component {
+// TODO: work this into styles, as padding and margin shouldn't be in the code, see Cotidia/react-ui#1
+const BOTTOM_MARGIN = 6
+
+export default class FieldError extends Component {
+    static propTypes = {
+        error: PropTypes.string.isRequired,
+        on: PropTypes.boolean,
+        position: PropTypes.number,
+    }
+
+    static defaultProps = {
+        on: false,
+    }
+
     render() {
         if (! this.props.error) {
             return null
         }
-
-        // TODO: work this into styles, as padding and margin shouldn't be in the code, see Cotidia/react-ui#1
-        const BOTTOM_MARGIN = 6
 
         const errorClasses = classnames({
             'form__error': true,
@@ -16,12 +26,10 @@ class FieldError extends Component {
             'form__error--tooltip-on': this.props.on,
         })
 
-        let errorStyle = null
+        const errorStyle = {}
 
         if (this.props.position) {
-            errorStyle = {
-                bottom: this.props.position + BOTTOM_MARGIN,
-            }
+            errorStyle.bottom = this.props.position + BOTTOM_MARGIN
         }
 
         return (
@@ -31,5 +39,3 @@ class FieldError extends Component {
         )
     }
 }
-
-export default FieldError

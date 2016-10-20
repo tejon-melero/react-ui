@@ -1,15 +1,19 @@
 import React, { Component } from 'react'
+
+import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
+
 import Checkbox from './checkbox'
 
-class MultipleCheckbox extends Component {
-    constructor(props) {
-        super(props)
-
-        this._onOptionSelect = this._onOptionSelect.bind(this)
-        this._getCurrentValue = this._getCurrentValue.bind(this)
+export default class MultipleCheckbox extends Component {
+    static propTypes = {
+        ...formControlPropTypes,
+        ...hasOptionsPropTypes,
     }
 
-    _onOptionSelect(data, cb) {
+    static defaultProps = {
+    }
+
+    _onOptionSelect = (data, cb) => {
         const newData = [ ...this.props.value ]
 
         for (const key in data) {
@@ -33,7 +37,7 @@ class MultipleCheckbox extends Component {
         this.props.updateValue({ [this.props.name]: newData }, cb)
     }
 
-    _getCurrentValue(key) {
+    _getCurrentValue = (key) => {
         if (this.props.value) {
             for (const k of this.props.value) {
                 if (key === k) {
@@ -75,5 +79,3 @@ class MultipleCheckbox extends Component {
         return (<div>{ error }{ optionList }</div>)
     }
 }
-
-export default MultipleCheckbox

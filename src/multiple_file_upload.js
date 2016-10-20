@@ -1,16 +1,16 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import FileUpload from './file_upload'
 
-class MultipleFileUpload extends Component {
+export default class MultipleFileUpload extends Component {
     static propTypes = {
-        appendValue: React.PropTypes.func.isRequired,
-        data: React.PropTypes.object,
-        errorAction: React.PropTypes.func.isRequired,
-        errors: React.PropTypes.array,
-        helpText: React.PropTypes.node,
-        name: React.PropTypes.string.isRequired,
-        uploadAction: React.PropTypes.func.isRequired,
-        value: React.PropTypes.array,
+        appendValue: PropTypes.func.isRequired,
+        data: PropTypes.object,
+        errorAction: PropTypes.func.isRequired,
+        errors: PropTypes.array,
+        helpText: PropTypes.node,
+        name: PropTypes.string.isRequired,
+        uploadAction: PropTypes.func.isRequired,
+        value: PropTypes.array,
     }
 
     static defaultProps = {
@@ -61,5 +61,3 @@ class MultipleFileUpload extends Component {
         )
     }
 }
-
-export default MultipleFileUpload
