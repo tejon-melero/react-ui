@@ -13,7 +13,8 @@ export const formControlPropTypes = {
 export const hasOptionsPropTypes = {
     options: PropTypes.arrayOf(PropTypes.shape({
         value: PropTypes.any.isRequired,
-        label: PropTypes.node.isRequired,
+        label: PropTypes.string.isRequired,
+        richLabel: PropTypes.node,
     })).isRequired,
 }
 

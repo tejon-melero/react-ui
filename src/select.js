@@ -21,11 +21,11 @@ export default class Select extends Component {
         defaultOptions: PropTypes.array,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
-        noOptionPlaceholder: PropTypes.string,
-        noResultsPlaceholder: PropTypes.string,
+        noOptionPlaceholder: PropTypes.node,
+        noResultsPlaceholder: PropTypes.node,
         placeholder: PropTypes.string,
         searchOptions: PropTypes.func,
-        searchingPlaceholder: PropTypes.string,
+        searchingPlaceholder: PropTypes.node,
         type: PropTypes.string,
     }
 
@@ -34,7 +34,12 @@ export default class Select extends Component {
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
         placeholder: 'Select item',
-        searchingPlaceholder: '<span class="loader loader--small"></span> Searching...',
+        searchingPlaceholder: (
+            <span>
+                <span className="loader loader--small" />
+                { ' Searching...' }
+            </span>
+        ),
     }
 
     constructor(props) {
@@ -289,22 +294,32 @@ export default class Select extends Component {
             options = this.props.getFilteredOptions(value)
         } else {
             for (const option of this.props.options) {
-                const _label = option.label.toString()
+                const _label = option.label
                 const index = _label.toLowerCase().indexOf(_value.toString().toLowerCase())
 
                 if (index !== -1) {
-                    /*
-                     * Get the string of the matched value (in original case)
-                     */
-                    const match = _label.slice(index, index + _value.length)
+                    let label = option.richLabel
+
+                    if (! label) {
+                        // Extract the prematch, match and postmatch from the plain label
+                        const prematch = _label.slice(0, index)
+                        const match = _label.slice(index, index + _value.length)
+                        const postmatch = _label.slice(index + _value.length)
+
+                        // Create some JSX markup to wrp the match in a highlighting span
+                        label = (
+                            <span>
+                                <span>{ prematch }</span>
+                                <span className="control-select__option--highlighted">{ match }</span>
+                                <span>{ postmatch }</span>
+                            </span>
+                        )
+                    }
 
                     // Create a new option dict with highlighted match
                     options.push({
                         classes: option.classes,
-                        label: _label.replace(
-                            match,
-                            `<span class="control-select__option--highlighted">${ match }</span>`
-                        ),
+                        label,
                         value: option.value,
                     })
                 }
@@ -577,14 +592,14 @@ export default class Select extends Component {
                             key={ item.value }
                             onMouseDown={ this._handleMouseDown.bind(this, item) }
                         >
-                            <span dangerouslySetInnerHTML={{ __html: item.label }} />
+                            { item.label }
                         </div>
                     )
                 })
             } else {
                 optionList = (
                     <div className="control-select__option">
-                        <span dangerouslySetInnerHTML={{ __html: this._getNoOptionPlaceholder() }} />
+                        { this._getNoOptionPlaceholder() }
                     </div>
                 )
             }
