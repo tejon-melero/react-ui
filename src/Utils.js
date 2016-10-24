@@ -29,16 +29,11 @@ export const focussablePropTypes = {
 export function updateValue(data, cb) {
     // generate new data by taking a copy of the current state data and
     // overriding keys defined in incoming data
-    const newData = {
-        ...this.state.data,
-        ...data,
-    }
-
-    // generate new state by taking a copy of the current state and
-    // overwriting data with our new data
     const newState = {
-        ...this.state,
-        data: newData,
+        data: {
+            ...this.state.data,
+            ...data,
+        },
     }
 
     if (cb) {
