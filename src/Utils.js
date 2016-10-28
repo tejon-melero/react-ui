@@ -25,9 +25,9 @@ export const focussablePropTypes = {
 }
 
 /*
- * Handle any data change in the form.
+ * Handle any data change in a form.
  */
-export function updateValue(data, cb) {
+export function updateValue(data) {
     // generate new data by taking a copy of the current state data and
     // overriding keys defined in incoming data
     const newState = {
@@ -37,11 +37,7 @@ export function updateValue(data, cb) {
         },
     }
 
-    if (cb) {
-        this.setState(newState, () => cb(newState))
-    } else {
-        this.setState(newState)
-    }
+    this.setState(newState)
 }
 
 /**
@@ -50,7 +46,6 @@ export function updateValue(data, cb) {
  * @param {string} itemsKey - The key of the field on *this* form, located in `this.state.data` to find the inner
  *     forms.
  * @param {object} defaultData - The default data with which to populate the form.
- * @param {function} cb - A callback to execute when the state is updated.
  *
  * @return {void} Nothing
  *
@@ -58,7 +53,7 @@ export function updateValue(data, cb) {
  * this method uses is `this.state.data.{itemsKey}` - this contains an array of the inner forms, each of which is an
  * object.
  */
-export function handleAddInnerForm(itemsKey, defaultData, cb) {
+export function handleAddInnerForm(itemsKey, defaultData) {
     // get a local copy of the item list
     let itemList = [ ...this.state.data[itemsKey] ]
 
@@ -71,7 +66,7 @@ export function handleAddInnerForm(itemsKey, defaultData, cb) {
 
     // Pass the state data as the new nested form data to be updated by the
     // parent component
-    this.props.updateValue({ [itemsKey]: itemList }, cb)
+    this.props.updateValue({ [itemsKey]: itemList })
 }
 
 /**
@@ -82,7 +77,6 @@ export function handleAddInnerForm(itemsKey, defaultData, cb) {
  * @param {number} index - The (numeric) id of the inner form to work on.
  * @param {object} data - The data that changed on that form.
  * @param {object} errors - Any errors occurring.
- * @param {function} cb - A callback to execute when the state is updated.
  *
  * @return {void} Nothing
  *
@@ -90,7 +84,7 @@ export function handleAddInnerForm(itemsKey, defaultData, cb) {
  * this method uses is `this.state.data.{itemsKey}` - this contains an array of the inner forms, each of which is an
  * object.
  */
-export function handleChangeInnerForm(itemsKey, index, data, errors, cb) {
+export function handleChangeInnerForm(itemsKey, index, data, errors) {
     // Create a new list of items with submitted item
     const itemList = []
 
@@ -105,7 +99,7 @@ export function handleChangeInnerForm(itemsKey, index, data, errors, cb) {
     }
 
     // Pass the state data as the new nested form data to be updated by the parent component
-    this.props.updateValue({ [itemsKey]: itemList }, cb)
+    this.props.updateValue({ [itemsKey]: itemList })
 }
 
 /**
@@ -114,7 +108,6 @@ export function handleChangeInnerForm(itemsKey, index, data, errors, cb) {
  * @param {string} itemsKey - The key of the field on *this* form, located in `this.state.data` to find the inner
  *     forms.
  * @param {number} index - The index of the inner form to delete.
- * @param {function} cb - A callback to execute when the state is updated.
  *
  * @return {void} Nothing
  *
@@ -122,7 +115,7 @@ export function handleChangeInnerForm(itemsKey, index, data, errors, cb) {
  * this method uses is `this.state.data.{itemsKey}` - this contains an array of the inner forms, each of which is an
  * object.
  */
-export function handleDeleteInnerForm(itemsKey, index, cb) {
+export function handleDeleteInnerForm(itemsKey, index) {
     // go through each inner form field and 'filter out' any items that have the same index as to be deleted
     const itemList = this.state.data[itemsKey].filter(
         (item) => item.index !== index
@@ -130,7 +123,7 @@ export function handleDeleteInnerForm(itemsKey, index, cb) {
 
     // Pass the state data as the new nested form data to be updated by the
     // parent component
-    this.props.updateValue({ [itemsKey]: itemList }, cb)
+    this.props.updateValue({ [itemsKey]: itemList })
 }
 
 /**
