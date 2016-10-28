@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
 
-import Checkbox from './checkbox'
+import Checkbox from './Checkbox'
 
 export default class MultipleCheckbox extends Component {
     static propTypes = {

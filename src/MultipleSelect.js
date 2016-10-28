@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 
 import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
 
-import Select from './select'
+import Select from './Select'
 
 export default class MultipleSelect extends Component {
     static propTypes = {

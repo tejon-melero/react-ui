@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-
 import classnames from 'classnames'
 
 import {
@@ -9,10 +8,10 @@ import {
     OutsideEventListener,
 } from './Utils'
 
-import Label from './label'
-import FieldError from './fielderror'
-import Help from './help'
-import SubHelp from './subhelp'
+import Label from './Label'
+import FieldError from './FieldError'
+import Help from './Help'
+import SubHelp from './SubHelp'
 
 /*
  * Select box with drop down scrollable, and can be navigated with up/down arrow keys.

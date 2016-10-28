@@ -1,11 +1,10 @@
 import React, { Component, PropTypes } from 'react'
-
 import classnames from 'classnames'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
-import Label from './label'
-import SubHelp from './subhelp'
+import Label from './Label'
+import SubHelp from './SubHelp'
 
 export default class Checkbox extends Component {
     static propTypes = {

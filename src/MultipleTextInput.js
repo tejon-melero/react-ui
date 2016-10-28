@@ -1,13 +1,12 @@
 import React, { Component, PropTypes } from 'react'
-
 import classnames from 'classnames'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
-import Button from './button'
-import Label from './label'
-import SubHelp from './subhelp'
-import TextInput from './textinput'
+import Button from './Button'
+import Label from './Label'
+import SubHelp from './SubHelp'
+import TextInput from './TextInput'
 
 export default class MultipleTextInput extends Component {
     static propTypes = {

@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
-
 import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
 
-import Label from './label'
-import FieldError from './fielderror'
-import Help from './help'
-import SubHelp from './subhelp'
+import Label from './Label'
+import FieldError from './FieldError'
+import Help from './Help'
+import SubHelp from './SubHelp'
 
 export default class RadioInput extends Component {
     static propTypes = {

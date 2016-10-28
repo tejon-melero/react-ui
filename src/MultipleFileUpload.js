@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
-import FileUpload from './file_upload'
+
+import FileUpload from './FileUpload'
 
 export default class MultipleFileUpload extends Component {
     static propTypes = {

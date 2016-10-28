@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 import moment from 'moment'
-
 import 'moment-range'
 
 const LAST_MONTH_IN_YEAR = 11

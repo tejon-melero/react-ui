@@ -1,16 +1,15 @@
 import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-
 import classnames from 'classnames'
 import moment from 'moment'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
-import DatePicker from './datepicker'
-import FieldError from './fielderror'
-import Help from './help'
-import Label from './label'
-import SubHelp from './subhelp'
+import DatePicker from './DatePicker'
+import FieldError from './FieldError'
+import Help from './Help'
+import Label from './Label'
+import SubHelp from './SubHelp'
 
 export default class TextInput extends Component {
     static propTypes = {
