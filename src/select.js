@@ -140,7 +140,7 @@ export default class Select extends Component {
      * Handles field focus
      */
     _handleFocus = (e) => {
-        const position = this.refs['form-control'].getBoundingClientRect()
+        const position = this.formControl.getBoundingClientRect()
         const tooltipPosition = position.height
 
         // Set the scroll top position to should the selected item in the list
@@ -148,7 +148,7 @@ export default class Select extends Component {
             this._setOptionScrollValue()
         }
 
-        this.refs.text_input.select()
+        this.textInput.select()
 
         this.setState({
             tooltipPosition,
@@ -167,7 +167,7 @@ export default class Select extends Component {
             focussed: false,
         })
 
-        this.refs.text_input.blur()
+        this.textInput.blur()
 
         this.props.handleBlur && this.props.handleBlur(e)
     }
@@ -454,8 +454,8 @@ export default class Select extends Component {
             value = this.props.value
         }
 
-        if (this.refs['option-list'].children.length) {
-            const firstChild = this.refs['option-list'].children[0]
+        if (this.optionList.children.length) {
+            const firstChild = this.optionList.children[0]
             const rect = firstChild.getBoundingClientRect()
             const optionHeight = rect.height
             const index = this._getOptionIndex(value, options)
@@ -466,7 +466,7 @@ export default class Select extends Component {
                 scrollTo = (index * optionHeight) - optionHeight
             }
 
-            this.refs['option-list'].scrollTop = scrollTo
+            this.optionList.scrollTop = scrollTo
         }
     }
 
@@ -606,7 +606,7 @@ export default class Select extends Component {
                 <Label for={ inputId }>
                     { this.props.label }
                 </Label>
-                <div className={ controlClasses } ref="form-control">
+                <div className={ controlClasses } ref={ (ref) => { this.formControl = ref } }>
                     <input
                         name={ this.props.name }
                         type="hidden"
@@ -623,11 +623,15 @@ export default class Select extends Component {
                         onKeyDown={ this._handleKeyDown }
                         onTouchStart={ this._handleFocus }
                         placeholder={ this.props.placeholder }
-                        ref="text_input"
+                        ref={ (ref) => { this.textInput = ref } }
                         type={ this.props.type || 'text' }
                         value={ displayValue }
                     />
-                    <div className="control-select__options" ref="option-list" style={ optionsStyle }>
+                    <div
+                        className="control-select__options"
+                        ref={ (ref) => { this.optionList = ref } }
+                        style={ optionsStyle }
+                    >
                         { optionList }
                     </div>
                     <FieldError
