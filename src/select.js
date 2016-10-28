@@ -115,7 +115,7 @@ export default class Select extends Component {
     /*
      * Handles the change of value from the input field
      */
-    _handleChange = (e) => {
+    _handleInputChanged = (e) => {
         const inputValue = e.target.value
 
         this.setState({ inputValue })
@@ -133,6 +133,14 @@ export default class Select extends Component {
                     this.props.searchOptions(inputValue)
                 }, 250)
             }
+        }
+    }
+
+    _handleInputClicked = (e) => {
+        if (this.state.focussed) {
+            this._handleBlur()
+        } else {
+            this._handleFocus()
         }
     }
 
@@ -175,7 +183,7 @@ export default class Select extends Component {
     /*
      * Handles user enter key up
      */
-    _handleKeyDown = (e) => {
+    _handleInputKeyDown = (e) => {
         const KEY_BACKSPACE = 8
         const KEY_TAB = 9
         const KEY_ENTER = 13
@@ -210,9 +218,7 @@ export default class Select extends Component {
         }
     }
 
-    _handleMouseDown(option, e) {
-        e.preventDefault()
-
+    _handleOptionClicked(option) {
         return this._assignValue(option)
     }
 
@@ -586,7 +592,7 @@ export default class Select extends Component {
                         <div
                             className={ optionClasses }
                             key={ item.value }
-                            onMouseDown={ this._handleMouseDown.bind(this, item) }
+                            onClick={ this._handleOptionClicked.bind(this, item) }
                         >
                             { item.label }
                         </div>
@@ -616,12 +622,9 @@ export default class Select extends Component {
                         className="form__select"
                         id={ inputId }
                         name={ `${ this.props.name }_selector` }
-                        onBlur={ this._handleBlur }
-                        onChange={ this._handleChange }
-                        onClick={ this._handleFocus }
-                        onFocus={ this._handleFocus }
-                        onKeyDown={ this._handleKeyDown }
-                        onTouchStart={ this._handleFocus }
+                        onChange={ this._handleInputChanged }
+                        onClick={ this._handleInputClicked }
+                        onKeyDown={ this._handleInputKeyDown }
                         placeholder={ this.props.placeholder }
                         ref={ (ref) => { this.textInput = ref } }
                         type={ this.props.type || 'text' }
