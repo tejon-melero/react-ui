@@ -122,9 +122,10 @@ export default class Select extends Component {
 
         // If a search function is provided then we need to call it with the value as a query argument
         if (this.props.searchOptions) {
-            if (inputValue && inputValue.length >= this.props.minCharSearch) {
+            if (inputValue && (inputValue.length >= this.props.minCharSearch)) {
                 this.setState({ searching: true })
 
+                // the following debounces the search function with a 250ms timeout
                 if (this.searchTimeout) {
                     clearTimeout(this.searchTimeout)
                 }
@@ -197,9 +198,7 @@ export default class Select extends Component {
 
                     this._handleFocus()
 
-                    this.setState({
-                        inputValue: '',
-                    })
+                    this.setState({ inputValue: '' })
                 }
                 break
             case KEY_TAB:
@@ -227,10 +226,11 @@ export default class Select extends Component {
      */
     _assignValue(option) {
         this.setState({
-            value: option.value,
             focussed: ! this.props.blurOnSelect,
+            focussedOptions: null,
             inputValue: null,
-            tooltipPosition: null,
+            searching: false,
+            value: option.value,
         })
 
         this.props.updateValue({ [this.props.name]: option.value })
@@ -259,18 +259,6 @@ export default class Select extends Component {
 
         return label
 
-    }
-
-    /*
-     * Check the click target and close options if clicked outside
-     */
-    closeSelectOptions = (e) => {
-        if (e.target.className !== 'form__select') {
-            this.setState({
-                tooltipPosition: null,
-                focussed: false,
-            })
-        }
     }
 
     /*
