@@ -18,6 +18,7 @@ export default class Select extends Component {
         ...hasOptionsPropTypes,
         ...focussablePropTypes,
 
+        blurOnSelect: PropTypes.bool,
         defaultOptions: PropTypes.array,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
@@ -30,6 +31,7 @@ export default class Select extends Component {
     }
 
     static defaultProps = {
+        blurOnSelect: true,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
@@ -225,10 +227,10 @@ export default class Select extends Component {
     _assignValue(option) {
         this.setState({
             value: option.value,
+            focussed: ! this.props.blurOnSelect,
             inputValue: null,
             tooltipPosition: null,
             showTooltip: false,
-            focussed: false,
         })
 
         this.props.updateValue({ [this.props.name]: option.value })
