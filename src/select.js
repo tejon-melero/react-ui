@@ -98,25 +98,6 @@ class Select extends Component {
         this.setState(newState)
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        // TODO: work out whether this is premature optimisation and whether we can remove it for
-        // code-cleanliness reasons.
-
-        if (nextProps.value !== this.props.value) {
-            return true
-        }
-
-        if (nextProps.options !== this.props.options) {
-            return true
-        }
-
-        if (nextState !== this.state) {
-            return true
-        }
-
-        return false
-    }
-
     onOutsideEvent(event) {
         if (event.type === 'mousedown') {
             this._handleBlur()
