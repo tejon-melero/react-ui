@@ -78,7 +78,7 @@ export default class TextInput extends Component {
             }
 
             this._listenDatePickerClick()
-            this._datePickerON = true
+            this._datePickerOn = true
         }
 
         this.setState(newState)
@@ -90,7 +90,7 @@ export default class TextInput extends Component {
      * Handle blur
      */
     handleBlur = () => {
-        if (this._datePickerON !== true) {
+        if (this._datePickerOn !== true) {
             this.setState({
                 showTooltip: false,
                 tooltipPosition: null,
@@ -104,15 +104,12 @@ export default class TextInput extends Component {
      * Handle value change from the date picker
      */
     handleDateChange = (value) => {
-        this._datePickerON = false
+        this._datePickerOn = false
 
-        this.props.updateValue(
-            { [this.props.name]: value },
-            () => {
-                this.handleBlur()
-                this._stopListenDatePickerClick()
-            }
-        )
+        this.props.updateValue({ [this.props.name]: value })
+
+        this.handleBlur()
+        this._stopListenDatePickerClick()
     }
 
     /*
@@ -138,7 +135,7 @@ export default class TextInput extends Component {
      */
 
     checkDatePickerPosition = (e) => {
-        if (this._datePickerON === true) {
+        if (this._datePickerOn === true) {
             // Get the area covered by the date picker
             const pDP = ReactDOM.findDOMNode(this.refs.datepicker).getBoundingClientRect()
             const pFC = this.refs['form-control'].getBoundingClientRect()
@@ -152,7 +149,7 @@ export default class TextInput extends Component {
             } else if (pFC.left < mouseX < pFC.right && pFC.top < mouseY < pFC.bottom) {
                 // also nothing, wait for it...
             } else {
-                this._datePickerON = false
+                this._datePickerOn = false
                 this.handleBlur()
                 this._stopListenDatePickerClick()
             }
