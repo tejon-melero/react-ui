@@ -2,7 +2,12 @@ import React, { Component, PropTypes } from 'react'
 
 import classnames from 'classnames'
 
-import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
+import {
+    formControlPropTypes,
+    hasOptionsPropTypes,
+    focussablePropTypes,
+    OutsideEventListener,
+} from './Utils'
 
 import Label from './label'
 import FieldError from './fielderror'
@@ -12,7 +17,7 @@ import SubHelp from './subhelp'
 /*
  * Select box with drop down scrollable, and can be navigated with up/down arrow keys.
  */
-export default class Select extends Component {
+class Select extends Component {
     static propTypes = {
         ...formControlPropTypes,
         ...hasOptionsPropTypes,
@@ -110,6 +115,12 @@ export default class Select extends Component {
         }
 
         return false
+    }
+
+    onOutsideEvent(event) {
+        if (event.type === 'mousedown') {
+            this._handleBlur()
+        }
     }
 
     /*
@@ -641,3 +652,4 @@ export default class Select extends Component {
         )
     }
 }
+export default OutsideEventListener(Select, ['mousedown'])

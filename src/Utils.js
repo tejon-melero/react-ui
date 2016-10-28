@@ -1,4 +1,5 @@
-import { PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 
 export const formControlPropTypes = {
     error: PropTypes.array,
@@ -130,4 +131,51 @@ export function handleDeleteInnerForm(itemsKey, index, cb) {
     // Pass the state data as the new nested form data to be updated by the
     // parent component
     this.props.updateValue({ [itemsKey]: itemList }, cb)
+}
+
+/**
+ * @param {Component} Target - The component that defines `onOutsideEvent` handler.
+ * @param {String[]} listeners - A list of valid DOM event names to listen for.
+ *
+ * @return {Component} The target wrapped in a HOC.
+ */
+export function OutsideEventListener(Target, listeners = []) {
+    return class OutsideEventListener extends Component {
+        target = null
+
+        componentDidMount() {
+            for (const eventName of listeners) {
+                window.addEventListener(eventName, this.handleEvent, false)
+            }
+        }
+
+        componentWillUnmount() {
+            for (const eventName of listeners) {
+                window.removeEventListener(eventName, this.handleEvent, false)
+            }
+        }
+
+        handleEvent = (event) => {
+            if (this.target) {
+                const targetElement = ReactDOM.findDOMNode(this.target)
+                const isInside = (targetElement === event.target) || targetElement.contains(event.target)
+
+                if (! isInside) {
+                    this.target.onOutsideEvent(event)
+                }
+            }
+        }
+
+        storeTarget = (ref) => {
+            if (ref && ! ref.onOutsideEvent) {
+                throw new Error('Component does not define "onOutsideEvent" method.')
+            }
+
+            this.target = ref
+        }
+
+        render() {
+            return <Target { ...this.props } ref={ this.storeTarget } />
+        }
+    }
 }
