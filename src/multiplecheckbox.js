@@ -13,7 +13,7 @@ export default class MultipleCheckbox extends Component {
     static defaultProps = {
     }
 
-    _onOptionSelect = (data, cb) => {
+    _onOptionSelect = (data) => {
         const newData = [ ...this.props.value ]
 
         for (const key in data) {
@@ -34,7 +34,7 @@ export default class MultipleCheckbox extends Component {
             }
         }
 
-        this.props.updateValue({ [this.props.name]: newData }, cb)
+        this.props.updateValue({ [this.props.name]: newData })
     }
 
     _getCurrentValue = (key) => {
