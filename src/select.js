@@ -48,9 +48,6 @@ export default class Select extends Component {
         super(props)
 
         this.state = {
-            // Whether the error tooltip should be displayed
-            showTooltip: false,
-
             // The bottom position of the tooltip
             tooltipPosition: null,
 
@@ -154,7 +151,6 @@ export default class Select extends Component {
         this.refs.text_input.select()
 
         this.setState({
-            showTooltip: true,
             tooltipPosition,
             focussed: true,
         })
@@ -167,7 +163,6 @@ export default class Select extends Component {
      */
     _handleBlur = (e) => {
         this.setState({
-            showTooltip: false,
             inputValue: '',
             focussed: false,
         })
@@ -230,7 +225,6 @@ export default class Select extends Component {
             focussed: ! this.props.blurOnSelect,
             inputValue: null,
             tooltipPosition: null,
-            showTooltip: false,
         })
 
         this.props.updateValue({ [this.props.name]: option.value })
@@ -638,12 +632,12 @@ export default class Select extends Component {
                     </div>
                     <FieldError
                         error={ this.props.error }
-                        on={ this.state.showTooltip }
+                        on={ this.state.focussed }
                         position={ this.state.tooltipPosition }
                     />
                     <Help
                         help={ this.props.help }
-                        on={ this.state.showTooltip && !this.props.error }
+                        on={ this.state.focussed && !this.props.error }
                         position={ this.state.tooltipPosition }
                     />
                 </div>
