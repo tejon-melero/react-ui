@@ -10,7 +10,7 @@ export default class MultipleSelect extends Component {
         ...focussablePropTypes,
         ...hasOptionsPropTypes,
 
-        class: PropTypes.string,
+        className: PropTypes.string,
         defaultOptions: PropTypes.array,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
@@ -29,10 +29,14 @@ export default class MultipleSelect extends Component {
      * @returns void
      */
     _updateValue = (data) => {
-        const newValue = [ ...this.props.value ]
+        let newValue = [ ...this.props.value ]
 
         for (const key in data) {
-            newValue.push(data[key])
+            if (newValue.includes(data[key])) {
+                newValue = newValue.filter((item) => item !== data[key])
+            } else {
+                newValue.push(data[key])
+            }
         }
 
         this.props.updateValue({ [this.props.name]: newValue })
@@ -54,6 +58,20 @@ export default class MultipleSelect extends Component {
      */
     _getSelectedOptions() {
         return this.props.options.filter((item) => this.props.value.includes(item.value))
+    }
+
+    _getFormattedOptions() {
+        return this.props.options.map((item) => {
+            if (this.props.value.includes(item.value)) {
+                item.richLabel = (
+                    <span>{ '✓ ' }{ item.label }</span>
+                )
+
+                item.classes = `${ item.classes || '' } control-select__option--focused`
+            }
+
+            return item
+        })
     }
 
     /**
@@ -87,9 +105,11 @@ export default class MultipleSelect extends Component {
                 </div>
             ))
         }
+
         return (
-            <div className={ this.props.class }>
+            <div className={ this.props.className }>
                 <Select
+                    blurOnSelect={ false }
                     defaultOptions={ this.props.defaultOptions }
                     error={ this.props.error }
                     getFilteredOptions={ this.props.getFilteredOptions }
@@ -101,7 +121,7 @@ export default class MultipleSelect extends Component {
                     name={ this.props.name }
                     noOptionPlaceholder={ this.props.noOptionPlaceholder }
                     noResultsPlaceholder={ this.props.noResultsPlaceholder }
-                    options={ this._getAvailableOptions() }
+                    options={ this._getFormattedOptions() }
                     placeholder={ this.props.placeholder }
                     searchOptions={ this.props.searchOptions }
                     searchingPlaceholder={ this.props.searchingPlaceholder }
