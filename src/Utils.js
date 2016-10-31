@@ -127,6 +127,62 @@ export function handleDeleteInnerForm(itemsKey, index) {
 }
 
 /**
+ * Generate a wrapped component where required props can be resolved to a default when null.
+ *
+ * Take a component, some propType declarations and a map of default props and create a wrapping HOC
+ * that will accept the proptypes with nulls and provide the prop's value from the default mapping
+ * if null is passed.
+ *
+ * React, by default, does not use defaultProps when `null` to be pased to a component. But setting
+ * the prop to isRequired means that null cannot be passed at all. As such, it sometimes makes sense
+ * to be able to have default values when null is passed. That's what this function does.
+ *
+ * @param {Component} Component - The component to wrap. This component should ahve no propType
+ *                                declaration (as it will be overwritten).
+ * @param {Object} propTypes - The proptypes for the component (with no `isRequired` attributes
+ *                             where you want nullable defalts).
+ * @param {Object} defaults - The default values to use for the props that are passed as null.
+ *
+ * @returns {Function} - The thin wrapping HOC that wraps the main component and applies the
+ *                       defaults.
+ */
+export function ApplyPropTypesAndDefaults(Component, propTypes, defaults) {
+    // First, make the passed proptypes required where a key exists in defaults and set the strict
+    // propTypes on the passed component.
+    const strictPropTypes = { ...propTypes }
+
+    for (const prop in defaults) {
+        strictPropTypes[prop] = strictPropTypes[prop].isRequired
+    }
+
+    Component.propTypes = strictPropTypes
+
+    // Now create the wrapping component that inspects the pased props, and fills in the defaults
+    // where null is passed.
+    const Wrapper = (props) => {
+        const newProps = { ...props }
+
+        for (const [ prop, defaultValue ] of Object.entries(defaults)) {
+            if (props[prop] === null) {
+                newProps[prop] = defaultValue
+            }
+        }
+
+        return <Component { ...newProps } />
+    }
+
+    // Now do a little bit of housekeeping with the component name and set the passed in 'loose'
+    // propTypes on the wrapping component.
+
+    const componentName = Component.displayName || Component.name || 'Component'
+
+    Wrapper.displayName = `WithDefaults(${ componentName })`
+    Wrapper.propTypes = propTypes
+
+    return Wrapper
+}
+
+/**
  * @param {Component} Target - The component that defines `onOutsideEvent` handler.
  * @param {String[]} listeners - A list of valid DOM event names to listen for.
  *
