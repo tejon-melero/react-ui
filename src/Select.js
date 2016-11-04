@@ -23,6 +23,7 @@ class Select extends Component {
         ...focussablePropTypes,
 
         blurOnSelect: PropTypes.bool,
+        categoriseBy: PropTypes.string,
         defaultOptions: PropTypes.array,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
@@ -297,8 +298,19 @@ class Select extends Component {
                         )
                     }
 
+                    let category = '__NONE__'
+
+                    if (
+                        this.props.categoriseBy &&
+                        (this.props.categoriseBy in option) &&
+                        option[this.props.categoriseBy]
+                    ) {
+                        category = option[this.props.categoriseBy]
+                    }
+
                     // Create a new option dict with highlighted match
                     options.push({
+                        category,
                         classes: option.classes,
                         label,
                         value: option.value,
@@ -553,30 +565,60 @@ class Select extends Component {
             const options = this._filterOptions(this.state.inputValue)
 
             if (options.length > 0) {
-                optionList = options.map((item) => {
-                    const classes = {
-                        'control-select__option': true,
-                        'control-select__option--focused':
-                            this.state.focussedOption && (item.value === this.state.focussedOption.value),
-                        'control-select__option--selected': this.props.value === item.value,
+                // This will store all options in their categories
+                const categorisedOptions = {
+                    __NONE__: [],
+                }
+
+                // Go through all options and add them to their categories
+                for (const item of options) {
+                    if (! (item.category in categorisedOptions)) {
+                        categorisedOptions[item.category] = []
                     }
 
-                    if (item.classes) {
-                        classes[item.classes] = true
-                    }
+                    categorisedOptions[item.category].push(item)
+                }
 
-                    const optionClasses = classnames(classes)
+                optionList = []
 
-                    return (
-                        <div
-                            className={ optionClasses }
-                            key={ item.value }
-                            onClick={ this._handleOptionClicked.bind(this, item) }
-                        >
-                            { item.label }
+                // Now add each category to the optionslist
+                for (const category in categorisedOptions) {
+                    optionList.push(
+                        <div key={ category }>
+                            { category !== '__NONE__' &&
+                                <div className="control-select__group-heading">{ category }</div>
+                            }
+                            { categorisedOptions[category].map(
+                                (item) => {
+                                    const classes = {
+                                        'control-select__option': true,
+                                        'control-select__option--focused':
+                                            this.state.focussedOption && (
+                                                item.value === this.state.focussedOption.value
+                                            ),
+                                        'control-select__option--selected': this.props.value === item.value,
+                                    }
+
+                                    if (item.classes) {
+                                        classes[item.classes] = true
+                                    }
+
+                                    const optionClasses = classnames(classes)
+
+                                    return (
+                                        <div
+                                            className={ optionClasses }
+                                            key={ item.value }
+                                            onClick={ this._handleOptionClicked.bind(this, item) }
+                                        >
+                                            { item.label }
+                                        </div>
+                                    )
+                                }
+                            ) }
                         </div>
                     )
-                })
+                }
             } else {
                 optionList = (
                     <div className="control-select__option">

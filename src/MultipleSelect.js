@@ -12,6 +12,7 @@ export default class MultipleSelect extends Component {
         ...focussablePropTypes,
         ...hasOptionsPropTypes,
 
+        categoriseBy: PropTypes.string,
         className: PropTypes.string,
         defaultOptions: PropTypes.array,
         getFilteredOptions: PropTypes.func,
