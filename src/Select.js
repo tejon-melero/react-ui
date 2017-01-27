@@ -34,7 +34,6 @@ export default class Select extends Component {
         searchOptions: PropTypes.func,
         searchingPlaceholder: PropTypes.node,
         type: PropTypes.string,
-        value: PropTypes.any,
     }
 
     static defaultProps = {

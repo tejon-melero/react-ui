@@ -26,11 +26,12 @@ export default class MultipleSelect extends Component {
         searchingPlaceholder: PropTypes.string,
         type: PropTypes.string,
         value: () => {},
-        values: PropTypes.arrayOf(PropTypes.any).isRequired,
+        values: PropTypes.arrayOf(PropTypes.any),
     }
 
     static defaultProps = {
         displaySelections: true,
+        values: [],
     }
 
     /**

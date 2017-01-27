@@ -8,7 +8,7 @@ export const formControlPropTypes = {
     name: PropTypes.string.isRequired,
     subHelp: PropTypes.node,
     updateValue: PropTypes.func.isRequired,
-    value: PropTypes.any.isRequired,
+    value: PropTypes.any,
 }
 
 export const hasOptionsPropTypes = {
