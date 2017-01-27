@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
 export const formControlPropTypes = {
-    error: PropTypes.array,
+    error: PropTypes.string,
     help: PropTypes.node,
     label: PropTypes.string,
     name: PropTypes.string.isRequired,
