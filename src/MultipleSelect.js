@@ -15,6 +15,7 @@ export default class MultipleSelect extends Component {
         categoriseBy: PropTypes.string,
         className: PropTypes.string,
         defaultOptions: PropTypes.array,
+        disabled: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.string,
@@ -108,8 +109,9 @@ export default class MultipleSelect extends Component {
         return (
             <div className={ this.props.className }>
                 <Select
-                    blurOnSelect={ false }
+                    closeOnSelect={ false }
                     defaultOptions={ this.props.defaultOptions }
+                    disabled={ this.props.disabled }
                     error={ this.props.error }
                     getFilteredOptions={ this.props.getFilteredOptions }
                     handleBlur={ this.props.handleBlur }
