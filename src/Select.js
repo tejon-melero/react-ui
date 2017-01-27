@@ -187,6 +187,7 @@ export default class Select extends Component {
         this.setState({
             inputValue: '',
             focussed: false,
+            focussedOption: null,
         })
 
         this.textInput && this.textInput.blur()
@@ -247,6 +248,7 @@ export default class Select extends Component {
         if (this.props.closeOnSelect) {
             this.setState({
                 focussed: false,
+                focussedOption: null,
                 focussedOptions: null,
                 inputValue: null,
                 searching: false,
@@ -405,7 +407,7 @@ export default class Select extends Component {
     }
 
     /*
-     * Returns the index of the focussed option or null if there is none.
+     * Returns the index of the focussed option, defaulting to the first (0) if there is none.
      */
     _getFocussedOptionIndex = (options) => {
         if (! options) {
