@@ -16,6 +16,7 @@ export default class MultipleSelect extends Component {
         className: PropTypes.string,
         defaultOptions: PropTypes.array,
         disabled: PropTypes.bool,
+        displaySelections: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.string,
@@ -26,6 +27,10 @@ export default class MultipleSelect extends Component {
         type: PropTypes.string,
         value: () => {},
         values: PropTypes.arrayOf(PropTypes.any).isRequired,
+    }
+
+    static defaultProps = {
+        displaySelections: true,
     }
 
     /**
@@ -91,7 +96,7 @@ export default class MultipleSelect extends Component {
     render() {
         let selectedItems = null
 
-        if (this.props.values.length) {
+        if (this.props.values.length && this.props.displaySelections) {
             selectedItems = this.props.values.map((option) => (
                 <div className="tag" key={ option.value }>
                     { option.label }
