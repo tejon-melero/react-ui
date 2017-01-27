@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 
 import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
 
@@ -8,9 +8,12 @@ export default class MultipleCheckbox extends Component {
     static propTypes = {
         ...formControlPropTypes,
         ...hasOptionsPropTypes,
+
+        columns: PropTypes.number,
     }
 
     static defaultProps = {
+        columns: 1,
     }
 
     _onOptionSelect = (data) => {
@@ -37,20 +40,14 @@ export default class MultipleCheckbox extends Component {
         this.props.updateValue({ [this.props.name]: newData })
     }
 
-    _getCurrentValue = (key) => {
-        if (this.props.value) {
-            for (const k of this.props.value) {
-                if (key === k) {
-                    return true
-                }
-            }
-        }
-
-        return false
+    _optionSelected = (value) => {
+        return this.props.value.some((item) => item === value)
     }
 
     render() {
-        let optionList = null
+        const columnisedOptionsList = []
+
+        let optionList = []
 
         if (this.props.options) {
             optionList = this.props.options.map(
@@ -60,10 +57,29 @@ export default class MultipleCheckbox extends Component {
                         label={ option.label }
                         name={ option.value }
                         updateValue={ this._onOptionSelect }
-                        value={ this._getCurrentValue(option.value) }
+                        value={ this._optionSelected(option.value) }
                     />
                 )
             )
+        }
+
+        if (this.props.columns > 1) {
+            const minPerColumn = Math.floor(optionList.length / this.props.columns)
+            const remainder = optionList.length % this.props.columns
+            let extra = 0
+
+            for (let i = 0; i < this.props.columns; i++) {
+                const columnExtra = (i < remainder) ? 1 : 0
+
+                columnisedOptionsList.push(optionList.slice(
+                    (i * minPerColumn) + extra,
+                    ((i + 1) * minPerColumn) + extra + columnExtra)
+                )
+
+                extra += columnExtra
+            }
+        } else {
+            columnisedOptionsList.push(optionList)
         }
 
         let error = null
@@ -76,6 +92,20 @@ export default class MultipleCheckbox extends Component {
             )
         }
 
-        return (<div>{ error }{ optionList }</div>)
+        return (
+            <div>
+                { error }
+
+                <table width="100%">
+                    <tbody>
+                        <tr>
+                            { columnisedOptionsList.map((column, index) => (
+                                <td key={ `column-${ index }` }>{ column }</td>
+                            )) }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        )
     }
 }
