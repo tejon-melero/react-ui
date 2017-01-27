@@ -6,7 +6,6 @@ import {
     hasOptionsPropTypes,
     focussablePropTypes,
     getProperty,
-    OutsideEventListener,
 } from './Utils'
 
 import Label from './Label'
@@ -17,15 +16,16 @@ import SubHelp from './SubHelp'
 /*
  * Select box with drop down scrollable, and can be navigated with up/down arrow keys.
  */
-class Select extends Component {
+export default class Select extends Component {
     static propTypes = {
         ...formControlPropTypes,
         ...hasOptionsPropTypes,
         ...focussablePropTypes,
 
-        blurOnSelect: PropTypes.bool,
         categoriseBy: PropTypes.string,
+        closeOnSelect: PropTypes.bool,
         defaultOptions: PropTypes.array,
+        disabled: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.node,
@@ -34,10 +34,12 @@ class Select extends Component {
         searchOptions: PropTypes.func,
         searchingPlaceholder: PropTypes.node,
         type: PropTypes.string,
+        value: PropTypes.any,
     }
 
     static defaultProps = {
-        blurOnSelect: true,
+        closeOnSelect: true,
+        disabled: false,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
@@ -48,6 +50,7 @@ class Select extends Component {
                 { ' Searching...' }
             </span>
         ),
+        value: null,
     }
 
     constructor(props) {
@@ -99,11 +102,8 @@ class Select extends Component {
         this.setState(newState)
     }
 
-    onOutsideEvent(event) {
-        if (event.type === 'mousedown') {
-            this._handleBlur()
-        }
-    }
+    ignoreNextBlur = false
+    textInput = null
 
     /*
      * Handles the change of value from the input field
@@ -130,48 +130,69 @@ class Select extends Component {
         }
     }
 
-    _handleInputClicked = (e) => {
+    _handleInputMousePressedDown = () => {
         if (this.state.focussed) {
-            this._handleBlur()
+            setTimeout(() => {
+                this._handleBlur()
+            }, 0)
         } else {
             this._handleFocus()
         }
     }
 
+    _handleInputFocussed = () => {
+        this._handleFocus()
+    }
+
+    _handleInputBlurred = () => {
+        if (this.ignoreNextBlur !== true) {
+            // The `activeElement` code is to differentiate between blurring caused by actually
+            // focussing another element and blurring caused by the window itself losing focus.
+            // The `setTimeout` part is to ensure that the browser has correctly set the
+            // `activeElement` property, as its value is somewhat undefined during the actual
+            // handling of a blur event!
+            setTimeout(() => {
+                if (document.activeElement !== this.textInput) {
+                    this._handleBlur()
+                }
+            }, 0)
+        }
+
+        this.ignoreNextBlur = false
+    }
+
     /*
      * Handles field focus
      */
-    _handleFocus = (e) => {
+    _handleFocus = () => {
         const position = this.formControl.getBoundingClientRect()
         const tooltipPosition = position.height
 
-        // Set the scroll top position to should the selected item in the list
-        if (this.props.value) {
-            this._setOptionScrollValue()
-        }
-
-        this.textInput.select()
+        this.textInput && this.textInput.select()
 
         this.setState({
             tooltipPosition,
             focussed: true,
+        }, () => {
+            // Set the scroll top position to show the selected item in the list
+            this._setOptionScrollValue(this._getFocussedOptionIndex(this.props.options))
         })
 
-        this.props.handleFocus && this.props.handleFocus(e)
+        this.props.handleFocus && this.props.handleFocus()
     }
 
     /*
      * Handles field blur
      */
-    _handleBlur = (e) => {
+    _handleBlur = () => {
         this.setState({
             inputValue: '',
             focussed: false,
         })
 
-        this.textInput.blur()
+        this.textInput && this.textInput.blur()
 
-        this.props.handleBlur && this.props.handleBlur(e)
+        this.props.handleBlur && this.props.handleBlur()
     }
 
     /*
@@ -179,7 +200,6 @@ class Select extends Component {
      */
     _handleInputKeyDown = (e) => {
         const KEY_BACKSPACE = 8
-        const KEY_TAB = 9
         const KEY_ENTER = 13
         const KEY_UP = 38
         const KEY_DOWN = 40
@@ -193,8 +213,6 @@ class Select extends Component {
 
                     this.setState({ inputValue: '' })
                 }
-                break
-            case KEY_TAB:
                 break
             case KEY_ENTER:
                 this._selectFocussedOption()
@@ -211,20 +229,31 @@ class Select extends Component {
     }
 
     _handleOptionClicked(option) {
-        return this._assignValue(option)
+        this.ignoreNextBlur = true
+
+        this._assignValue(option)
+
+        // setTimout because setting the focus in the blur event doesn't work. Gah DOM events!
+        setTimeout(() => {
+            if (! this.props.closeOnSelect) {
+                this.textInput && this.textInput.focus()
+            }
+        }, 0)
     }
 
     /*
      * Assigned the value upstream
      */
     _assignValue(option) {
-        this.setState({
-            focussed: ! this.props.blurOnSelect,
-            focussedOptions: null,
-            inputValue: null,
-            searching: false,
-            value: option.value,
-        })
+        if (this.props.closeOnSelect) {
+            this.setState({
+                focussed: false,
+                focussedOptions: null,
+                inputValue: null,
+                searching: false,
+                value: option.value,
+            })
+        }
 
         this.props.updateValue({ [this.props.name]: option.value })
     }
@@ -276,42 +305,44 @@ class Select extends Component {
         if (this.props.getFilteredOptions) {
             options = this.props.getFilteredOptions(value)
         } else {
-            for (const option of this.props.options) {
-                const _label = option.label
-                const index = _label.toLowerCase().indexOf(_value.toString().toLowerCase())
+            if (this.props.options) {
+                for (const option of this.props.options) {
+                    const _label = option.label
+                    const index = _label.toLowerCase().indexOf(_value.toString().toLowerCase())
 
-                if (index !== -1) {
-                    let label = option.richLabel
+                    if (index !== -1) {
+                        let label = option.richLabel
 
-                    if (! label) {
-                        // Extract the prematch, match and postmatch from the plain label
-                        const prematch = _label.slice(0, index)
-                        const match = _label.slice(index, index + _value.length)
-                        const postmatch = _label.slice(index + _value.length)
+                        if (! label) {
+                            // Extract the prematch, match and postmatch from the plain label
+                            const prematch = _label.slice(0, index)
+                            const match = _label.slice(index, index + _value.length)
+                            const postmatch = _label.slice(index + _value.length)
 
-                        // Create some JSX markup to wrp the match in a highlighting span
-                        label = (
-                            <span>
-                                <span>{ prematch }</span>
-                                <span className="control-select__option--highlighted">{ match }</span>
-                                <span>{ postmatch }</span>
-                            </span>
-                        )
+                            // Create some JSX markup to wrap the match in a highlighting span
+                            label = (
+                                <span>
+                                    <span>{ prematch }</span>
+                                    <span className="control-select__option--highlighted">{ match }</span>
+                                    <span>{ postmatch }</span>
+                                </span>
+                            )
+                        }
+
+                        let category = '__NONE__'
+
+                        if (this.props.categoriseBy) {
+                            category = getProperty(option, this.props.categoriseBy)
+                        }
+
+                        // Create a new option with highlighted match
+                        options.push({
+                            category,
+                            classes: option.classes,
+                            label,
+                            value: option.value,
+                        })
                     }
-
-                    let category = '__NONE__'
-
-                    if (this.props.categoriseBy) {
-                        category = getProperty(option, this.props.categoriseBy)
-                    }
-
-                    // Create a new option dict with highlighted match
-                    options.push({
-                        category,
-                        classes: option.classes,
-                        label,
-                        value: option.value,
-                    })
                 }
             }
         }
@@ -325,67 +356,60 @@ class Select extends Component {
      * Focus on the next option or first one if none
      */
     _focusNextOption = () => {
-        let options = this.props.options
+        const options = this.filteredOptions || this.props.options || []
 
-        if (this.filteredOptions) {
-            options = this.filteredOptions
+        let index = this._getFocussedOptionIndex(options)
+
+        // Update index according to direction and wrapping rules
+        if ((index === null) || (index === options.length - 1)) {
+            index = 0
+        } else {
+            index++
         }
 
-        const index = this._getFocussedOptionIndex('down', options)
-        let focussedOption = null
+        // Now let's find the option that the index corresponds to and set that as the focussed
+        // option in state
+        this._focusOptionAtIndex(index, options)
 
-        if (index < options.length - 1 || index === null) {
-            let i = 0
-
-            for (const option of options) {
-                if (index === null && i === 0) {
-                    focussedOption = option
-                    break
-                } else if (index !== null && index + 1 === i) {
-                    focussedOption = option
-                    break
-                }
-
-                i++
-            }
-
-            this.setState({ focussedOption })
-        }
+        // Now we've got the index, let's set the scroll offset to show the item.
+        this._setOptionScrollValue(index)
     }
 
     /*
      * Focus on the previous option
      */
     _focusPreviousOption = () => {
-        let options = this.props.options
+        const options = this.filteredOptions || this.props.options || []
 
-        if (this.filteredOptions) {
-            options = this.filteredOptions
+        let index = this._getFocussedOptionIndex(options)
+
+        // Update index according to direction and wrapping rules
+        if ((index === null) || (index === 0)) {
+            index = options.length - 1
+        } else {
+            index--
         }
 
-        const index = this._getFocussedOptionIndex('up', options)
-        let focussedOption = null
+        // Now let's find the option that the index corresponds to and set that as the focussed
+        // option in state
+        this._focusOptionAtIndex(index, options)
 
-        if (index > 0) {
-            let i = 0
+        // Now we've got the index, let's set the scroll offset to show the item.
+        this._setOptionScrollValue(index)
+    }
 
-            for (const option of options) {
-                if (index !== null && index - 1 === i) {
-                    focussedOption = option
-                    break
-                }
-
-                i++
+    _focusOptionAtIndex(index, options) {
+        options.forEach((option, arrIndex) => {
+            if (arrIndex === index) {
+                this.setState({ focussedOption: option })
             }
-
-            this.setState({ focussedOption })
-        }
+        })
     }
 
     /*
      * Returns the index of the focussed option or null if there is none.
      */
-    _getFocussedOptionIndex = (direction, options) => {
+    _getFocussedOptionIndex = (options) => {
         if (! options) {
             options = this.props.options
         }
@@ -394,31 +418,30 @@ class Select extends Component {
             return null
         }
 
-        let i = 0
+        const index = options.findIndex(
+            (option) => option.value === this.state.focussedOption.value
+        )
 
-        for (const option of options) {
-            if (option.value === this.state.focussedOption.value) {
-                this._setOptionScrollValue(option.value, direction, options)
-                return i
-            }
+        // If the item is not found in the array, index will be -1. We actually don't care about a
+        // not-found situation, and in fact want to select the first item in these cases so we clamp
+        // to 0 or higher.
 
-            i++
-        }
-
-        return null
+        return Math.max(0, index)
     }
 
     /*
      * Submit the value that is currently focussed
      */
     _selectFocussedOption = () => {
-        if (!this.state.focussedOption) {
+        if (! this.state.focussedOption) {
             return
         }
 
-        for (const option of this.props.options) {
-            if (option.value === this.state.focussedOption.value) {
-                this._assignValue(option)
+        if (this.props.options) {
+            for (const option of this.props.options) {
+                if (option.value === this.state.focussedOption.value) {
+                    this._assignValue(option)
+                }
             }
         }
     }
@@ -428,7 +451,7 @@ class Select extends Component {
      */
     _getFocussedOption = (value, options) => {
         if (! options) {
-            options = this.props.options
+            options = this.props.options || []
         }
 
         for (const option of options) {
@@ -443,21 +466,19 @@ class Select extends Component {
     /*
      * Adjust the scroll value of the option list to show the selected item
      */
-    _setOptionScrollValue = (value, direction, options) => {
-        if (! value) {
-            value = this.props.value
-        }
+    _setOptionScrollValue = (index) => {
+        if ((index !== null) && this.optionList.children.length) {
+            // By default, go to the top?
+            let scrollTo = 0
 
-        if (this.optionList.children.length) {
-            const firstChild = this.optionList.children[0]
-            const rect = firstChild.getBoundingClientRect()
-            const optionHeight = rect.height
-            const index = this._getOptionIndex(value, options)
+            // Get all "options" from the descendents of the option list
+            const allItems = this.optionList.querySelectorAll('.control-select__option')
 
-            let scrollTo = (index * optionHeight)
+            // Pick the one at the requested index and get its scrollTop
+            if (index < allItems.length) {
+                const item = allItems[index]
 
-            if (direction === 'up') {
-                scrollTo = (index * optionHeight) - optionHeight
+                scrollTo = item.offsetTop
             }
 
             this.optionList.scrollTop = scrollTo
@@ -469,23 +490,12 @@ class Select extends Component {
      */
     _getOptionIndex = (value, options) => {
         if (! options) {
-            options = this.props.options
+            options = this.props.options || []
         }
 
-        let index = 0
-
-        if (options.length > 0) {
-            for (const option of options) {
-                if (option.value === value) {
-                    return index
-                }
-
-                index++
-            }
-        }
-
-        // not found, go for -1
-        return -1
+        return options.findIndex(
+            (option) => option.value === value
+        )
     }
 
     /*
@@ -606,7 +616,7 @@ class Select extends Component {
                                         <div
                                             className={ optionClasses }
                                             key={ item.value }
-                                            onClick={ this._handleOptionClicked.bind(this, item) }
+                                            onMouseDown={ this._handleOptionClicked.bind(this, item) }
                                         >
                                             { item.label }
                                         </div>
@@ -638,11 +648,14 @@ class Select extends Component {
                     />
                     <input
                         className="form__select"
+                        disabled={ this.props.disabled }
                         id={ inputId }
                         name={ `${ this.props.name }_selector` }
+                        onBlur={ this._handleInputBlurred }
                         onChange={ this._handleInputChanged }
-                        onClick={ this._handleInputClicked }
+                        onFocus={ this._handleInputFocussed }
                         onKeyDown={ this._handleInputKeyDown }
+                        onMouseDown={ this._handleInputMousePressedDown }
                         placeholder={ this.props.placeholder }
                         ref={ (ref) => { this.textInput = ref } }
                         type={ this.props.type || 'text' }
@@ -662,7 +675,7 @@ class Select extends Component {
                     />
                     <Help
                         help={ this.props.help }
-                        on={ this.state.focussed && !this.props.error }
+                        on={ this.state.focussed && ! this.props.error }
                         position={ this.state.tooltipPosition }
                     />
                 </div>
@@ -671,4 +684,3 @@ class Select extends Component {
         )
     }
 }
-export default OutsideEventListener(Select, ['mousedown'])
