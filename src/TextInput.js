@@ -245,7 +245,7 @@ export default class TextInput extends Component {
             helpUI = (
                 <Help
                     help={ this.props.help }
-                    on={ this.state.showTooltip && !this.props.error }
+                    on={ this.state.showTooltip && ! this.props.error }
                     position={ this.state.tooltipPosition }
                 />
             )
