@@ -5,6 +5,7 @@ import {
     formControlPropTypes,
     hasOptionsPropTypes,
     focussablePropTypes,
+    getProperty,
     OutsideEventListener,
 } from './Utils'
 
@@ -300,12 +301,8 @@ class Select extends Component {
 
                     let category = '__NONE__'
 
-                    if (
-                        this.props.categoriseBy &&
-                        (this.props.categoriseBy in option) &&
-                        option[this.props.categoriseBy]
-                    ) {
-                        category = option[this.props.categoriseBy]
+                    if (this.props.categoriseBy) {
+                        category = getProperty(option, this.props.categoriseBy)
                     }
 
                     // Create a new option dict with highlighted match

@@ -127,6 +127,70 @@ export function handleDeleteInnerForm(itemsKey, index) {
 }
 
 /**
+ * Get a property from an object optionally following a path and also providing a default.
+ *
+ * The `key` parameter can take a dot-separated path to a deeply-nested key.
+ *
+ * `null` values are considered 'empty' for the purposes of this function, and the value of
+ * `defaultValue` will be returned in the case that `null` is found. Of course, the default default
+ * is `null` anyway, so there you go. This is only true of `null`: `0`, `''` and `false` are all
+ * considered to be 'filled' values and will be returned as-is.
+ *
+ * Example calling:
+ *
+ *     let obj = { defined: 'string', empty: null }
+ *
+ *     getProperty(obj, 'defined') => 'string'
+ *     getProperty(obj, 'undefined') => null
+ *
+ *     getProperty(obj, 'defined', 'default') => 'string'
+ *     getProperty(obj, 'undefined', 'default') => 'default'
+ *
+ *     // while `empty` is defined, it is set to null so is considered 'empty'
+ *     getProperty(obj, 'empty') => null // null here being the default return, not the value stored
+ *     getProperty(obj, 'empty', 'default') => 'default'
+ *
+ * @param {Object} object The object to find the key on.
+ * @param {string} key The key to search for on the object.
+ * @param {mixed} defaultValue The value to return if the key isn't found.
+ * @returns {mixed} The value of object.key or defaultValue depending on the rules above.
+ */
+export function getProperty(object, key, defaultValue = null) {
+    if (! object) {
+        return defaultValue
+    }
+
+    // if no key, we just care about the object itself
+    if (! key) {
+        return object
+    }
+
+    // are we using complex path components (i.e. dot-notation)?
+    if (key.indexOf('.') !== -1) {
+        // take the first 'path component' from the key
+        const path = key.split('.')
+        const currentKey = path.shift()
+
+        // now getting the value of the object[first-path-part] to kick off recusion
+        const currentValue = getProperty(object, currentKey, defaultValue)
+
+        // rebuild the key leaving out the first part we already used
+        const restOfKey = path.join('.')
+
+        // now recurse by getting the value of [rest-of-key] from our
+        // [first-path-part] value
+        return getProperty(currentValue, restOfKey, defaultValue)
+    }
+
+    // now the actual reason for this funciton - does the key exist on object and is it 'filled'?
+    if (object.hasOwnProperty(key) && object[key] !== null) {
+        return object[key]
+    }
+
+    return defaultValue
+}
+
+/**
  * Generate a wrapped component where required props can be resolved to a default when null.
  *
  * Take a component, some propType declarations and a map of default props and create a wrapping HOC
