@@ -35,12 +35,17 @@ export default class MultipleSelect extends Component {
      * @returns {void}
      */
     _updateValue = (data) => {
-        const option = this.props.options.filter((item) => (item.value === data[this.props.name]))[0]
+        const option = this.props.options.find((item) => (item.value === data[this.props.name]))
 
-        if (this.props.values.map(valueMapper).includes(option.value)) {
-            this._removeOption(option)
-        } else {
-            this.props.updateValue({ [this.props.name]: [ ...this.props.values, option ] })
+        // If user presses backspace, the Select component will send a 'null' as the selected value
+        // (as backspace means "clear the selection" to the Select component). As such, it should be
+        // safe to just ignore it. So let's check that what came back was a proper object.
+        if (Object(option) === option) {
+            if (this.props.values.map(valueMapper).includes(option.value)) {
+                this._removeOption(option)
+            } else {
+                this.props.updateValue({ [this.props.name]: [ ...this.props.values, option ] })
+            }
         }
     }
 
