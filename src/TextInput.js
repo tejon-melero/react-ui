@@ -24,6 +24,7 @@ export default class TextInput extends Component {
         rows: PropTypes.number,
         success: PropTypes.bool,
         type: PropTypes.string, // oneOf?
+        updateValueOnBlur: PropTypes.bool,
         weekDayStart: PropTypes.number,
     }
 
@@ -32,12 +33,29 @@ export default class TextInput extends Component {
         placeholder: '',
         rows: 6,
         type: 'text',
+        updateValueOnBlur: false,
         weekDayStart: 0,
     }
 
-    state = {
-        showTooltip: false,
-        tooltipPosition: null,
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            showTooltip: false,
+            tooltipPosition: null,
+            value: props.value || '',
+        }
+    }
+
+    /*
+     * If props gets updated we change the state value
+     */
+    componentWillReceiveProps(nextProps) {
+        if (this.props.value !== nextProps.value) {
+            this.setState({
+                value: nextProps.value || '',
+            })
+        }
     }
 
     /*
@@ -54,7 +72,11 @@ export default class TextInput extends Component {
             }
         }
 
-        this.props.updateValue({ [this.props.name]: value })
+        this.setState({ value })
+
+        if (! this.props.updateValueOnBlur) {
+            this.props.updateValue({ [this.props.name]: value })
+        }
     }
 
     /*
@@ -94,6 +116,10 @@ export default class TextInput extends Component {
                 showTooltip: false,
                 tooltipPosition: null,
             })
+        }
+
+        if (this.props.updateValueOnBlur) {
+            this.props.updateValue({ [this.props.name]: this.state.value })
         }
 
         this.props.handleBlur && this.props.handleBlur()
@@ -168,7 +194,7 @@ export default class TextInput extends Component {
      * Define the HTML for the field
      */
     render() {
-        const value = this.props.value || ''
+        const value = this.state.value
         const inputId = `id_${ this.props.name }`
 
         const groupClasses = classnames({
