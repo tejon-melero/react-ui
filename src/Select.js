@@ -69,7 +69,7 @@ export default class Select extends Component {
             searching: false,
 
             // This option currently focussed on the list
-            focussedOption: this._getFocussedOption(props.value),
+            focussedOption: this._getSelectedOption(props.value),
         }
     }
 
@@ -85,7 +85,7 @@ export default class Select extends Component {
 
         // If the value has changed, refresh our idea of which option should be focussed.
         if (nextProps.value !== this.props.value) {
-            newState.focussedOption = this._getFocussedOption(nextProps.value)
+            newState.focussedOption = this._getSelectedOption(nextProps.value)
 
             if (! nextProps.value) {
                 newState.inputValue = ''
@@ -95,7 +95,7 @@ export default class Select extends Component {
         // If we have different options coming in, refresh our idea of which option should be
         // focussed based on the new value and new options.
         if (nextProps.options !== this.props.options) {
-            newState.focussedOption = this._getFocussedOption(nextProps.value, nextProps.options)
+            newState.focussedOption = this._getSelectedOption(nextProps.value, nextProps.options)
         }
 
         this.setState(newState)
@@ -169,9 +169,12 @@ export default class Select extends Component {
 
         this.textInput && this.textInput.select()
 
+        const focussedOption = this._getSelectedOption(this.props.value)
+
         this.setState({
             tooltipPosition,
             focussed: true,
+            focussedOption,
         }, () => {
             // Set the scroll top position to show the selected item in the list
             this._setOptionScrollValue(this._getFocussedOptionIndex(this.props.options))
@@ -447,9 +450,9 @@ export default class Select extends Component {
     }
 
     /*
-     * Find the focussed option from the current value
+     * Find the selected option from the current value
      */
-    _getFocussedOption = (value, options) => {
+    _getSelectedOption = (value, options) => {
         if (! options) {
             options = this.props.options || []
         }
