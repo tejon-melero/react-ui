@@ -13,6 +13,24 @@ import FieldError from './FieldError'
 import Help from './Help'
 import SubHelp from './SubHelp'
 
+function createHighlightNode(text, highlight) {
+    const index = text.toLowerCase().indexOf(highlight)
+
+    // Extract the prematch, match and postmatch from the plain label
+    const prematch = text.slice(0, index)
+    const match = text.slice(index, index + highlight.length)
+    const postmatch = text.slice(index + highlight.length)
+
+    // Create some JSX markup to wrap the match in a highlighting span
+    return (
+        <span>
+            <span>{ prematch }</span>
+            <span className="control-select__option--highlighted">{ match }</span>
+            <span>{ postmatch }</span>
+        </span>
+    )
+}
+
 /*
  * Select box with drop down scrollable, and can be navigated with up/down arrow keys.
  */
@@ -38,6 +56,7 @@ export default class Select extends Component {
 
     static defaultProps = {
         closeOnSelect: true,
+        defaultOptions: [],
         disabled: false,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
@@ -56,53 +75,84 @@ export default class Select extends Component {
         super(props)
 
         this.state = {
-            // The bottom position of the tooltip
+            // The bottom position of the tooltip.
             tooltipPosition: null,
 
-            // The value currently inputted by the user in the text field
+            // The value currently inputted by the user in the text field.
             inputValue: null,
 
-            // Whether the field is currently focussed due to user interaction
+            // Whether the field is currently focussed due to user interaction.
             focussed: false,
 
-            // Tnis applies only when a search function is provided
+            // Tnis applies only when a search function is provided.
             searching: false,
-
-            // This option currently focussed on the list
-            focussedOption: this._getSelectedOption(props.value),
         }
+
+        setTimeout(() => {
+            this._resolveSelectedOption()
+            this._resolveFilteredOptions()
+        }, 0)
     }
 
     componentWillReceiveProps(nextProps) {
         const newState = {}
 
-        // If we have different options coming in and there is a searchOptions callback specified,
+        // If there is a searchOptions callback specified and we have different options coming in,
         // then we can assume that we were searching and these new props have ended the search (by
         // returning results).
-        if (nextProps.options !== this.props.options && this.props.searchOptions) {
+        if (this.props.searchOptions && (nextProps.options !== this.props.options)) {
             newState.searching = false
         }
 
         // If the value has changed, refresh our idea of which option should be focussed.
         if (nextProps.value !== this.props.value) {
-            newState.focussedOption = this._getSelectedOption(nextProps.value)
-
+            // Also, if the value is empty, we should clear the 'selected text' value.
             if (! nextProps.value) {
                 newState.inputValue = ''
             }
         }
 
-        // If we have different options coming in, refresh our idea of which option should be
-        // focussed based on the new value and new options.
-        if (nextProps.options !== this.props.options) {
-            newState.focussedOption = this._getSelectedOption(nextProps.value, nextProps.options)
-        }
-
-        this.setState(newState)
+        this.setState(newState, () => {
+            this._resolveSelectedOption()
+            this._resolveFilteredOptions()
+        })
     }
 
     ignoreNextBlur = false
+
+    // Refs
     textInput = null
+    formControl = null
+    optionList = null
+
+    _resolveSelectedOption = () => {
+        this.setState({
+            focussedOption: this._getSelectedOption(),
+            selectedOption: this._getSelectedOption(),
+        })
+    }
+
+    _resolveFilteredOptions = () => {
+        const filteredOptions = this._getFilteredOptions()
+
+        this.setState({
+            numFilteredOptions: filteredOptions.length,
+            categorisedOptions: this._categoriseOptions(filteredOptions, this.props.categoriseBy),
+        })
+    }
+
+    /*
+     * Find the selected option from the current value
+     */
+    _getSelectedOption = () => {
+        let option = this.props.options.find((option) => option.value === this.props.value)
+
+        if ((! option) && this.props.options.length) {
+            option = this.props.options[0]
+        }
+
+        return option
+    }
 
     /*
      * Handles the change of value from the input field
@@ -110,7 +160,7 @@ export default class Select extends Component {
     _handleInputChanged = (e) => {
         const inputValue = e.target.value
 
-        this.setState({ inputValue })
+        this.setState({ inputValue }, this._resolveFilteredOptions)
 
         // If a search function is provided then we need to call it with the value as a query argument
         if (this.props.searchOptions) {
@@ -169,16 +219,11 @@ export default class Select extends Component {
 
         this.textInput && this.textInput.select()
 
-        const focussedOption = this._getSelectedOption(this.props.value)
-
         this.setState({
             tooltipPosition,
             focussed: true,
-            focussedOption,
-        }, () => {
-            // Set the scroll top position to show the selected item in the list
-            this._setOptionScrollValue(this._getFocussedOptionIndex(this.props.options))
-        })
+            focussedOption: this._getSelectedOption(),
+        }, this._setOptionScrollValue)
 
         this.props.handleFocus && this.props.handleFocus()
     }
@@ -190,7 +235,6 @@ export default class Select extends Component {
         this.setState({
             inputValue: '',
             focussed: false,
-            focussedOption: null,
         })
 
         this.textInput && this.textInput.blur()
@@ -211,10 +255,6 @@ export default class Select extends Component {
             case KEY_BACKSPACE:
                 if (this.props.value) {
                     this.props.updateValue({ [this.props.name]: null })
-
-                    this._handleFocus()
-
-                    this.setState({ inputValue: '' })
                 }
                 break
             case KEY_ENTER:
@@ -232,11 +272,12 @@ export default class Select extends Component {
     }
 
     _handleOptionClicked(option) {
-        this.ignoreNextBlur = true
-
         this._assignValue(option)
 
-        // setTimout because setting the focus in the blur event doesn't work. Gah DOM events!
+        this.ignoreNextBlur = true
+
+        // setTimout because setting the focus as part of the blur process (which clicking on an
+        // item wil be for ther text input) doesn't work. Gah DOM events!
         setTimeout(() => {
             if (! this.props.closeOnSelect) {
                 this.textInput && this.textInput.focus()
@@ -251,11 +292,8 @@ export default class Select extends Component {
         if (this.props.closeOnSelect) {
             this.setState({
                 focussed: false,
-                focussedOption: null,
-                focussedOptions: null,
                 inputValue: null,
                 searching: false,
-                value: option.value,
             })
         }
 
@@ -265,171 +303,154 @@ export default class Select extends Component {
     /*
      * Get an option label from its value
      */
-    _getOptionLabel = (value) => {
-        let label = null
-        let options = []
+    _getOptionLabelForValue = (value) => {
+        const allOptions = this.props.options.concat(this.props.defaultOptions)
 
-        if (this.props.defaultOptions) {
-            options = options.concat(this.props.defaultOptions)
+        const option = allOptions.find((option) => option.value === value)
+
+        if (option) {
+            return option.label
         }
 
-        if (this.props.options) {
-            options = options.concat(this.props.options)
-        }
-
-        for (const option of options) {
-            if (option.value === value) {
-                label = option.label
-            }
-        }
-
-        return label
+        return null
     }
 
     /*
-     * Filter options when typing
+     * Compile a list of all options filtered by the search text.
      */
-    _filterOptions = (value) => {
-        if (value) {
-            return this._getFilteredOptions(value)
-        }
+    _getFilteredOptions = () => {
+        if (this.state.inputValue) {
+            let options = []
 
-        return this._getFilteredOptions()
-    }
+            const search = this.state.inputValue.toString().toLowerCase()
 
-    /*
-     * Compile a list of all options filtered by a value
-     */
-    _getFilteredOptions = (value) => {
-        const _value = value || ''
-        let options = []
-
-        // Allow search function override
-        if (this.props.getFilteredOptions) {
-            options = this.props.getFilteredOptions(value)
-        } else {
-            if (this.props.options) {
-                for (const option of this.props.options) {
-                    const _label = option.label
-                    const index = _label.toLowerCase().indexOf(_value.toString().toLowerCase())
-
-                    if (index !== -1) {
-                        let label = option.richLabel
-
-                        if (! label) {
-                            // Extract the prematch, match and postmatch from the plain label
-                            const prematch = _label.slice(0, index)
-                            const match = _label.slice(index, index + _value.length)
-                            const postmatch = _label.slice(index + _value.length)
-
-                            // Create some JSX markup to wrap the match in a highlighting span
-                            label = (
-                                <span>
-                                    <span>{ prematch }</span>
-                                    <span className="control-select__option--highlighted">{ match }</span>
-                                    <span>{ postmatch }</span>
-                                </span>
-                            )
-                        }
-
-                        let category = '__NONE__'
-
-                        if (this.props.categoriseBy) {
-                            category = getProperty(option, this.props.categoriseBy)
-                        }
-
-                        // Create a new option with highlighted match
-                        options.push({
-                            category,
-                            classes: option.classes,
-                            label,
-                            value: option.value,
-                        })
+            if (this.props.getFilteredOptions) {
+                options = this.props.getFilteredOptions(search)
+            } else {
+                options = this.props.options.filter((option) => (
+                    option.label.toLowerCase().indexOf(search) !== -1
+                )).map((option) => {
+                    // Create a new option with highlighted match if no rich label is present
+                    return {
+                        ...option,
+                        label: option.richLabel || createHighlightNode(option.label, search),
                     }
+                })
+            }
+
+            return options
+        }
+
+        return this.props.options.map((option) => {
+            return {
+                ...option,
+                label: option.richLabel || option.label,
+            }
+        })
+    }
+
+    _categoriseOptions(options, categoriseBy) {
+        if (categoriseBy) {
+            // This will store all options in their categories
+            const categorisedOptions = {
+                __NONE__: [],
+            }
+
+            for (const option of options) {
+                const category = getProperty(option, categoriseBy)
+
+                if (! (category in categorisedOptions)) {
+                    categorisedOptions[category] = []
+                }
+
+                categorisedOptions[category].push(option)
+            }
+
+            return categorisedOptions
+        }
+
+        return {
+            __NONE__: [ ...options ],
+        }
+    }
+
+    _getNextOption() {
+        // We store the first option visited so that if the last option is the one that matches the
+        // current one, the next option is the first. Or if the option is not found, the first
+        // option seems like a sensible 'next' option.
+        let first = null
+
+        // As soon as we visit the currently-selected value, we say the next one visited is the one
+        // we want. This variable helps us do that.
+        let selectNext = false
+
+        // Iterate through all options in category order in order to find the current one and select
+        // the next one visited.
+        for (const options of Object.values(this.state.categorisedOptions)) {
+            for (const option of options) {
+                // If no 'first option' exists, set it here.
+                if (! first) {
+                    first = option
+                }
+
+                // If we already found the current one, this will be true telling us to return the
+                // 'next' one. So do so.
+                if (selectNext) {
+                    return option
+                }
+
+                // Otherwise, keep searching for the curretly-selected option. If found, set
+                // selectNext to true,
+                if (option.value === this.state.focussedOption.value) {
+                    selectNext = true
                 }
             }
         }
 
-        this.filteredOptions = options
+        // Nothing matched, or the last one matched, so return the first.
+        return first
+    }
 
-        return options
+    _getPreviousOption() {
+        // As we iterate through the options, we will constantly be keeping track of the last option
+        // visited so that when we find the currently-selected option, we can return the one
+        // previous to it.
+        let previous = null
+
+        // Iterate through all options in category order in order to find the current one and select
+        // the next one hit.
+        for (const options of Object.values(this.state.categorisedOptions)) {
+            for (const option of options) {
+                // if the current option is the currently selected one, return the previous option.
+                if (previous && (option.value === this.state.focussedOption.value)) {
+                    return previous
+                }
+
+                // Otherwise, store the current option as the previous one and continue iteration.
+                previous = option
+            }
+        }
+
+        // Nothing matched, or the last one matched, so return the last one.
+        return previous
     }
 
     /*
      * Focus on the next option or first one if none
      */
     _focusNextOption = () => {
-        const options = this.filteredOptions || this.props.options || []
-
-        let index = this._getFocussedOptionIndex(options)
-
-        // Update index according to direction and wrapping rules
-        if ((index === null) || (index === options.length - 1)) {
-            index = 0
-        } else {
-            index++
-        }
-
-        // Now let's find the option that the index corresponds to and set that as the focussed
-        // option in state
-        this._focusOptionAtIndex(index, options)
-
-        // Now we've got the index, let's set the scroll offset to show the item.
-        this._setOptionScrollValue(index)
+        this.setState({
+            focussedOption: this._getNextOption(),
+        }, this._setOptionScrollValue)
     }
 
     /*
      * Focus on the previous option
      */
     _focusPreviousOption = () => {
-        const options = this.filteredOptions || this.props.options || []
-
-        let index = this._getFocussedOptionIndex(options)
-
-        // Update index according to direction and wrapping rules
-        if ((index === null) || (index === 0)) {
-            index = options.length - 1
-        } else {
-            index--
-        }
-
-        // Now let's find the option that the index corresponds to and set that as the focussed
-        // option in state
-        this._focusOptionAtIndex(index, options)
-
-        // Now we've got the index, let's set the scroll offset to show the item.
-        this._setOptionScrollValue(index)
-    }
-
-    _focusOptionAtIndex(index, options) {
-        options.forEach((option, arrIndex) => {
-            if (arrIndex === index) {
-                this.setState({ focussedOption: option })
-            }
-        })
-    }
-
-    /*
-     * Returns the index of the focussed option, defaulting to the first (0) if there is none.
-     */
-    _getFocussedOptionIndex = (options) => {
-        if (! options) {
-            options = this.props.options
-        }
-
-        if (! this.state.focussedOption) {
-            return 0
-        }
-
-        const index = options.findIndex(
-            (option) => option.value === this.state.focussedOption.value
-        )
-
-        // If the item is not found in the array, index will be -1. We actually don't care about a
-        // not-found situation, and in fact want to select the first item in these cases so we clamp
-        // to 0 or higher.
-
-        return Math.max(0, index)
+        this.setState({
+            focussedOption: this._getPreviousOption(),
+        }, this._setOptionScrollValue)
     }
 
     /*
@@ -440,59 +461,49 @@ export default class Select extends Component {
             return
         }
 
-        if (this.props.options) {
-            for (const option of this.props.options) {
-                if (option.value === this.state.focussedOption.value) {
-                    this._assignValue(option)
-                }
-            }
-        }
-    }
+        // While the state's focussedOption is an option object, it will have been mutated sightly
+        // from what was passed in props. So here we make sure to pick the 'original' props option
+        // out.
+        const option = this.props.options.find((option) => (
+            option.value === this.state.focussedOption.value
+        ))
 
-    /*
-     * Find the selected option from the current value
-     */
-    _getSelectedOption = (value, options) => {
-        if (! options) {
-            options = this.props.options || []
+        // And just on the offchance we didn't find the option, let's be cautious...
+        if (option) {
+            this._assignValue(option)
         }
-
-        return options.find((option) => option.value === value)
     }
 
     /*
      * Adjust the scroll value of the option list to show the selected item
      */
-    _setOptionScrollValue = (index) => {
-        if ((index !== null) && this.optionList.children.length) {
-            // By default, go to the top?
-            let scrollTo = 0
+    _setOptionScrollValue = () => {
+        const option = this.state.focussedOption
 
+        // By default, let's go to the top.
+        let scrollTo = 0
+
+        if (option && this.state.numFilteredOptions) {
             // Get all "options" from the descendents of the option list
-            const allItems = this.optionList.querySelectorAll('.control-select__option')
+            const item = this.optionList.querySelector(
+                `.control-select__option[data-value="${ option.value }"]`
+            )
 
-            // Pick the one at the requested index and get its scrollTop
-            if (index < allItems.length) {
-                const item = allItems[index]
+            if (item) {
+                // If item if the first option in a categorisation group, actually set the scroll
+                // value to the group itself.
 
-                scrollTo = item.offsetTop
+                const prev = item.previousElementSibling
+
+                if (prev && Array.from(prev.classList).includes('control-select__group-heading')) {
+                    scrollTo = item.parentNode.offsetTop
+                } else {
+                    scrollTo = item.offsetTop
+                }
             }
-
-            this.optionList.scrollTop = scrollTo
-        }
-    }
-
-    /*
-     * Find the index of the selected value
-     */
-    _getOptionIndex = (value, options) => {
-        if (! options) {
-            options = this.props.options || []
         }
 
-        return options.findIndex(
-            (option) => option.value === value
-        )
+        this.optionList.scrollTop = scrollTo
     }
 
     /*
@@ -500,19 +511,17 @@ export default class Select extends Component {
      * it's a search select or standard fixed list
      */
     _getNoOptionPlaceholder = () => {
-        // If we have an option search function, then we will be either "type in" or no search results
+        // If we are currently searching, return the "searching..." placeholder.
         if (this.state.searching === true) {
             return this.props.searchingPlaceholder
         }
 
-        if (this.props.searchOptions && this.state.inputValue === '') {
-            return this.props.noOptionPlaceholder
-        }
-
-        if (this.props.searchOptions && typeof this.state.inputValue === 'string') {
+        // If we have a search function, and some search text, return the "no results" placeholder.
+        if (this.props.searchOptions && this.state.inputValue && this.state.inputValue.length) {
             return this.props.noResultsPlaceholder
         }
 
+        // Anythng else can safely have the "no results" placeholder.
         return this.props.noOptionPlaceholder
     }
 
@@ -528,7 +537,7 @@ export default class Select extends Component {
         if (this.state.inputValue && this.state.inputValue.length) {
             displayValue = this.state.inputValue
         } else {
-            displayValue = this._getOptionLabel(this.props.value)
+            displayValue = this._getOptionLabelForValue(this.props.value)
         }
 
         // Ensure the values we will place in the inputs are usable strings (i.e. not null)
@@ -566,45 +575,29 @@ export default class Select extends Component {
         let optionList = null
 
         if (this.state.focussed) {
-            const options = this._filterOptions(this.state.inputValue)
-
-            if (options.length > 0) {
-                // This will store all options in their categories
-                const categorisedOptions = {
-                    __NONE__: [],
-                }
-
-                // Go through all options and add them to their categories
-                for (const item of options) {
-                    if (! (item.category in categorisedOptions)) {
-                        categorisedOptions[item.category] = []
-                    }
-
-                    categorisedOptions[item.category].push(item)
-                }
-
+            if (this.state.numFilteredOptions) {
                 optionList = []
 
                 // Now add each category to the optionslist
-                for (const category in categorisedOptions) {
+                for (const [ category, options ] of Object.entries(this.state.categorisedOptions)) {
                     optionList.push(
                         <div key={ category }>
                             { category !== '__NONE__' &&
                                 <div className="control-select__group-heading">{ category }</div>
                             }
-                            { categorisedOptions[category].map(
-                                (item) => {
+                            { options.map(
+                                (option) => {
                                     const classes = {
                                         'control-select__option': true,
                                         'control-select__option--focused':
                                             this.state.focussedOption && (
-                                                item.value === this.state.focussedOption.value
+                                                option.value === this.state.focussedOption.value
                                             ),
-                                        'control-select__option--selected': this.props.value === item.value,
+                                        'control-select__option--selected': option.value === this.props.value,
                                     }
 
-                                    if (item.classes) {
-                                        classes[item.classes] = true
+                                    if (option.classes) {
+                                        classes[option.classes] = true
                                     }
 
                                     const optionClasses = classnames(classes)
@@ -612,10 +605,11 @@ export default class Select extends Component {
                                     return (
                                         <div
                                             className={ optionClasses }
-                                            key={ item.value }
-                                            onMouseDown={ this._handleOptionClicked.bind(this, item) }
+                                            data-value={ option.value }
+                                            key={ option.value }
+                                            onMouseDown={ this._handleOptionClicked.bind(this, option) }
                                         >
-                                            { item.label }
+                                            { option.label }
                                         </div>
                                     )
                                 }
