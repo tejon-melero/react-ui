@@ -418,7 +418,7 @@ export default class Select extends Component {
         }
 
         if (! this.state.focussedOption) {
-            return null
+            return 0
         }
 
         const index = options.findIndex(
@@ -457,13 +457,7 @@ export default class Select extends Component {
             options = this.props.options || []
         }
 
-        for (const option of options) {
-            if (option.value === value) {
-                return option
-            }
-        }
-
-        return null
+        return options.find((option) => option.value === value)
     }
 
     /*
