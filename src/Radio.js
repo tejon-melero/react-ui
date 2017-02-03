@@ -8,7 +8,7 @@ import FieldError from './FieldError'
 import Help from './Help'
 import SubHelp from './SubHelp'
 
-export default class RadioInput extends Component {
+export default class Radio extends Component {
     static propTypes = {
         ...formControlPropTypes,
         ...hasOptionsPropTypes,

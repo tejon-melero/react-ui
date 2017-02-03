@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react'
-import reactUpdate from 'react-addons-update'
 
 export default class Notify extends Component {
     static propTypes = {
@@ -29,32 +28,28 @@ export default class Notify extends Component {
         }
     }
 
-    componentDidUnmount() {
+    componentWillUnmount() {
         document.removeEventListener('reactUINotification', this.pushNotification)
     }
 
     pushNotification = (e) => {
-        // Create new notification object
-
         // Generate a unique id using a timestamp
         const newId = new Date().getTime()
 
+        // Create new notification object
         const notification = {
             id: newId,
             message: e.detail.message,
         }
 
-        // Push the notification to the state
-        const newState = reactUpdate(
-            this.state,
-            {
-                notifications: { $push: [ notification ] },
-            }
-        )
-
-        // Update the state
+        // Update the state, pushing the notification to the end
         this.setState(
-            newState,
+            {
+                notifications: [
+                    ...this.state.notifications,
+                    notification,
+                ],
+            },
             () => {
                 setTimeout(() => {
                     this.clearNotification(newId)
@@ -64,22 +59,11 @@ export default class Notify extends Component {
     }
 
     clearNotification(id) {
-        const newList = []
-
-        for (const item in this.state.notifications) {
-            if (item.id !== id) {
-                newList.push(item)
-            }
-        }
-
-        const newState = reactUpdate(
-            this.state,
-            {
-                notifications: { $set: newList },
-            }
-        )
-
-        this.setState(newState)
+        this.setState({
+            notifications: this.state.notifications.filter(
+                (item) => item.id !== id
+            ),
+        })
     }
 
     handleClose(item_id, e) {
