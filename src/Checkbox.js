@@ -11,7 +11,12 @@ export default class Checkbox extends Component {
         ...formControlPropTypes,
         ...focussablePropTypes,
 
+        hidden: PropTypes.bool,
         value: PropTypes.bool.isRequired,
+    }
+
+    static defaultProps = {
+        hidden: false,
     }
 
     _handleChange = () => {
@@ -48,6 +53,11 @@ export default class Checkbox extends Component {
                 onBlur={ this._handleBlur }
                 onChange={ this._handleChange }
                 onFocus={ this._handleFocus }
+                style={
+                    this.props.hidden ?
+                        { position: 'absolute', top: '-9999px', left: '-9999px' } :
+                        null
+                }
                 type="checkbox"
                 value={ 1 }
             />

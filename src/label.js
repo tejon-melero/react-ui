@@ -4,6 +4,7 @@ import classnames from 'classnames'
 export default class Label extends Component {
     static propTypes = {
         children: PropTypes.arrayOf(PropTypes.node),
+        className: PropTypes.string,
         inline: PropTypes.bool,
     }
 
@@ -16,10 +17,11 @@ export default class Label extends Component {
             return null
         }
 
-        const labelClasses = classnames({
-            'form__label': true,
-            'form__label--inline': this.props.inline,
-        })
+        const labelClasses = classnames(
+            this.props.className,
+            'form__label',
+            { 'form__label--inline': this.props.inline }
+        )
 
         return (
             <label className={ labelClasses }>
