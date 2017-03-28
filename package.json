@@ -1,10 +1,17 @@
 {
-  "name": "react-ui",
-  "private": true,
-  "version": "0.1.0",
+  "name": "@cotidia/react-ui",
+  "version": "0.1.6",
   "description": "UI Components for React",
   "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://code.cotidia.com/cotidia/react-ui.git"
+  },
+  "publishConfig": {
+    "registry": "http://code.cotidia.com:4873"
+  },
   "scripts": {
+    "prepublish": "npm run build",
     "prebuild": "rimraf lib dist",
     "build:main": "babel -d lib ./src",
     "build:umd": "webpack --output-filename index.umd.js",
