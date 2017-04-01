@@ -33,7 +33,7 @@ export default class TextInput extends Component {
         placeholder: '',
         rows: 6,
         type: 'text',
-        updateValueOnBlur: false,
+        updateValueOnBlur: true,
         weekDayStart: 0,
     }
 
