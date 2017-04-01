@@ -18,7 +18,6 @@ export default class DatePicker extends Component {
 
     static defaultProps = {
         date: moment(),
-        position: 0,
         weekDayStart: 0,
     }
 
@@ -211,10 +210,12 @@ export default class DatePicker extends Component {
             zIndex: '10000',
         }
 
-        if (this.props.alignment === 'bottom') {
-            datePickerStyles.top = this.props.position + VERTICAL_PADDING_PX
-        } else {
-            datePickerStyles.bottom = this.props.position + VERTICAL_PADDING_PX
+        if (this.props.position) {
+            if (this.props.alignment === 'bottom') {
+                datePickerStyles.top = this.props.position + VERTICAL_PADDING_PX
+            } else {
+                datePickerStyles.bottom = this.props.position + VERTICAL_PADDING_PX
+            }
         }
 
         datePickerStyles.display = 'block'
