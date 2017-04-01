@@ -12,13 +12,13 @@ export default class DatePicker extends Component {
         date: PropTypes.instanceOf(moment).isRequired,
         dateFormat: PropTypes.string,
         onChange: PropTypes.func,
-        position: PropTypes.bool,
+        position: PropTypes.number,
         weekDayStart: PropTypes.number,
     }
 
     static defaultProps = {
         date: moment(),
-        position: false,
+        position: 0,
         weekDayStart: 0,
     }
 
@@ -139,26 +139,23 @@ export default class DatePicker extends Component {
     }
 
     render() {
-        const state = this.state
-        const setDate = this.setDate
+        const { calendar, month, date, year } = this.state
 
         // Generate week days
         let weekDays = null
 
-        if (state.calendar.length) {
+        if (calendar.length) {
             const dayList = []
 
-            state.calendar[0].by('days', (day) => dayList.push(day))
-
-            weekDays = dayList.map((day) => (
-                <td className="datepicker__weekday" key={ day.format('dd') }>
-                    { day.format('dd') }
-                </td>
-            ))
+            calendar[0].by('days', (day) => dayList.push(day))
 
             weekDays = (
                 <tr>
-                    { weekDays }
+                    { dayList.map((day) => (
+                        <td className="datepicker__weekday" key={ day.format('dd') }>
+                            { day.format('dd') }
+                        </td>
+                    )) }
                 </tr>
             )
         }
@@ -166,7 +163,7 @@ export default class DatePicker extends Component {
         // Generate month days
         let weekCount = 0
 
-        const weeks = state.calendar.map((week) => {
+        const weeks = calendar.map((week) => {
             weekCount++
 
             const dayList = []
@@ -174,9 +171,9 @@ export default class DatePicker extends Component {
             week.by('days', (day) => dayList.push(day))
 
             const days = dayList.map((day) => {
-                const isCurrentMonth = day.month() === state.month
+                const isCurrentMonth = day.month() === month
                 const isToday = day.format('DD-MM-YYYY') === moment().format('DD-MM-YYYY')
-                const isSelected = day.format('DD-MM-YYYY') === state.date.format('DD-MM-YYYY')
+                const isSelected = day.format('DD-MM-YYYY') === date.format('DD-MM-YYYY')
                 const dayClasses = [ 'datepicker__day' ]
 
                 if (! isCurrentMonth) {
@@ -196,7 +193,7 @@ export default class DatePicker extends Component {
                         <a
                             className={ dayClasses.join(' ') }
                             href="#"
-                            onClick={ setDate.bind(this, day) }
+                            onClick={ this.setDate.bind(this, day) }
                         >
                             { day.format('D') }
                         </a>
@@ -214,15 +211,13 @@ export default class DatePicker extends Component {
             zIndex: '10000',
         }
 
-        if (this.props.position) {
-            if (this.props.alignment === 'bottom') {
-                datePickerStyles.top = this.props.position.height + VERTICAL_PADDING_PX
-            } else {
-                datePickerStyles.bottom = this.props.position.height + VERTICAL_PADDING_PX
-            }
-
-            datePickerStyles.display = 'block'
+        if (this.props.alignment === 'bottom') {
+            datePickerStyles.top = this.props.position + VERTICAL_PADDING_PX
+        } else {
+            datePickerStyles.bottom = this.props.position + VERTICAL_PADDING_PX
         }
+
+        datePickerStyles.display = 'block'
 
         return (
             <div style={ datePickerStyles }>
@@ -239,8 +234,8 @@ export default class DatePicker extends Component {
                                 </td>
                                 <td colSpan="5">
                                     <span className="datepicker__selected-date">
-                                        { moment().month(this.state.month).format('MMMM') }
-                                        { this.state.year }
+                                        { moment().month(month).format('MMMM') }
+                                        { year }
                                     </span>
                                 </td>
                                 <td>

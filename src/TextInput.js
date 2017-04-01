@@ -138,11 +138,9 @@ export default class TextInput extends Component {
      */
     handleDateChange = (value) => {
         this._datePickerOn = false
-
-        this.updateValue(value)
-
-        this.handleBlur()
         this._stopListenDatePickerClick()
+
+        this.setState({ value }, this.handleBlur)
     }
 
     /*
