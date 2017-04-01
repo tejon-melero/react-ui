@@ -58,6 +58,14 @@ export default class TextInput extends Component {
         }
     }
 
+    _datePickerOn = false
+
+    updateValue(value) {
+        if (value !== this.props.value) {
+            this.props.updateValue({ [this.props.name]: value })
+        }
+    }
+
     /*
      * Assigned the value upstream
      */
@@ -75,7 +83,7 @@ export default class TextInput extends Component {
         this.setState({ value })
 
         if (! this.props.updateValueOnBlur) {
-            this.props.updateValue({ [this.props.name]: value })
+            this.updateValue(value)
         }
     }
 
@@ -91,7 +99,7 @@ export default class TextInput extends Component {
             tooltipPosition,
         }
 
-        if (this.props.datePicker === true) {
+        if (this.props.datePicker) {
             if ((position.top + position.height / 2) < window.innerHeight / 2) {
                 newState.datePickerAlignment = 'bottom'
             } else {
@@ -111,7 +119,7 @@ export default class TextInput extends Component {
      * Handle blur
      */
     handleBlur = () => {
-        if (this._datePickerOn !== true) {
+        if (! this._datePickerOn) {
             this.setState({
                 showTooltip: false,
                 tooltipPosition: null,
@@ -119,7 +127,7 @@ export default class TextInput extends Component {
         }
 
         if (this.props.updateValueOnBlur) {
-            this.props.updateValue({ [this.props.name]: this.state.value })
+            this.updateValue(this.state.value)
         }
 
         this.props.handleBlur && this.props.handleBlur()
@@ -131,7 +139,7 @@ export default class TextInput extends Component {
     handleDateChange = (value) => {
         this._datePickerOn = false
 
-        this.props.updateValue({ [this.props.name]: value })
+        this.updateValue(value)
 
         this.handleBlur()
         this._stopListenDatePickerClick()
@@ -160,7 +168,7 @@ export default class TextInput extends Component {
      */
 
     checkDatePickerPosition = (e) => {
-        if (this._datePickerOn === true) {
+        if (this._datePickerOn) {
             // Get the area covered by the date picker
             const pDP = ReactDOM.findDOMNode(this.refs.datepicker).getBoundingClientRect()
             const pFC = this.refs['form-control'].getBoundingClientRect()
