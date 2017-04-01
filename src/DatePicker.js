@@ -216,9 +216,9 @@ export default class DatePicker extends Component {
             } else {
                 datePickerStyles.bottom = this.props.position + VERTICAL_PADDING_PX
             }
-        }
 
-        datePickerStyles.display = 'block'
+            datePickerStyles.display = 'block'
+        }
 
         return (
             <div style={ datePickerStyles }>
