@@ -236,6 +236,7 @@ export default class DatePicker extends Component {
                                 <td colSpan="5">
                                     <span className="datepicker__selected-date">
                                         { moment().month(month).format('MMMM') }
+                                        { ' ' }
                                         { year }
                                     </span>
                                 </td>
