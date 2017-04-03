@@ -9,7 +9,6 @@ import SubHelp from './SubHelp'
 export default class Checkbox extends Component {
     static propTypes = {
         ...formControlPropTypes,
-        ...focussablePropTypes,
 
         hidden: PropTypes.bool,
         value: PropTypes.bool.isRequired,
@@ -17,22 +16,15 @@ export default class Checkbox extends Component {
 
     static defaultProps = {
         hidden: false,
+        value: false,
     }
 
     _handleChange = () => {
         this.props.updateValue({ [this.props.name]: ! this.props.value })
     }
 
-    _handleFocus = () => {
-        this.props.handleFocus && this.props.handleFocus()
-    }
-
-    _handleBlur = () => {
-        this.props.handleBlur && this.props.handleBlur()
-    }
-
     render() {
-        const input_id = `id_${ this.props.name }`
+        const inputId = `${ this.props.name }-${ Math.floor(Math.random() * 10000) }`
 
         const groupClasses = classnames({
             'form__group': true,
@@ -48,11 +40,9 @@ export default class Checkbox extends Component {
             <input
                 checked={ this.props.value }
                 className="form__checkbox"
-                id={ input_id }
+                id={ inputId }
                 name={ this.props.name }
-                onBlur={ this._handleBlur }
                 onChange={ this._handleChange }
-                onFocus={ this._handleFocus }
                 style={
                     this.props.hidden ?
                         { position: 'absolute', top: '-9999px', left: '-9999px' } :
@@ -66,7 +56,7 @@ export default class Checkbox extends Component {
         return (
             <div className={ groupClasses }>
                 <div className={ controlClasses }>
-                    <Label for={ input_id }>
+                    <Label for={ inputId }>
                         { field }
                         { this.props.label }
                     </Label>
