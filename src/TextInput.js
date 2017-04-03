@@ -60,6 +60,16 @@ export default class TextInput extends Component {
 
     _datePickerOn = false
 
+    textInput = null
+
+    storeTextInputRef = (ref) => {
+        this.textInput = ref
+
+        if (this.props.innerRef) {
+            this.props.innerRef(ref)
+        }
+    }
+
     updateValue(value) {
         if (value !== this.props.value) {
             this.props.updateValue({ [this.props.name]: value })
@@ -230,7 +240,7 @@ export default class TextInput extends Component {
                     onFocus={ this.handleFocus }
                     onKeyPress={ this.props.onKeyPress }
                     placeholder={ this.props.placeholder }
-                    ref="input"
+                    ref={this.storeTextInputRef}
                     rows={ this.props.rows }
                     type={ this.props.type }
                     value={ value }
@@ -254,7 +264,7 @@ export default class TextInput extends Component {
                     onFocus={ this.handleFocus }
                     onKeyPress={ this.props.onKeyPress }
                     placeholder={ this.props.placeholder }
-                    ref="input"
+                    ref={this.storeTextInputRef}
                     type={ type }
                     value={ value }
                 />

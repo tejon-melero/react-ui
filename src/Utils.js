@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 export const formControlPropTypes = {
     error: PropTypes.string,
     help: PropTypes.node,
+    innerRef: PropTypes.func,
     label: PropTypes.node,
     name: PropTypes.string.isRequired,
     subHelp: PropTypes.node,
