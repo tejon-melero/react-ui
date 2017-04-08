@@ -3,7 +3,7 @@ import classnames from 'classnames'
 
 export default class Label extends Component {
     static propTypes = {
-        children: PropTypes.arrayOf(PropTypes.node),
+        children: PropTypes.node,
         className: PropTypes.string,
         inline: PropTypes.bool,
     }
