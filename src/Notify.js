@@ -20,7 +20,7 @@ export default class Notify extends Component {
 
     componentDidUpdate() {
         for (const item of Object.values(this.state.notifications)) {
-            const elm = this.refs[item.id]
+            const elm = this.myRefs[item.id]
 
             if (elm && (elm.style.opacity === '0')) {
                 elm.style.opacity = 1
@@ -33,9 +33,9 @@ export default class Notify extends Component {
         document.removeEventListener('reactUINotification', this.pushNotification)
     }
 
-    refs = {}
+    mymyRefs = {}
 
-    storeRefCreator = (id) => (ref) => this.refs[id] = ref
+    storeRefCreator = (id) => (ref) => this.myRefs[id] = ref
 
     pushNotification = (e) => {
         // Generate a unique id using a timestamp
