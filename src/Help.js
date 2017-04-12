@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
 // TODO: work this into styles, as padding and margin shouldn't be in the code, see Cotidia/react-ui#1
