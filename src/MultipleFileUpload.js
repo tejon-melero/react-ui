@@ -7,6 +7,7 @@ export default class MultipleFileUpload extends Component {
     static propTypes = {
         appendValue: PropTypes.func.isRequired,
         data: PropTypes.object,
+        disabled: PropTypes.bool,
         errorAction: PropTypes.func.isRequired,
         errors: PropTypes.array,
         helpText: PropTypes.node,
@@ -17,6 +18,7 @@ export default class MultipleFileUpload extends Component {
 
     static defaultProps = {
         data: {},
+        disabled: false,
         errors: [],
         helpText: null,
         value: [],
@@ -52,6 +54,7 @@ export default class MultipleFileUpload extends Component {
 
                 <FileUpload
                     data={ this.props.data }
+                    disabled={ this.props.disabled }
                     errorAction={ this.props.errorAction }
                     errors={ this.props.errors }
                     helpText={ this.props.helpText }

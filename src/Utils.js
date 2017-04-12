@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
 export const formControlPropTypes = {
+    disabled: PropTypes.bool,
     error: PropTypes.string,
     help: PropTypes.node,
     innerRef: PropTypes.func,

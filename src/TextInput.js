@@ -19,7 +19,6 @@ export default class TextInput extends Component {
 
         dateFormat: PropTypes.string,
         datePicker: PropTypes.bool,
-        disabled: PropTypes.bool,
         onKeyPress: PropTypes.func,
         placeholder: PropTypes.string,
         rows: PropTypes.number,
@@ -31,6 +30,7 @@ export default class TextInput extends Component {
 
     static defaultProps = {
         datePicker: false,
+        disabled: false,
         placeholder: '',
         rows: 6,
         type: 'text',
@@ -241,7 +241,7 @@ export default class TextInput extends Component {
                     onFocus={ this.handleFocus }
                     onKeyPress={ this.props.onKeyPress }
                     placeholder={ this.props.placeholder }
-                    ref={this.storeTextInputRef}
+                    ref={ this.storeTextInputRef }
                     rows={ this.props.rows }
                     type={ this.props.type }
                     value={ value }
@@ -265,7 +265,7 @@ export default class TextInput extends Component {
                     onFocus={ this.handleFocus }
                     onKeyPress={ this.props.onKeyPress }
                     placeholder={ this.props.placeholder }
-                    ref={this.storeTextInputRef}
+                    ref={ this.storeTextInputRef }
                     type={ type }
                     value={ value }
                 />

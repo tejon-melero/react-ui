@@ -16,7 +16,6 @@ export default class MultipleSelect extends Component {
         categoriseBy: PropTypes.string,
         className: PropTypes.string,
         defaultOptions: PropTypes.array,
-        disabled: PropTypes.bool,
         displaySelections: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
@@ -31,6 +30,7 @@ export default class MultipleSelect extends Component {
     }
 
     static defaultProps = {
+        disabled: false,
         displaySelections: true,
         values: [],
     }

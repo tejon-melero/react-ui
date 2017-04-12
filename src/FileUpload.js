@@ -6,6 +6,7 @@ const FIVE_MEBIBYTES = 5242880
 class FileUpload extends Component {
     static propTypes = {
         data: PropTypes.object,
+        disabled: PropTypes.bool,
         errorAction: PropTypes.func.isRequired,
         errors: PropTypes.array,
         helpText: PropTypes.node,
@@ -19,6 +20,7 @@ class FileUpload extends Component {
 
     static defaultProps = {
         data: {},
+        disabled: false,
         errors: [],
         helpText: (
             <p>
@@ -93,6 +95,7 @@ class FileUpload extends Component {
                 content = (
                     <input
                         accept="application/pdf,image/png"
+                        disabled={ this.props.disabled }
                         onChange={ this._onFileChange }
                         type="file"
                     />

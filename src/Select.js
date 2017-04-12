@@ -44,7 +44,6 @@ export default class Select extends Component {
         categoriseBy: PropTypes.string,
         closeOnSelect: PropTypes.bool,
         defaultOptions: PropTypes.array,
-        disabled: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.node,

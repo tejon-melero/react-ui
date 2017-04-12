@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-import { formControlPropTypes, focussablePropTypes } from './Utils'
+import { formControlPropTypes } from './Utils'
 
 import Label from './Label'
 import SubHelp from './SubHelp'
@@ -16,6 +16,7 @@ export default class Checkbox extends Component {
     }
 
     static defaultProps = {
+        disabled: false,
         hidden: false,
         value: false,
     }
@@ -41,6 +42,7 @@ export default class Checkbox extends Component {
             <input
                 checked={ this.props.value }
                 className="form__checkbox"
+                disabled={ this.props.disabled }
                 id={ inputId }
                 name={ this.props.name }
                 onChange={ this._handleChange }

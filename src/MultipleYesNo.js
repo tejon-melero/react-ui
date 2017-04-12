@@ -9,6 +9,10 @@ export default class MultipleYesNo extends Component {
         ...hasOptionsPropTypes,
     }
 
+    static defaultProps = {
+        disabled: false,
+    }
+
     constructor(props) {
         super(props)
 
@@ -105,6 +109,7 @@ class Option extends Component {
                     <label>
                         <input
                             checked={ this.props.currentValue === '1' }
+                            disabled={ this.props.disabled }
                             name={ this.props.option.value }
                             onChange={ this._handleChange }
                             type="radio"
@@ -117,6 +122,7 @@ class Option extends Component {
                     <label>
                         <input
                             checked={ this.props.currentValue === '2' }
+                            disabled={ this.props.disabled }
                             name={ this.props.option.value }
                             onChange={ this._handleChange }
                             type="radio"

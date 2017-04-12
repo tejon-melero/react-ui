@@ -19,6 +19,7 @@ export default class MultipleTextInput extends Component {
     }
 
     static defaultProps = {
+        disabled: false,
         type: 'text',
     }
 
@@ -69,6 +70,7 @@ export default class MultipleTextInput extends Component {
         if (value && value.length) {
             fields = value.map((item, index) => (
                 <TextInput
+                    disabled={ this.props.disabled }
                     handleBlur={ this.props.handleBlur }
                     handleFocus={ this.props.handleFocus }
                     key={ index }
@@ -90,6 +92,7 @@ export default class MultipleTextInput extends Component {
                     <div className="pull-right">
                         <Button
                             buttonOnly
+                            disabled={ this.props.disabled }
                             onClick={ this._addNewField }
                             status="create"
                         >

@@ -15,6 +15,7 @@ export default class MultipleCheckbox extends Component {
 
     static defaultProps = {
         columns: 1,
+        disabled: false,
     }
 
     _onOptionSelect = (data) => {
@@ -54,6 +55,7 @@ export default class MultipleCheckbox extends Component {
             optionList = this.props.options.map(
                 (option) => (
                     <Checkbox
+                        disabled={ this.props.disabled }
                         key={ option.value }
                         label={ option.label }
                         name={ option.value }

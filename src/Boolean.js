@@ -8,6 +8,10 @@ export default class Boolean extends Component {
         ...formControlPropTypes,
     }
 
+    static defaultProps = {
+        disabled: false,
+    }
+
     _handleChange = (e) => {
         const value = (e.target.value === '1')
 
@@ -42,6 +46,7 @@ export default class Boolean extends Component {
                                 <label htmlFor={ `${ this.props.name }-yes` }>
                                     <input
                                         checked={ this.props.value === true }
+                                        disabled={ this.props.disabled }
                                         id={ `${ this.props.name }-yes` }
                                         name={ `${ this.props.name }` }
                                         onChange={ this._handleChange }
@@ -55,6 +60,7 @@ export default class Boolean extends Component {
                                 <label htmlFor={ `${ this.props.name }-no` }>
                                     <input
                                         checked={ this.props.value === false }
+                                        disabled={ this.props.disabled }
                                         id={ `${ this.props.name }-no` }
                                         name={ `${ this.props.name }` }
                                         onChange={ this._handleChange }

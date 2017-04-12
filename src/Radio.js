@@ -15,6 +15,10 @@ export default class Radio extends Component {
         ...focussablePropTypes,
     }
 
+    static defaultProps = {
+        disabled: false,
+    }
+
     constructor(props) {
         super(props)
 
@@ -86,6 +90,7 @@ export default class Radio extends Component {
                             <input
                                 checked={ item.value === this.state.value }
                                 className="form__radio"
+                                disabled={ this.props.disabled }
                                 id={ option_id }
                                 name={ this.props.name }
                                 onBlur={ this._handleBlur }
