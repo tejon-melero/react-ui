@@ -19,10 +19,10 @@ export default class Notify extends Component {
     }
 
     componentDidUpdate() {
-        for (const item in this.state.notifications) {
-            const elm = this.refs[`item-${ item.id }`]
+        for (const item of Object.values(this.state.notifications)) {
+            const elm = this.refs[item.id]
 
-            if (elm.style.opacity === '0') {
+            if (elm && (elm.style.opacity === '0')) {
                 elm.style.opacity = 1
                 elm.style.top = 0
             }
@@ -32,6 +32,10 @@ export default class Notify extends Component {
     componentWillUnmount() {
         document.removeEventListener('reactUINotification', this.pushNotification)
     }
+
+    refs = {}
+
+    storeRefCreator = (id) => (ref) => this.refs[id] = ref
 
     pushNotification = (e) => {
         // Generate a unique id using a timestamp
@@ -117,7 +121,7 @@ export default class Notify extends Component {
             <div
                 className="react-ui-notification__item"
                 key={ item.id }
-                ref={ `item-${ item.id }` }
+                ref={ this.storeRefCreator(item.id) }
                 style={ itemStyle }
             >
                 <a
@@ -128,7 +132,7 @@ export default class Notify extends Component {
                     onMouseOver={ this.handleCloseOver }
                     style={ closeStyle }
                 >
-                    &times;
+                    { '⨉' }
                 </a>
 
                 { item.message }
