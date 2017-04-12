@@ -33,7 +33,7 @@ export default class Notify extends Component {
         document.removeEventListener('reactUINotification', this.pushNotification)
     }
 
-    mymyRefs = {}
+    myRefs = {}
 
     storeRefCreator = (id) => (ref) => this.myRefs[id] = ref
 
