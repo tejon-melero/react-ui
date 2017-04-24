@@ -6,6 +6,7 @@ export default class Button extends Component {
     static propTypes = {
         buttonOnly: PropTypes.bool,
         children: PropTypes.node,
+        className: PropTypes.string,
         disabled: PropTypes.bool,
         fullWidth: PropTypes.bool,
         large: PropTypes.bool,
@@ -19,6 +20,7 @@ export default class Button extends Component {
 
     static defaultProps = {
         buttonOnly: false,
+        className: '',
         disabled: false,
         fullWidth: false,
         large: false,
@@ -30,18 +32,17 @@ export default class Button extends Component {
     }
 
     render() {
-        const buttonClasses = classnames({
-            'btn': true,
-            'btn--primary': this.props.status === 'primary',
-            'btn--create': this.props.status === 'create',
-            'btn--change': this.props.status === 'change',
-            'btn--cancel': this.props.status === 'cancel',
-            'btn--delete': this.props.status === 'delete',
-            'btn--full-width': this.props.fullWidth,
-            'btn--large': this.props.large,
-            'btn--margin-bottom': this.props.marginBottom,
-            'btn--loading': this.props.loading,
-        })
+        const buttonClasses = classnames(
+            'btn',
+            this.props.className,
+            {
+                [`btn--${ this.props.status }`]: true,
+                'btn--full-width': this.props.fullWidth,
+                'btn--large': this.props.large,
+                'btn--margin-bottom': this.props.marginBottom,
+                'btn--loading': this.props.loading,
+            }
+        )
 
         const button = (
             <button
