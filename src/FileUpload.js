@@ -1,14 +1,18 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames'
+
+import GroupError from './Utils/GroupError'
 
 const FIVE_MEBIBYTES = 5242880
 
 class FileUpload extends Component {
     static propTypes = {
+        controlOnly: PropTypes.bool,
         data: PropTypes.object,
         disabled: PropTypes.bool,
+        error: PropTypes.string,
         errorAction: PropTypes.func.isRequired,
-        errors: PropTypes.array,
         helpText: PropTypes.node,
         maxFilesize: PropTypes.number,
         maxFilesizeHuman: PropTypes.string,
@@ -19,9 +23,9 @@ class FileUpload extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         data: {},
         disabled: false,
-        errors: [],
         helpText: (
             <p>
                 { 'Please upload the file in PDF format. ' }
@@ -66,17 +70,15 @@ class FileUpload extends Component {
     }
 
     render() {
-        let errors = null
+        const groupClasses = classnames({
+            'form__group': true,
+            'form__group--error': this.props.error,
+        })
 
-        if (this.props.errors && this.props.errors.length) {
-            errors = (
-                <div className="alert alert--error">
-                    { this.props.errors.map(
-                        (error, index) => <span key={ index }>{ error }<br /></span>
-                    ) }
-                </div>
-            )
-        }
+        const controlClasses = classnames(
+            'form__control',
+            'form__control--file',
+        )
 
         let content = null
 
@@ -113,11 +115,23 @@ class FileUpload extends Component {
             }
         }
 
-        return (
-            <div>
-                { errors }
-                { this.props.helpText }
+        const control = (
+            <div className={ controlClasses }>
                 { content }
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                <GroupError error={ this.props.error } />
+
+                { this.props.helpText }
+
+                { control }
             </div>
         )
     }

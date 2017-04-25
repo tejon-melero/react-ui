@@ -57,6 +57,7 @@ export default class Select extends Component {
 
     static defaultProps = {
         closeOnSelect: true,
+        controlOnly: false,
         defaultOptions: [],
         disabled: false,
         minCharSearch: 3,
@@ -627,11 +628,10 @@ export default class Select extends Component {
             }
         }
 
-        return (
-            <div className={ groupClasses }>
-                <Label for={ inputId }>
-                    { this.props.label }
-                </Label>
+        const control = (
+            <div>
+                <Label for={ inputId }>{ this.props.label }</Label>
+
                 <div className={ controlClasses } ref={ (ref) => { this.formControl = ref } }>
                     <input
                         name={ this.props.name }
@@ -671,7 +671,18 @@ export default class Select extends Component {
                         position={ this.state.tooltipPosition }
                     />
                 </div>
-                <SubHelp help={ this.props.subHelp }/>
+
+                <SubHelp help={ this.props.subHelp } />
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                { control }
             </div>
         )
     }

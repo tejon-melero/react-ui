@@ -3,7 +3,7 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
 
-import FieldError from './Utils/FieldError'
+import GroupError from './Utils/GroupError'
 import Help from './Utils/Help'
 import SubHelp from './Utils/SubHelp'
 
@@ -17,6 +17,7 @@ export default class Radio extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         disabled: false,
     }
 
@@ -72,9 +73,10 @@ export default class Radio extends Component {
             'form__group--error': this.props.error,
         })
 
-        const controlClasses = classnames({
-            'form__control': true,
-        })
+        const controlClasses = classnames(
+            'form__control',
+            'form__control--radio',
+        )
 
         /*
          * Add a default option for no selection
@@ -107,23 +109,31 @@ export default class Radio extends Component {
             })
         }
 
-        return (
-            <div className={ groupClasses }>
+        const control = (
+            <div className={ controlClasses }>
                 <Label>{ this.props.label }</Label>
-                <FieldError
-                    error={ this.props.error }
-                    on={ this.state.showTooltip }
+
+                <ul className="control-radio__options" >{ optionList }</ul>
+
+                <Help
+                    help={ this.props.help }
+                    on={ this.state.showTooltip && ! this.props.error }
                     position={ this.state.tooltipPosition }
                 />
-                <div className={ controlClasses } ref="form-control">
-                    <ul className="control-radio__options" >{ optionList }</ul>
-                    <Help
-                        help={ this.props.help }
-                        on={ this.state.showTooltip && !this.props.error }
-                        position={ this.state.tooltipPosition }
-                    />
-                    <SubHelp help={ this.props.subHelp }/>
-                </div>
+
+                <SubHelp help={ this.props.subHelp }/>
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                <GroupError error={ this.props.error } />
+
+                { control }
             </div>
         )
     }

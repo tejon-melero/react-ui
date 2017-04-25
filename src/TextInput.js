@@ -30,6 +30,7 @@ export default class TextInput extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         datePicker: false,
         disabled: false,
         placeholder: '',
@@ -295,11 +296,10 @@ export default class TextInput extends Component {
             )
         }
 
-        return (
-            <div className={ groupClasses }>
-                <Label for={ inputId }>
-                    { this.props.label }
-                </Label>
+        const control = (
+            <div>
+                <Label for={ inputId }>{ this.props.label }</Label>
+
                 <div className={ controlClasses } ref="form-control">
                     <FieldError
                         error={ this.props.error }
@@ -309,7 +309,18 @@ export default class TextInput extends Component {
                     { field }
                     { helpUI }
                 </div>
-                <SubHelp help={ this.props.subHelp }/>
+
+                <SubHelp help={ this.props.subHelp } />
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                { control }
             </div>
         )
     }

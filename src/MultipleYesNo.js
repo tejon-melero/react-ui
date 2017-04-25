@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
+
+import GroupError from './Utils/GroupError'
 
 export default class MultipleYesNo extends Component {
     static propTypes = {
@@ -10,6 +13,7 @@ export default class MultipleYesNo extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         disabled: false,
     }
 
@@ -44,6 +48,17 @@ export default class MultipleYesNo extends Component {
     }
 
     render() {
+        const groupClasses = classnames({
+            'form__group': true,
+            'form__group--error': this.props.error,
+        })
+
+        const controlClasses = classnames(
+            'form__control',
+            'form__control--multiple',
+            'form__control--boolean',
+        )
+
         let optionList = null
 
         if (this.props.options) {
@@ -59,21 +74,25 @@ export default class MultipleYesNo extends Component {
             )
         }
 
-        let error = null
+        const control = (
+            <div className={ controlClasses }>
+                <table className="table table--multipleyesno">
+                    <tbody>
+                        { optionList }
+                    </tbody>
+                </table>
+            </div>
+        )
 
-        if (this.props.error) {
-            error = (
-                <div className="alert alert--error">
-                    { this.props.error }
-                </div>
-            )
+        if (this.props.controlOnly) {
+            return control
         }
 
         return (
-            <div>
-                { error }
+            <div className={ groupClasses }>
+                <GroupError error={ this.props.error } />
 
-                <table className="table table--multipleyesno"><tbody>{ optionList }</tbody></table>
+                { control }
             </div>
         )
     }
@@ -82,11 +101,16 @@ export default class MultipleYesNo extends Component {
 class Option extends Component {
     static propTypes = {
         currentValue: PropTypes.number.isRequired,
+        disabled: PropTypes.bool,
         onSelect: PropTypes.func.isRequired,
         option: PropTypes.shape({
             value: PropTypes.any.isRequired,
             label: PropTypes.node.isRequired,
         }).isRequired,
+    }
+
+    static defaultProps = {
+        disabled: false,
     }
 
     constructor(props) {

@@ -4,6 +4,7 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
+import GroupError from './Utils/GroupError'
 import SubHelp from './Utils/SubHelp'
 
 import Button from './Button'
@@ -20,6 +21,7 @@ export default class MultipleTextInput extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         disabled: false,
         type: 'text',
     }
@@ -58,19 +60,19 @@ export default class MultipleTextInput extends Component {
     }
 
     render() {
-        const value = this.state.value
-        const inputId = `id_${ this.props.name }`
-
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.error,
         })
 
-        let fields = []
+        let fields = null
+
+        const value = this.state.value
 
         if (value && value.length) {
             fields = value.map((item, index) => (
                 <TextInput
+                    controlOnly
                     disabled={ this.props.disabled }
                     handleBlur={ this.props.handleBlur }
                     handleFocus={ this.props.handleFocus }
@@ -83,9 +85,9 @@ export default class MultipleTextInput extends Component {
             ))
         }
 
-        return (
-            <div className={ groupClasses }>
-                <Label for={ inputId }>{ this.props.label }</Label>
+        const control = (
+            <div>
+                <Label>{ this.props.label }</Label>
 
                 { fields }
 
@@ -103,6 +105,18 @@ export default class MultipleTextInput extends Component {
                 </div>
 
                 <SubHelp help={ this.props.subHelp } />
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                <GroupError error={ this.props.error } />
+
+                { control }
             </div>
         )
     }

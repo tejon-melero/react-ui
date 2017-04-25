@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
 
@@ -30,6 +31,7 @@ export default class MultipleSelect extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         disabled: false,
         displaySelections: true,
         values: [],
@@ -96,6 +98,11 @@ export default class MultipleSelect extends Component {
     }
 
     render() {
+        const groupClasses = classnames({
+            'form__group': true,
+            'form__group--error': this.props.error,
+        })
+
         let selectedItems = null
 
         if (this.props.values.length && this.props.displaySelections) {
@@ -113,10 +120,11 @@ export default class MultipleSelect extends Component {
             ))
         }
 
-        return (
+        const control = (
             <div className={ this.props.className }>
                 <Select
                     closeOnSelect={ false }
+                    controlOnly
                     defaultOptions={ this.props.defaultOptions }
                     disabled={ this.props.disabled }
                     error={ this.props.error }
@@ -139,6 +147,16 @@ export default class MultipleSelect extends Component {
                 />
 
                 { selectedItems }
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                { control }
             </div>
         )
     }

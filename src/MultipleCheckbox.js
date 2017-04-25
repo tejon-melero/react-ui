@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
+
+import GroupError from './Utils/GroupError'
 
 import Checkbox from './Checkbox'
 
@@ -15,6 +18,7 @@ export default class MultipleCheckbox extends Component {
 
     static defaultProps = {
         columns: 1,
+        controlOnly: false,
         disabled: false,
     }
 
@@ -47,6 +51,11 @@ export default class MultipleCheckbox extends Component {
     }
 
     render() {
+        const groupClasses = classnames({
+            'form__group': true,
+            'form__group--error': this.props.error,
+        })
+
         const columnisedOptionsList = []
 
         let optionList = []
@@ -55,6 +64,7 @@ export default class MultipleCheckbox extends Component {
             optionList = this.props.options.map(
                 (option) => (
                     <Checkbox
+                        controlOnly
                         disabled={ this.props.disabled }
                         key={ option.value }
                         label={ option.label }
@@ -85,29 +95,29 @@ export default class MultipleCheckbox extends Component {
             columnisedOptionsList.push(optionList)
         }
 
-        let error = null
-
-        if (this.props.error) {
-            error = (
-                <div className="alert alert--error">
-                    { this.props.error }
-                </div>
-            )
-        }
-
-        return (
+        const control = (
             <div>
-                { error }
-
                 <table width="100%">
                     <tbody>
                         <tr>
                             { columnisedOptionsList.map((column, index) => (
-                                <td key={ `column-${ index }` }>{ column }</td>
+                                <td key={ index }>{ column }</td>
                             )) }
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                <GroupError error={ this.props.error } />
+
+                { control }
             </div>
         )
     }

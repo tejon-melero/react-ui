@@ -4,8 +4,10 @@ import classnames from 'classnames'
 
 import { formControlPropTypes } from './Utils'
 
-import Label from './Label'
+import GroupError from './Utils/GroupError'
 import SubHelp from './Utils/SubHelp'
+
+import Label from './Label'
 
 export default class Checkbox extends Component {
     static propTypes = {
@@ -16,6 +18,7 @@ export default class Checkbox extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         disabled: false,
         hidden: false,
         value: false,
@@ -26,45 +29,48 @@ export default class Checkbox extends Component {
     }
 
     render() {
-        const inputId = `${ this.props.name }-${ Math.floor(Math.random() * 10000) }`
-
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.error,
         })
 
-        const controlClasses = classnames({
-            'form__control': true,
-            'form__control--checkbox': true,
-        })
-
-        const field = (
-            <input
-                checked={ this.props.value }
-                className="form__checkbox"
-                disabled={ this.props.disabled }
-                id={ inputId }
-                name={ this.props.name }
-                onChange={ this._handleChange }
-                style={
-                    this.props.hidden ?
-                        { position: 'absolute', top: '-9999px', left: '-9999px' } :
-                        null
-                }
-                type="checkbox"
-                value={ 1 }
-            />
+        const controlClasses = classnames(
+            'form__control',
+            'form__control--checkbox',
         )
+
+        const inputId = `${ this.props.name }-${ Math.floor(Math.random() * 10000) }`
+
+        const control = (
+            <div className={ controlClasses }>
+                <Label for={ inputId }>
+                    <input
+                        checked={ this.props.value }
+                        className="form__checkbox"
+                        disabled={ this.props.disabled }
+                        id={ inputId }
+                        name={ this.props.name }
+                        onChange={ this._handleChange }
+                        style={ this.props.hidden && ({ position: 'absolute', top: '-9999px', left: '-9999px' }) }
+                        type="checkbox"
+                        value={ 1 }
+                    />
+
+                    { this.props.label }
+                </Label>
+                <SubHelp help={ this.props.subHelp }/>
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
 
         return (
             <div className={ groupClasses }>
-                <div className={ controlClasses }>
-                    <Label for={ inputId }>
-                        { field }
-                        { this.props.label }
-                    </Label>
-                    <SubHelp help={ this.props.subHelp }/>
-                </div>
+                <GroupError error={ this.props.error } />
+
+                { control }
             </div>
         )
     }

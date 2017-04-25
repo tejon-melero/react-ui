@@ -3,12 +3,15 @@ import classnames from 'classnames'
 
 import { formControlPropTypes } from './Utils'
 
+import GroupError from './Utils/GroupError'
+
 export default class Boolean extends Component {
     static propTypes = {
         ...formControlPropTypes,
     }
 
     static defaultProps = {
+        controlOnly: false,
         disabled: false,
     }
 
@@ -19,35 +22,30 @@ export default class Boolean extends Component {
     }
 
     render() {
-        let error = null
+        const groupClasses = classnames({
+            'form__group': true,
+            'form__group--error': this.props.error,
+        })
 
-        if (this.props.error) {
-            error = (
-                <div className="alert alert--error">
-                    { this.props.error }
-                </div>
-            )
-        }
+        const controlClasses = classnames(
+            'form__control',
+            'form__control--boolean',
+        )
 
-        return (
-            <div
-                className={ classnames({
-                    'form__group': true,
-                    'form__group--error': this.props.error,
-                }) }
-            >
-                { error }
+        const inputId = `${ this.props.name }-${ Math.floor(Math.random() * 10000) }`
 
-                <table className="table table--multipleyesno table--boolean">
+        const control = (
+            <div className={ controlClasses }>
+                <table className="table table--boolean">
                     <tbody>
                         <tr className="table-row">
                             <td className="table-cell"><label>{ this.props.label }</label></td>
                             <td className="table-cell" width="80">
-                                <label htmlFor={ `${ this.props.name }-yes` }>
+                                <label htmlFor={ `${ inputId }-yes` }>
                                     <input
                                         checked={ this.props.value === true }
                                         disabled={ this.props.disabled }
-                                        id={ `${ this.props.name }-yes` }
+                                        id={ `${ inputId }-yes` }
                                         name={ `${ this.props.name }` }
                                         onChange={ this._handleChange }
                                         type="radio"
@@ -57,11 +55,11 @@ export default class Boolean extends Component {
                                 </label>
                             </td>
                             <td className="table-cell" width="80">
-                                <label htmlFor={ `${ this.props.name }-no` }>
+                                <label htmlFor={ `${ inputId }-no` }>
                                     <input
                                         checked={ this.props.value === false }
                                         disabled={ this.props.disabled }
-                                        id={ `${ this.props.name }-no` }
+                                        id={ `${ inputId }-no` }
                                         name={ `${ this.props.name }` }
                                         onChange={ this._handleChange }
                                         type="radio"
@@ -73,6 +71,18 @@ export default class Boolean extends Component {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
+        return (
+            <div className={ groupClasses }>
+                <GroupError error={ this.props.error } />
+
+                { control }
             </div>
         )
     }
