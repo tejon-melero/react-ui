@@ -51,7 +51,7 @@ export default class Checkbox extends Component {
                         id={ inputId }
                         name={ this.props.name }
                         onChange={ this._handleChange }
-                        style={ this.props.hidden && ({ position: 'absolute', top: '-9999px', left: '-9999px' }) }
+                        style={ (this.props.hidden && ({ position: 'absolute', top: '-9999px', left: '-9999px' }) || null) }
                         type="checkbox"
                         value={ 1 }
                     />
