@@ -3,10 +3,11 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
 
+import FieldError from './Utils/FieldError'
+import Help from './Utils/Help'
+import SubHelp from './Utils/SubHelp'
+
 import Label from './Label'
-import FieldError from './FieldError'
-import Help from './Help'
-import SubHelp from './SubHelp'
 
 export default class Radio extends Component {
     static propTypes = {

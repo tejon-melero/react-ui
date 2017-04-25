@@ -9,10 +9,11 @@ import {
     getProperty,
 } from './Utils'
 
+import FieldError from './Utils/FieldError'
+import Help from './Utils/Help'
+import SubHelp from './Utils/SubHelp'
+
 import Label from './Label'
-import FieldError from './FieldError'
-import Help from './Help'
-import SubHelp from './SubHelp'
 
 function createHighlightNode(text, highlight) {
     const index = text.toLowerCase().indexOf(highlight)

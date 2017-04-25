@@ -6,11 +6,12 @@ import moment from 'moment'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
+import FieldError from './Utils/FieldError'
+import Label from './Utils/Label'
+import SubHelp from './Utils/SubHelp'
+
 import DatePicker from './DatePicker'
-import FieldError from './FieldError'
 import Help from './Help'
-import Label from './Label'
-import SubHelp from './SubHelp'
 
 export default class TextInput extends Component {
     static propTypes = {

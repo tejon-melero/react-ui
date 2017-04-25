@@ -5,13 +5,15 @@ export {
     handleDeleteInnerForm,
 } from './Utils'
 
+export FieldError from './Utils/FieldError'
+export Help from './Utils/Help'
+export SubHelp from './Utils/SubHelp'
+
 export Button from './Button'
 export Boolean from './Boolean'
 export Checkbox from './Checkbox'
 export DatePicker from './DatePicker'
-export FieldError from './FieldError'
 export FileUpload from './FileUpload'
-export Help from './Help'
 export Label from './Label'
 export MultipleCheckbox from './MultipleCheckbox'
 export MultipleFileUpload from './MultipleFileUpload'
@@ -21,5 +23,4 @@ export MultipleYesNo from './MultipleYesNo'
 export Notify from './Notify'
 export Radio from './Radio'
 export Select from './Select'
-export SubHelp from './SubHelp'
 export TextInput from './TextInput'

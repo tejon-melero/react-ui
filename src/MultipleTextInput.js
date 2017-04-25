@@ -4,9 +4,10 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
+import SubHelp from './Utils/SubHelp'
+
 import Button from './Button'
 import Label from './Label'
-import SubHelp from './SubHelp'
 import TextInput from './TextInput'
 
 export default class MultipleTextInput extends Component {

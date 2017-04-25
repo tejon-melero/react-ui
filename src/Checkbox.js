@@ -5,7 +5,7 @@ import classnames from 'classnames'
 import { formControlPropTypes } from './Utils'
 
 import Label from './Label'
-import SubHelp from './SubHelp'
+import SubHelp from './Utils/SubHelp'
 
 export default class Checkbox extends Component {
     static propTypes = {
