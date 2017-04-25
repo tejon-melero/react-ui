@@ -39,7 +39,11 @@ export default class Boolean extends Component {
                 <table className="table table--boolean">
                     <tbody>
                         <tr className="table-row">
-                            <td className="table-cell"><label>{ this.props.label }</label></td>
+                            { this.props.label &&
+                                <td className="table-cell">
+                                    <label>{ this.props.label }</label>
+                                </td>
+                            }
                             <td className="table-cell" width="80">
                                 <label htmlFor={ `${ inputId }-yes` }>
                                     <input
