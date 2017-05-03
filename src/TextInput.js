@@ -13,6 +13,8 @@ import SubHelp from './Utils/SubHelp'
 import DatePicker from './DatePicker'
 import Label from './Label'
 
+const emailRegex = /^\w+@\w+\.[a-z.]+$/
+
 export default class TextInput extends Component {
     static propTypes = {
         ...formControlPropTypes,
@@ -104,7 +106,7 @@ export default class TextInput extends Component {
      * Handle focus
      */
     handleFocus = () => {
-        const position = this.refs['form-control'].getBoundingClientRect()
+        const position = this.refs.formControl.getBoundingClientRect()
         const tooltipPosition = position.height
 
         const newState = {
@@ -182,17 +184,20 @@ export default class TextInput extends Component {
         if (this._datePickerOn) {
             // Get the area covered by the date picker
             const pDP = ReactDOM.findDOMNode(this.refs.datepicker).getBoundingClientRect()
-            const pFC = this.refs['form-control'].getBoundingClientRect()
+            const pFC = this.refs.formControl.getBoundingClientRect()
 
             // Get the position of the mouse
             const mouseX = e.clientX
             const mouseY = e.clientY
 
             if (pDP.left < mouseX < pDP.right && pDP.top < mouseY < pDP.bottom) {
-                // nothing, just handy to use thie positive test to get our else condition
+                // mouse is within the datepicker
+                // do nothing, just handy to use the positive test to get our else condition
             } else if (pFC.left < mouseX < pFC.right && pFC.top < mouseY < pFC.bottom) {
-                // also nothing, wait for it...
+                // mouse is within the form control div
+                // also do nothing, but wait for it...
             } else {
+                // mouse is both ouside of the datepicker and the form control, hide the datepicker
                 this._datePickerOn = false
                 this.handleBlur()
                 this._stopListenDatePickerClick()
@@ -204,9 +209,7 @@ export default class TextInput extends Component {
      * Validate email
      */
     _isEmailValid(value) {
-        const re = /^[\w]+@[\w]+\.[a-z\.]+$/
-
-        return re.test(value)
+        return emailRegex.test(value)
     }
 
     /*
@@ -300,7 +303,7 @@ export default class TextInput extends Component {
             <div>
                 <Label for={ inputId }>{ this.props.label }</Label>
 
-                <div className={ controlClasses } ref="form-control">
+                <div className={ controlClasses } ref="formControl">
                     <FieldError
                         error={ this.props.error }
                         on={ this.state.showTooltip }
