@@ -12,6 +12,9 @@ export default class DatePicker extends Component {
         alignment: PropTypes.oneOf([ 'top', 'bottom' ]),
         date: PropTypes.instanceOf(moment).isRequired,
         dateFormat: PropTypes.string,
+        innerRef: PropTypes.func,
+        max: PropTypes.instanceOf(moment).isRequired,
+        min: PropTypes.instanceOf(moment).isRequired,
         onChange: PropTypes.func,
         position: PropTypes.number,
         weekDayStart: PropTypes.number,
@@ -47,6 +50,8 @@ export default class DatePicker extends Component {
             calendar: this.getCalendar(year, month),
         }
     }
+
+    storeContainerRef = (ref) => this.props.innerRef && this.props.innerRef(ref)
 
     getCalendar(year, month) {
         // Get a date in the given month and year
@@ -222,7 +227,7 @@ export default class DatePicker extends Component {
         }
 
         return (
-            <div style={ datePickerStyles }>
+            <div ref={ this.storeContainerRef } style={ datePickerStyles }>
                 <div className="datepicker">
                     <table>
                         <thead>

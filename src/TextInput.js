@@ -10,7 +10,6 @@ import FieldError from './Utils/FieldError'
 import Help from './Utils/Help'
 import SubHelp from './Utils/SubHelp'
 
-import DatePicker from './DatePicker'
 import Label from './Label'
 
 const emailRegex = /^\w+@\w+\.[a-z.]+$/
@@ -20,26 +19,25 @@ export default class TextInput extends Component {
         ...formControlPropTypes,
         ...focussablePropTypes,
 
-        dateFormat: PropTypes.string,
-        datePicker: PropTypes.bool,
+        max: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
+        min: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
         onKeyPress: PropTypes.func,
         placeholder: PropTypes.string,
+        required: PropTypes.bool,
         rows: PropTypes.number,
+        step: PropTypes.number,
         success: PropTypes.bool,
         type: PropTypes.string, // oneOf?
         updateValueOnBlur: PropTypes.bool,
-        weekDayStart: PropTypes.number,
     }
 
     static defaultProps = {
         controlOnly: false,
-        datePicker: false,
         disabled: false,
         placeholder: '',
         rows: 6,
         type: 'text',
         updateValueOnBlur: true,
-        weekDayStart: 0,
     }
 
     constructor(props) {
@@ -62,8 +60,6 @@ export default class TextInput extends Component {
             })
         }
     }
-
-    _datePickerOn = false
 
     textInput = null
 
@@ -109,23 +105,10 @@ export default class TextInput extends Component {
         const position = this.refs.formControl.getBoundingClientRect()
         const tooltipPosition = position.height
 
-        const newState = {
+        this.setState({
             showTooltip: true,
             tooltipPosition,
-        }
-
-        if (this.props.datePicker) {
-            if ((position.top + position.height / 2) < window.innerHeight / 2) {
-                newState.datePickerAlignment = 'bottom'
-            } else {
-                newState.datePickerAlignment = 'top'
-            }
-
-            this._listenDatePickerClick()
-            this._datePickerOn = true
-        }
-
-        this.setState(newState)
+        })
 
         this.props.handleFocus && this.props.handleFocus()
     }
@@ -134,75 +117,11 @@ export default class TextInput extends Component {
      * Handle blur
      */
     handleBlur = () => {
-        if (! this._datePickerOn) {
-            this.setState({
-                showTooltip: false,
-                tooltipPosition: null,
-            })
-        }
-
         if (this.props.updateValueOnBlur) {
             this.updateValue(this.state.value)
         }
 
         this.props.handleBlur && this.props.handleBlur()
-    }
-
-    /*
-     * Handle value change from the date picker
-     */
-    handleDateChange = (value) => {
-        this._datePickerOn = false
-        this._stopListenDatePickerClick()
-
-        this.setState({ value }, this.handleBlur)
-    }
-
-    /*
-     * Start listening to click events, if the user click out of the date picker,
-     * then hide it.
-     */
-    _listenDatePickerClick() {
-        this._listener = (e) => this.checkDatePickerPosition(e)
-        document.addEventListener('click', this._listener)
-    }
-
-    /*
-     * Stop listening to click events
-     */
-
-    _stopListenDatePickerClick() {
-        document.removeEventListener('click', this._listener)
-    }
-
-    /*
-     * Check if the mouse click is within the datepicker or form-control area
-     * If the mouse click is outside of the area, then we hide the date picker
-     */
-
-    checkDatePickerPosition = (e) => {
-        if (this._datePickerOn) {
-            // Get the area covered by the date picker
-            const pDP = ReactDOM.findDOMNode(this.refs.datepicker).getBoundingClientRect()
-            const pFC = this.refs.formControl.getBoundingClientRect()
-
-            // Get the position of the mouse
-            const mouseX = e.clientX
-            const mouseY = e.clientY
-
-            if (pDP.left < mouseX < pDP.right && pDP.top < mouseY < pDP.bottom) {
-                // mouse is within the datepicker
-                // do nothing, just handy to use the positive test to get our else condition
-            } else if (pFC.left < mouseX < pFC.right && pFC.top < mouseY < pFC.bottom) {
-                // mouse is within the form control div
-                // also do nothing, but wait for it...
-            } else {
-                // mouse is both ouside of the datepicker and the form control, hide the datepicker
-                this._datePickerOn = false
-                this.handleBlur()
-                this._stopListenDatePickerClick()
-            }
-        }
     }
 
     /*
@@ -247,6 +166,7 @@ export default class TextInput extends Component {
                     onKeyPress={ this.props.onKeyPress }
                     placeholder={ this.props.placeholder }
                     ref={ this.storeTextInputRef }
+                    required={ this.props.required }
                     rows={ this.props.rows }
                     type={ this.props.type }
                     value={ value }
@@ -255,15 +175,13 @@ export default class TextInput extends Component {
         } else {
             let type = this.props.type
 
-            if (this.props.datePicker) {
-                type = 'date'
-            }
-
             field = (
                 <input
                     className="form__text"
                     disabled={ this.props.disabled }
                     id={ inputId }
+                    max={ this.props.max }
+                    min={ this.props.min }
                     name={ this.props.name }
                     onBlur={ this.handleBlur }
                     onChange={ this.handleChange }
@@ -271,33 +189,21 @@ export default class TextInput extends Component {
                     onKeyPress={ this.props.onKeyPress }
                     placeholder={ this.props.placeholder }
                     ref={ this.storeTextInputRef }
+                    required={ this.props.required }
+                    step={ this.props.step }
                     type={ type }
                     value={ value }
                 />
             )
         }
 
-        if (this.props.datePicker) {
-            helpUI = (
-                <DatePicker
-                    alignment={ this.state.datePickerAlignment }
-                    date={ moment(value) }
-                    dateFormat={ this.props.dateFormat || null }
-                    onChange={ this.handleDateChange }
-                    position={ this.state.tooltipPosition }
-                    ref="datepicker"
-                    weekDayStart={ this.props.weekDayStart || null }
-                />
-            )
-        } else {
-            helpUI = (
-                <Help
-                    help={ this.props.help }
-                    on={ this.state.showTooltip && ! this.props.error }
-                    position={ this.state.tooltipPosition }
-                />
-            )
-        }
+        helpUI = (
+            <Help
+                help={ this.props.help }
+                on={ this.state.showTooltip && ! this.props.error }
+                position={ this.state.tooltipPosition }
+            />
+        )
 
         const control = (
             <div>
