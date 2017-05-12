@@ -185,11 +185,11 @@ export default class TextInput extends Component {
                         className="form__text"
                         disabled={ this.props.disabled }
                         id={ inputId }
-                        locked
                         name={ this.props.name }
                         onBlur={ this.handleBlur }
                         onFocus={ this.handleFocus }
                         placeholder={ this.props.placeholder }
+                        readOnly
                         ref={ this.storeTextInputRef }
                         required={ this.props.required }
                         type="text"
