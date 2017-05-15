@@ -10,149 +10,192 @@ const WEEKS_TO_DISPLAY = 6
 export default class DatePicker extends Component {
     static propTypes = {
         alignment: PropTypes.oneOf([ 'top', 'bottom' ]),
-        date: PropTypes.instanceOf(moment).isRequired,
+        date: PropTypes.instanceOf(moment),
         dateFormat: PropTypes.string,
         innerRef: PropTypes.func,
-        max: PropTypes.instanceOf(moment).isRequired,
-        min: PropTypes.instanceOf(moment).isRequired,
-        onChange: PropTypes.func,
+        max: PropTypes.instanceOf(moment),
+        min: PropTypes.instanceOf(moment),
+        onChange: PropTypes.func.isRequired,
         position: PropTypes.number,
         weekDayStart: PropTypes.number,
     }
 
     static defaultProps = {
-        date: moment(),
-        weekDayStart: 0,
+        weekDayStart: 1,
     }
 
     constructor(props) {
         super(props)
 
-        if (this.props.weekDayStart === 1) {
-            //  Set locale to start week on Monday
-            moment.locale('en', {
-                week: {
-                    dow: 1, // In UK, Monday is the first day of the week.
-                    doy: 4, // In UK, The week that contains Jan 4th is the first week of the year.
-                },
-            })
-        } else {
-            moment.locale('en')
+        //  Set locale to start week on Monday
+        moment.updateLocale('en', {
+            week: {
+                dow: this.props.weekDayStart,
+                // Just use the moment default (https://github.com/moment/moment/blob/develop/src/lib/units/week.js#L46)
+                // here, but this shouldn't affect us either way as we don't care about week numbers.
+                doy: 6,
+            },
+        })
+
+        moment.locale('en')
+    }
+
+    state = {
+        month: moment().startOf('month'),
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (
+            this.props.min !== nextProps.min ||
+            this.props.max !== nextProps.max ||
+            this.props.date !== nextProps.date
+        ) {
+            const validDate = this.getValidDate(nextProps.date, nextProps.min, nextProps.max)
+
+            if (validDate !== nextProps.date) {
+                this.setDate(validDate)
+            }
+        }
+    }
+
+    getValidDate(date, min, max) {
+        // Note: because any invalid date will return `false` when compatred to any other date
+        // (valid or not), we can avoid any `isValid` checks in this function and simply assume
+        // validity, because all our conditions and comparisons only return something other than
+        // the original date if the comparisons return `true`.
+
+        // First just ensure that we have a usable date, because without one it's going to be
+        // difficult to do any comparisons.
+        if (! (date && date instanceof moment)) {
+            return date
         }
 
-        const month = moment().month()
-        const year = moment().year()
+        // If we have a usable min and max and they're in the nonstandard order (i.e. disallow a
+        // given range, but all history and future is valid):
+        if (min && max && min instanceof moment && max instanceof moment) {
+            if (max.isBefore(min, 'day') && date.isBetween(min, max, 'day', '()')) {
+                // In this case, we set date to its closest out of min and max, with min winning
+                // a tie.
 
-        this.state = {
-            date: this.props.date,
-            month,
-            year,
-            calendar: this.getCalendar(year, month),
+                const maxDiff = date.diff(max, 'days', true)
+                const minDiff = min.diff(date, 'days', true)
+
+                if (maxDiff < minDiff) {
+                    return max
+                }
+
+                return min
+            }
         }
+
+        // Okay if we got here, it's a normal date range where min is before max (though either may
+        // be unspecified).
+
+        // In this case, just set date to min if before min, max if after max.
+        if (min && min instanceof moment && date.isBefore(min, 'day')) {
+            return min
+        } else if (max & max instanceof moment && date.isAfter(max, 'day')) {
+            return max
+        }
+
+        // If we got here, the date is a normal date in between min and max 😱 so just return it
+        return date
+    }
+
+    isValidDate(date, min, max) {
+        // See above for the basis of the logic here. This function only has to determine if the
+        // date is out of bounds, so doesn't have quite as much code, but uses the same basic
+        // checks.
+
+        if (! (date && date instanceof moment)) {
+            return false
+        }
+
+        // Inverted min/max (window of invalid as opposed to window of valid). Check if date is in
+        // that invalid window.
+        if (min && max && min instanceof moment && max instanceof moment && max.isBefore(min, 'day')) {
+            return (! date.isBetween(min, max, 'day', '()'))
+        }
+
+        // Normal date range with optional min/max
+
+        if (min && min instanceof moment && date.isBefore(min, 'day')) {
+            return false
+        } else if (max & max instanceof moment && date.isAfter(max, 'day')) {
+            return false
+        }
+
+        // Normal date range, date in range.
+        return true
     }
 
     storeContainerRef = (ref) => this.props.innerRef && this.props.innerRef(ref)
 
-    getCalendar(year, month) {
-        // Get a date in the given month and year
-        const startDate = moment([ year, month ])
-
-        // Get the first and last date of the month
-        const firstDay = moment(startDate).startOf('month')
-        const endDay = moment(startDate).endOf('month')
-
-        // Create a month range we can iterate through
-        const monthRange = moment.range(firstDay, endDay)
-
-        // Create an empty list of weeks IDs and calendar (list of week ranges)
-        const weeks = []
+    getCalendar(month) {
+        // Calendar will be our list of week ranges,
         const calendar = []
 
-        // Look through each day and add the week to the range if not added
-        // already
-        monthRange.by('days', (day) => {
-            if (! weeks.includes(day.week())) {
-                // Create a range for the week of that day
-                const weekRange = moment.range(
-                    moment(day).startOf('week'),
-                    moment(day).endOf('week')
+        // We need to ensure that the calendar will include the entire month, so we need to know when it ends.
+        const lastDayOfMonth = month.clone().endOf('month')
+
+        // curDay is just a temporary stepping variable, and is initialised to the first day of the
+        // first week of the month (most probably a date before the 1st of the month).
+        // Realistically, becasue we want at least six weeks, this is not really required, but
+        // let's be as correct as we can.
+        const curDay = month.clone().startOf('month').startOf('week')
+
+        // We do array length check first as it'll be faster and will shortcut the date check if true.
+        while (calendar.length < WEEKS_TO_DISPLAY || curDay.isBefore(lastDayOfMonth, 'day')) {
+            calendar.push(
+                moment.range(
+                    curDay.clone().startOf('week'),
+                    curDay.clone().endOf('week')
                 )
-
-                calendar.push(weekRange)
-                weeks.push(day.week())
-            }
-        })
-
-        // Add an extra week if we only have five, to maintain picker height
-        if (weeks.length < WEEKS_TO_DISPLAY) {
-            // Add an extra day
-            const extraDay = moment(calendar[calendar.length - 1].end).add(1, 'day')
-            const weekRange = moment.range(
-                moment(extraDay).startOf('week'),
-                moment(extraDay).endOf('week')
             )
 
-            calendar.push(weekRange)
-            weeks.push(extraDay.week())
+            curDay.add(1, 'week')
         }
 
         return calendar
     }
 
-    setDate(date, e) {
-        e.preventDefault()
+    selectDate(date, e) {
+        e && e.preventDefault()
 
-        this.setState({ date })
+        const validDate = this.getValidDate(date, this.props.min, this.props.max)
 
-        this.props.onChange && this.props.onChange(date.format(this.props.dateFormat || 'YYYY-MM-DD'))
+        this.setDate(validDate)
+    }
+
+    setDate(date) {
+        this.props.onChange(date.format(this.props.dateFormat || 'YYYY-MM-DD'))
     }
 
     nextMonth = (e) => {
-        e.preventDefault()
+        e && e.preventDefault()
 
-        let month = this.state.month + 1
-        let year = this.state.year
-
-        if (this.state.month === LAST_MONTH_IN_YEAR) {
-            month = 0
-            year = this.state.year + 1
-        }
-
-        this.setState({
-            month,
-            year,
-            calendar: this.getCalendar(year, month),
-        })
+        this.setState({ month: this.state.month.clone().add(1, 'month') })
     }
 
     previousMonth = (e) => {
-        e.preventDefault()
+        e && e.preventDefault()
 
-        let month = this.state.month - 1
-        let year = this.state.year
-
-        if (this.state.month === 0) {
-            month = LAST_MONTH_IN_YEAR
-            year = this.state.year - 1
-        }
-
-        this.setState({
-            month,
-            year,
-            calendar: this.getCalendar(year, month),
-        })
+        this.setState({ month: this.state.month.clone().subtract(1, 'month') })
     }
 
     render() {
-        const { calendar, month, date, year } = this.state
+        const { month } = this.state
+        const { date, min, max } = this.props
+
+        const calendar = this.getCalendar(month)
+
+        const today = moment().startOf('day')
 
         // Generate week days
         let weekDays = null
 
         if (calendar.length) {
-            const dayList = []
-
-            calendar[0].by('days', (day) => dayList.push(day))
+            const dayList = Array.from(calendar[0].by('day'))
 
             weekDays = (
                 <tr>
@@ -166,19 +209,13 @@ export default class DatePicker extends Component {
         }
 
         // Generate month days
-        let weekCount = 0
+        const weeks = calendar.map((week, weekIndex) => {
+            const days = Array.from(week.by('day')).map((day) => {
+                const isCurrentMonth = day.isSame(month, 'month')
+                const isSelected = day.isSame(date, 'day')
+                const isToday = day.isSame(today, 'day')
+                const isInvalid = this.isValidDate(date, min, max)
 
-        const weeks = calendar.map((week) => {
-            weekCount++
-
-            const dayList = []
-
-            week.by('days', (day) => dayList.push(day))
-
-            const days = dayList.map((day) => {
-                const isCurrentMonth = day.month() === month
-                const isToday = day.format('DD-MM-YYYY') === moment().format('DD-MM-YYYY')
-                const isSelected = day.format('DD-MM-YYYY') === date.format('DD-MM-YYYY')
                 const dayClasses = [ 'datepicker__day' ]
 
                 if (! isCurrentMonth) {
@@ -193,20 +230,29 @@ export default class DatePicker extends Component {
                     dayClasses.push('datepicker__day--today')
                 }
 
+                if (isInvalid) {
+                    dayClasses.push('datepicker__day--invalid')
+                }
+
+                const dayProps = {
+                    role: 'button',
+                    className: dayClasses,
+                }
+
+                if (! isInvalid) {
+                    dayProps.onClick = this.selectDate.bind(this, day)
+                }
+
                 return (
                     <td key={ day.format('D-MM') }>
-                        <a
-                            className={ dayClasses.join(' ') }
-                            href="#"
-                            onClick={ this.setDate.bind(this, day) }
-                        >
+                        <span { ...dayProps }>
                             { day.format('D') }
-                        </a>
+                        </span>
                     </td>
                 )
             })
 
-            return <tr key={ weekCount }>{ days }</tr>
+            return <tr key={ weekIndex }>{ days }</tr>
         })
 
         // Date Picker styles
@@ -241,9 +287,9 @@ export default class DatePicker extends Component {
                                 </td>
                                 <td colSpan="5">
                                     <span className="datepicker__selected-date">
-                                        { moment().month(month).format('MMMM') }
+                                        { month.format('MMMM') }
                                         { ' ' }
-                                        { year }
+                                        { month.format('YYYY') }
                                     </span>
                                 </td>
                                 <td>
