@@ -123,7 +123,7 @@ export default class DatePicker extends Component {
 
         if (min && min instanceof moment && date.isBefore(min, 'day')) {
             return false
-        } else if (max & max instanceof moment && date.isAfter(max, 'day')) {
+        } else if (max && max instanceof moment && date.isAfter(max, 'day')) {
             return false
         }
 
@@ -216,7 +216,9 @@ export default class DatePicker extends Component {
                 const isCurrentMonth = day.isSame(month, 'month')
                 const isSelected = day.isSame(date, 'day')
                 const isToday = day.isSame(today, 'day')
-                const isInvalid = this.isValidDate(date, min, max)
+                const isValid = this.isValidDate(day, min, max)
+
+                console.debug(isValid)
 
                 const dayClasses = [ 'datepicker__day' ]
 
@@ -232,16 +234,16 @@ export default class DatePicker extends Component {
                     dayClasses.push('datepicker__day--today')
                 }
 
-                if (isInvalid) {
+                if (! isValid) {
                     dayClasses.push('datepicker__day--invalid')
                 }
 
                 const dayProps = {
                     role: 'button',
-                    className: dayClasses,
+                    className: dayClasses.join(' '),
                 }
 
-                if (! isInvalid) {
+                if (isValid) {
                     dayProps.onClick = this.selectDate.bind(this, day)
                 }
 
