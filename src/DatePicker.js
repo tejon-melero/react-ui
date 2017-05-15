@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import moment from 'moment'
-import 'moment-range'
+import Moment from 'moment'
+import { extendMoment } from 'moment-range'
+
+const moment = extendMoment(Moment)
 
 const LAST_MONTH_IN_YEAR = 11
 const VERTICAL_PADDING_PX = 6
