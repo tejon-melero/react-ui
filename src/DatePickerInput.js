@@ -202,8 +202,8 @@ export default class TextInput extends Component {
                             date={ moment(this.props.value) }
                             dateFormat={ this.props.dateFormat || null }
                             innerRef={ this.storeDatePickerRef }
-                            max={ moment(this.props.max) }
-                            min={ moment(this.props.min) }
+                            max={ this.props.max && moment(this.props.max) }
+                            min={ this.props.min && moment(this.props.min) }
                             onChange={ this.handleDateChange }
                             position={ this.state.tooltipPosition }
                             weekDayStart={ this.props.weekDayStart || null }
