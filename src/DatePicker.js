@@ -5,7 +5,6 @@ import { extendMoment } from 'moment-range'
 
 const moment = extendMoment(Moment)
 
-const LAST_MONTH_IN_YEAR = 11
 const VERTICAL_PADDING_PX = 6
 const WEEKS_TO_DISPLAY = 6
 
@@ -217,8 +216,6 @@ export default class DatePicker extends Component {
                 const isSelected = day.isSame(date, 'day')
                 const isToday = day.isSame(today, 'day')
                 const isValid = this.isValidDate(day, min, max)
-
-                console.debug(isValid)
 
                 const dayClasses = [ 'datepicker__day' ]
 
