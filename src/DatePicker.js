@@ -39,10 +39,16 @@ export default class DatePicker extends Component {
         })
 
         moment.locale('en')
-    }
 
-    state = {
-        month: moment().startOf('month'),
+        let prototypeMonth = moment()
+
+        if (props.date) {
+            prototypeMonth = moment(props.date)
+        }
+
+        this.state = {
+            month: prototypeMonth.startOf('month'),
+        }
     }
 
     componentWillReceiveProps(nextProps) {
