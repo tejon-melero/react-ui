@@ -117,6 +117,11 @@ export default class TextInput extends Component {
      * Handle blur
      */
     handleBlur = () => {
+        this.setState({
+            showTooltip: false,
+            tooltipPosition: null,
+        })
+
         if (this.props.updateValueOnBlur) {
             this.updateValue(this.state.value)
         }
@@ -173,8 +178,6 @@ export default class TextInput extends Component {
                 />
             )
         } else {
-            let type = this.props.type
-
             field = (
                 <input
                     className="form__text"
@@ -191,7 +194,7 @@ export default class TextInput extends Component {
                     ref={ this.storeTextInputRef }
                     required={ this.props.required }
                     step={ this.props.step }
-                    type={ type }
+                    type={ this.props.type }
                     value={ value }
                 />
             )
