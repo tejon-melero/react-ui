@@ -55,7 +55,7 @@ export default class Checkbox extends Component {
                         type="checkbox"
                         value={ 1 }
                     />
-
+                    { ' ' }
                     { this.props.label }
                 </Label>
                 <SubHelp help={ this.props.subHelp }/>
