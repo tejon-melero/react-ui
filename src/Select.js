@@ -45,6 +45,7 @@ export default class Select extends Component {
         categoriseBy: PropTypes.string,
         closeOnSelect: PropTypes.bool,
         defaultOptions: PropTypes.array,
+        dropdownTakesSpace: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.node,
@@ -60,6 +61,7 @@ export default class Select extends Component {
         controlOnly: false,
         defaultOptions: [],
         disabled: false,
+        dropdownTakesSpace: false,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
@@ -571,6 +573,13 @@ export default class Select extends Component {
 
         if (this.state.tooltipPosition) {
             optionsStyle.top = this.state.tooltipPosition
+        }
+
+        // If the implementor thinks the dropdown should take up space in the UI, override its
+        // position to static (as it is `absolute` by default in order to make it overlay the
+        // content).
+        if (this.props.dropdownTakesSpace === true) {
+            optionsStyle.position = 'static'
         }
 
         // Define the list of options available to choose from
