@@ -38,8 +38,8 @@ export default class Notify extends Component {
     storeRefCreator = (id) => (ref) => this.myRefs[id] = ref
 
     pushNotification = (e) => {
-        // Generate a unique id using a timestamp
-        const newId = new Date().getTime()
+        // Generate a unique id using a timestamp and some random for extra fun!
+        const newId = `${ Date.now() }-${ Math.floor(Math.random() * 1e6) }`
 
         // Create new notification object
         const notification = {
