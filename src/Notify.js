@@ -47,7 +47,11 @@ export default class Notify extends Component {
             message: e.detail.message,
         }
 
-        // Update the state, pushing the notification to the end
+        // Update the state, pushing the notification to the end. We use the pass-a-function method
+        // in order to update the state in an 'atomic' way. If this function is called multiple
+        // times in quick succession then the referece to `this.state.notifications` in the
+        // previous code would actually reference an out-of-date copy of the array by the time the
+        // batch state transformations are run.
         this.setState(
             (state) => ({
                 notifications: [
