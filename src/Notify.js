@@ -136,7 +136,7 @@ export default class Notify extends Component {
                     onMouseOver={ this.handleCloseOver }
                     style={ closeStyle }
                 >
-                    { '⨉' }
+                    { '×' }
                 </a>
 
                 { item.message }
