@@ -49,12 +49,12 @@ export default class Notify extends Component {
 
         // Update the state, pushing the notification to the end
         this.setState(
-            {
+            (state) => ({
                 notifications: [
-                    ...this.state.notifications,
+                    ...state.notifications,
                     notification,
                 ],
-            },
+            }),
             () => {
                 setTimeout(() => {
                     this.clearNotification(newId)
