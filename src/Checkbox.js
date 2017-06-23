@@ -43,7 +43,7 @@ export default class Checkbox extends Component {
 
         const control = (
             <div className={ controlClasses }>
-                <Label for={ inputId }>
+                <Label htmlFor={ inputId }>
                     <input
                         checked={ this.props.value }
                         className="form__checkbox"

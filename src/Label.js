@@ -14,19 +14,21 @@ export default class Label extends Component {
     }
 
     render() {
-        if (! this.props.children) {
+        const { children, className, inline, ...labelProps } = this.props
+
+        if (! children) {
             return null
         }
 
         const labelClasses = classnames(
-            this.props.className,
+            className,
             'form__label',
-            { 'form__label--inline': this.props.inline }
+            { 'form__label--inline': inline }
         )
 
         return (
-            <label className={ labelClasses }>
-                { this.props.children }
+            <label { ...labelProps } className={ labelClasses }>
+                { children }
             </label>
         )
     }

@@ -178,7 +178,7 @@ export default class TextInput extends Component {
 
         const control = (
             <div>
-                <Label for={ inputId }>{ this.props.label }</Label>
+                <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
                 <div className={ controlClasses } ref={ this.storeFormControlRef }>
                     <input

@@ -643,7 +643,7 @@ export default class Select extends Component {
 
         const control = (
             <div>
-                <Label for={ inputId }>{ this.props.label }</Label>
+                <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
                 <div className={ controlClasses } ref={ (ref) => { this.formControl = ref } }>
                     <input
