@@ -254,6 +254,7 @@ export default class Select extends Component {
         const KEY_ENTER = 13
         const KEY_UP = 38
         const KEY_DOWN = 40
+        const KEY_ESCAPE = 27
 
         switch (e.keyCode) {
             case KEY_BACKSPACE:
@@ -269,6 +270,9 @@ export default class Select extends Component {
                 break
             case KEY_DOWN:
                 this._focusNextOption()
+                break
+            case KEY_ESCAPE:
+                this._handleBlur()
                 break
             default:
                 break
