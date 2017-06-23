@@ -285,12 +285,12 @@ export default class Select extends Component {
         this.ignoreNextBlur = true
 
         // setTimout because setting the focus as part of the blur process (which clicking on an
-        // item wil be for ther text input) doesn't work. Gah DOM events!
-        setTimeout(() => {
-            if (! this.props.closeOnSelect) {
+        // item will be for the text input) doesn't work. Gah DOM events!
+        if (! this.props.closeOnSelect) {
+            setTimeout(() => {
                 this.textInput && this.textInput.focus()
-            }
-        }, 0)
+            }, 0)
+        }
     }
 
     /*
