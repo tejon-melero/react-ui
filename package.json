@@ -7,9 +7,6 @@
     "type": "git",
     "url": "https://code.cotidia.com/cotidia/react-ui.git"
   },
-  "publishConfig": {
-    "registry": "http://code.cotidia.com:4873"
-  },
   "scripts": {
     "prepublish": "npm run build",
     "prebuild": "rimraf lib dist",
