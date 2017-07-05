@@ -44,7 +44,8 @@ export default class TextInput extends Component {
         super(props)
 
         this.state = {
-            showTooltip: false,
+            focussed: false,
+            hovering: false,
             tooltipPosition: null,
             value: props.value || '',
         }
@@ -62,6 +63,7 @@ export default class TextInput extends Component {
     }
 
     textInput = null
+    formControl = null
 
     storeTextInputRef = (ref) => {
         this.textInput = ref
@@ -69,6 +71,18 @@ export default class TextInput extends Component {
         if (this.props.innerRef) {
             this.props.innerRef(ref)
         }
+    }
+
+    storeFormControlRef = (ref) => {
+        this.formControl = ref
+
+        let tooltipPosition = null
+
+        if (ref) {
+            tooltipPosition = ref.getBoundingClientRect().height
+        }
+
+        this.setState({ tooltipPosition })
     }
 
     updateValue(value) {
@@ -102,12 +116,8 @@ export default class TextInput extends Component {
      * Handle focus
      */
     handleFocus = () => {
-        const position = this.refs.formControl.getBoundingClientRect()
-        const tooltipPosition = position.height
-
         this.setState({
-            showTooltip: true,
-            tooltipPosition,
+            focussed: true,
         })
 
         this.props.handleFocus && this.props.handleFocus()
@@ -118,8 +128,7 @@ export default class TextInput extends Component {
      */
     handleBlur = () => {
         this.setState({
-            showTooltip: false,
-            tooltipPosition: null,
+            focussed: false,
         })
 
         if (this.props.updateValueOnBlur) {
@@ -134,6 +143,18 @@ export default class TextInput extends Component {
      */
     _isEmailValid(value) {
         return emailRegex.test(value)
+    }
+
+    handleMouseOver = () => {
+        if (this.props.helpOnHover) {
+            this.setState({ hovering: true })
+        }
+    }
+
+    handleMouseOut = () => {
+        if (this.props.helpOnHover) {
+            this.setState({ hovering: false })
+        }
     }
 
     /*
@@ -203,19 +224,19 @@ export default class TextInput extends Component {
         helpUI = (
             <Help
                 help={ this.props.help }
-                on={ this.state.showTooltip && ! this.props.error }
+                on={ (this.state.focussed || this.state.hovering) && ! this.props.error }
                 position={ this.state.tooltipPosition }
             />
         )
 
         const control = (
-            <div>
+            <div onMouseOver={ this.handleMouseOver } onMouseOut={ this.handleMouseOut }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className={ controlClasses } ref="formControl">
+                <div className={ controlClasses } ref={this.storeFormControlRef}>
                     <FieldError
                         error={ this.props.error }
-                        on={ this.state.showTooltip }
+                        on={ (this.state.focussed || this.state.hovering) }
                         position={ this.state.tooltipPosition }
                     />
                     { field }
