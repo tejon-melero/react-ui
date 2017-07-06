@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import ReactDOM from 'react-dom'
 import classnames from 'classnames'
-import moment from 'moment'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
@@ -19,6 +17,8 @@ export default class TextInput extends Component {
         ...formControlPropTypes,
         ...focussablePropTypes,
 
+        helpOnHover: PropTypes.bool,
+        innerRef: PropTypes.func,
         max: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
         min: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
         onKeyPress: PropTypes.func,
@@ -27,13 +27,14 @@ export default class TextInput extends Component {
         rows: PropTypes.number,
         step: PropTypes.number,
         success: PropTypes.bool,
-        type: PropTypes.string, // oneOf?
+        type: PropTypes.string,
         updateValueOnBlur: PropTypes.bool,
     }
 
     static defaultProps = {
         controlOnly: false,
         disabled: false,
+        helpOnHover: false,
         placeholder: '',
         rows: 6,
         type: 'text',
@@ -230,10 +231,10 @@ export default class TextInput extends Component {
         )
 
         const control = (
-            <div onMouseOver={ this.handleMouseOver } onMouseOut={ this.handleMouseOut }>
+            <div onMouseOut={ this.handleMouseOut } onMouseOver={ this.handleMouseOver }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className={ controlClasses } ref={this.storeFormControlRef}>
+                <div className={ controlClasses } ref={ this.storeFormControlRef }>
                     <FieldError
                         error={ this.props.error }
                         on={ (this.state.focussed || this.state.hovering) }
