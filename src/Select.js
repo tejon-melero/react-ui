@@ -47,6 +47,8 @@ export default class Select extends Component {
         defaultOptions: PropTypes.array,
         dropdownTakesSpace: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
+        helpOnHover: PropTypes.bool,
+        innerRef: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.node,
         noResultsPlaceholder: PropTypes.node,
@@ -62,6 +64,7 @@ export default class Select extends Component {
         defaultOptions: [],
         disabled: false,
         dropdownTakesSpace: false,
+        helpOnHover: false,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
@@ -87,6 +90,9 @@ export default class Select extends Component {
 
             // Whether the field is currently focussed due to user interaction.
             focussed: false,
+
+            // Whether the field is currently being hovered over.
+            hovering: false,
 
             // Tnis applies only when a search function is provided.
             searching: false,
@@ -128,6 +134,28 @@ export default class Select extends Component {
     textInput = null
     formControl = null
     optionList = null
+
+    storeTextInputRef = (ref) => {
+        this.textInput = ref
+
+        if (this.props.innerRef) {
+            this.props.innerRef(ref)
+        }
+    }
+
+    storeFormControlRef = (ref) => {
+        this.formControl = ref
+
+        let tooltipPosition = null
+
+        if (ref) {
+            tooltipPosition = ref.getBoundingClientRect().height
+        }
+
+        this.setState({ tooltipPosition })
+    }
+
+    storeOptionListRef = (ref) => this.optionList = ref
 
     _resolveSelectedOption = () => {
         this.setState({
@@ -218,13 +246,9 @@ export default class Select extends Component {
      * Handles field focus
      */
     _handleFocus = () => {
-        const position = this.formControl.getBoundingClientRect()
-        const tooltipPosition = position.height
-
         this.textInput && this.textInput.select()
 
         this.setState({
-            tooltipPosition,
             focussed: true,
             focussedOption: this._getSelectedOption(),
         }, this._setOptionScrollValue)
@@ -533,6 +557,18 @@ export default class Select extends Component {
         return this.props.noOptionPlaceholder
     }
 
+    handleMouseOver = () => {
+        if (this.props.helpOnHover) {
+            this.setState({ hovering: true })
+        }
+    }
+
+    handleMouseOut = () => {
+        if (this.props.helpOnHover) {
+            this.setState({ hovering: false })
+        }
+    }
+
     render() {
         const inputId = `id_${ this.props.name }`
 
@@ -642,10 +678,10 @@ export default class Select extends Component {
         }
 
         const control = (
-            <div>
+            <div onMouseOut={ this.handleMouseOut } onMouseOver={ this.handleMouseOver }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className={ controlClasses } ref={ (ref) => { this.formControl = ref } }>
+                <div className={ controlClasses } ref={ this.storeFormControlRef }>
                     <input
                         name={ this.props.name }
                         type="hidden"
@@ -662,25 +698,25 @@ export default class Select extends Component {
                         onKeyDown={ this._handleInputKeyDown }
                         onMouseDown={ this._handleInputMousePressedDown }
                         placeholder={ this.props.placeholder }
-                        ref={ (ref) => { this.textInput = ref } }
+                        ref={ this.storeTextInputRef }
                         type={ this.props.type || 'text' }
                         value={ displayValue }
                     />
                     <div
                         className="control-select__options"
-                        ref={ (ref) => { this.optionList = ref } }
+                        ref={ this.storeOptionListRef }
                         style={ optionsStyle }
                     >
                         { optionList }
                     </div>
                     <FieldError
                         error={ this.props.error }
-                        on={ this.state.focussed }
+                        on={ this.state.focussed || this.state.hovering }
                         position={ this.state.tooltipPosition }
                     />
                     <Help
                         help={ this.props.help }
-                        on={ this.state.focussed && ! this.props.error }
+                        on={ (this.state.focussed || this.state.hovering) && ! this.props.error }
                         position={ this.state.tooltipPosition }
                     />
                 </div>
