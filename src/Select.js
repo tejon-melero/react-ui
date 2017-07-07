@@ -15,6 +15,12 @@ import SubHelp from './Utils/SubHelp'
 
 import Label from './Label'
 
+const KEY_BACKSPACE = 8
+const KEY_ENTER = 13
+const KEY_UP = 38
+const KEY_DOWN = 40
+const KEY_ESCAPE = 27
+
 function createHighlightNode(text, highlight) {
     const index = text.toLowerCase().indexOf(highlight)
 
@@ -118,7 +124,7 @@ export default class Select extends Component {
         if (nextProps.value !== this.props.value) {
             // Also, if the value is empty, we should clear the 'selected text' value.
             if (! nextProps.value) {
-                newState.inputValue = ''
+                newState.inputValue = null
             }
         }
 
@@ -261,7 +267,7 @@ export default class Select extends Component {
      */
     _handleBlur = () => {
         this.setState({
-            inputValue: '',
+            inputValue: null,
             focussed: false,
         })
 
@@ -274,12 +280,6 @@ export default class Select extends Component {
      * Handles user enter key up
      */
     _handleInputKeyDown = (e) => {
-        const KEY_BACKSPACE = 8
-        const KEY_ENTER = 13
-        const KEY_UP = 38
-        const KEY_DOWN = 40
-        const KEY_ESCAPE = 27
-
         switch (e.keyCode) {
             case KEY_BACKSPACE:
                 if (this.props.value) {
@@ -578,10 +578,10 @@ export default class Select extends Component {
         let displayValue = ''
         let actualValue = this.props.value
 
-        if (this.state.inputValue && this.state.inputValue.length) {
-            displayValue = this.state.inputValue
-        } else {
+        if (this.state.inputValue === null) {
             displayValue = this._getOptionLabelForValue(this.props.value)
+        } else {
+            displayValue = this.state.inputValue
         }
 
         // Ensure the values we will place in the inputs are usable strings (i.e. not null)
