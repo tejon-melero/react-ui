@@ -17,6 +17,7 @@ export default class TextInput extends Component {
         ...formControlPropTypes,
         ...focussablePropTypes,
 
+        helpOnFocus: PropTypes.bool,
         helpOnHover: PropTypes.bool,
         innerRef: PropTypes.func,
         max: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
@@ -34,6 +35,7 @@ export default class TextInput extends Component {
     static defaultProps = {
         controlOnly: false,
         disabled: false,
+        helpOnFocus: true,
         helpOnHover: false,
         placeholder: '',
         rows: 6,
@@ -225,7 +227,13 @@ export default class TextInput extends Component {
         helpUI = (
             <Help
                 help={ this.props.help }
-                on={ (this.state.focussed || this.state.hovering) && ! this.props.error }
+                on={
+                    ! this.props.error &&
+                    (
+                        (this.props.helpOnFocus && this.state.focussed) ||
+                        (this.props.helpOnHover && this.state.hovering)
+                    )
+                }
                 position={ this.state.tooltipPosition }
             />
         )
@@ -237,7 +245,10 @@ export default class TextInput extends Component {
                 <div className={ controlClasses } ref={ this.storeFormControlRef }>
                     <FieldError
                         error={ this.props.error }
-                        on={ (this.state.focussed || this.state.hovering) }
+                        on={
+                            (this.props.helpOnFocus && this.state.focussed) ||
+                            (this.props.helpOnHover && this.state.hovering)
+                        }
                         position={ this.state.tooltipPosition }
                     />
                     { field }

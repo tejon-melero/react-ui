@@ -53,6 +53,7 @@ export default class Select extends Component {
         defaultOptions: PropTypes.array,
         dropdownTakesSpace: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
+        helpOnFocus: PropTypes.bool,
         helpOnHover: PropTypes.bool,
         innerRef: PropTypes.func,
         minCharSearch: PropTypes.number,
@@ -70,6 +71,7 @@ export default class Select extends Component {
         defaultOptions: [],
         disabled: false,
         dropdownTakesSpace: false,
+        helpOnFocus: true,
         helpOnHover: false,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
@@ -711,12 +713,21 @@ export default class Select extends Component {
                     </div>
                     <FieldError
                         error={ this.props.error }
-                        on={ this.state.focussed || this.state.hovering }
+                        on={
+                            (this.props.helpOnFocus && this.state.focussed) ||
+                            (this.props.helpOnHover && this.state.hovering)
+                        }
                         position={ this.state.tooltipPosition }
                     />
                     <Help
                         help={ this.props.help }
-                        on={ (this.state.focussed || this.state.hovering) && ! this.props.error }
+                        on={
+                            ! this.props.error &&
+                            (
+                                (this.props.helpOnFocus && this.state.focussed) ||
+                                (this.props.helpOnHover && this.state.hovering)
+                            )
+                        }
                         position={ this.state.tooltipPosition }
                     />
                 </div>
