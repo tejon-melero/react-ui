@@ -42,7 +42,7 @@ export default class DatePicker extends Component {
 
         let prototypeMonth = moment()
 
-        if (props.date) {
+        if (props.date && props.date.isValid()) {
             prototypeMonth = moment(props.date)
         }
 
@@ -52,6 +52,9 @@ export default class DatePicker extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        // If any of the date, min or max dates change, we need to recaulcate a new valid date
+        // (within min and max) and if that's different to the date we have, we need to "set" it in
+        // order to tell the parent about the new date we wish to use.
         if (
             this.props.min !== nextProps.min ||
             this.props.max !== nextProps.max ||
@@ -66,13 +69,13 @@ export default class DatePicker extends Component {
     }
 
     getValidDate(date, min, max) {
-        // Note: because any invalid date will return `false` when compatred to any other date
+        // Note: because any invalid date will return `false` when compared to any other date
         // (valid or not), we can avoid any `isValid` checks in this function and simply assume
         // validity, because all our conditions and comparisons only return something other than
         // the original date if the comparisons return `true`.
 
         // First just ensure that we have a usable date, because without one it's going to be
-        // difficult to do any comparisons.
+        // difficult to do any comparisons. If we don't, just return it as-is.
         if (! (date && date instanceof moment)) {
             return date
         }
