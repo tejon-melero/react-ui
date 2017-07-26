@@ -11,7 +11,7 @@ import SubHelp from './Utils/SubHelp'
 import DatePicker from './DatePicker'
 import Label from './Label'
 
-export default class TextInput extends Component {
+export default class DatePickerInput extends Component {
     static propTypes = {
         ...formControlPropTypes,
         ...focussablePropTypes,
