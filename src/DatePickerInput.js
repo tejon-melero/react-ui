@@ -199,7 +199,7 @@ export default class DatePickerInput extends Component {
                     { this.state.datePickerOn &&
                         <DatePicker
                             alignment={ this.state.datePickerAlignment }
-                            date={ moment(this.props.value) }
+                            date={ this.props.value && moment(this.props.value) }
                             dateFormat={ this.props.dateFormat || null }
                             innerRef={ this.storeDatePickerRef }
                             max={ this.props.max && moment(this.props.max) }
