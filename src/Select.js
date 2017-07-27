@@ -39,6 +39,45 @@ function createHighlightNode(text, highlight) {
     )
 }
 
+/**
+ * Determine if two options arrays are the same (depp-style equiality).
+ *
+ * As this function is meant to check options arrays, the measure of equality is the following.
+ *
+ * If:
+ *
+ * - Both are arrays
+ * - And are referentially the same, or:
+ *     - Have the same length
+ *     - And the same value for [].value at each index
+ *
+ * They are equal. Otherwise they are not.
+ *
+ * @param {array} a The first array to compare.
+ * @param {array} b The second array to compare.
+ */
+function areOptionsEqual(a, b) {
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a === b) {
+            return true
+        }
+
+        if (a.length !== b.length) {
+            return false
+        }
+
+        for (let i = 0; i < a.length; i++) {
+            if (a[i].value !== b[i].value) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    return false
+}
+
 /*
  * Select box with drop down scrollable, and can be navigated with up/down arrow keys.
  */
@@ -118,7 +157,7 @@ export default class Select extends Component {
         // If there is a searchOptions callback specified and we have different options coming in,
         // then we can assume that we were searching and these new props have ended the search (by
         // returning results).
-        if (this.props.searchOptions && (nextProps.options !== this.props.options)) {
+        if (this.props.searchOptions && ! areOptionsEqual(nextProps.options, this.props.options)) {
             newState.searching = false
         }
 
