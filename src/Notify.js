@@ -62,7 +62,7 @@ export default class Notify extends Component {
             () => {
                 setTimeout(() => {
                     this.clearNotification(newId)
-                }, this.props.duration)
+                }, e.detail.duration || this.props.duration)
             }
         )
     }
@@ -75,10 +75,10 @@ export default class Notify extends Component {
         })
     }
 
-    handleClose(item_id, e) {
+    handleClose(id, e) {
         e.preventDefault()
 
-        this.clearNotification(item_id)
+        this.clearNotification(id)
     }
 
     handleCloseOver(e) {
