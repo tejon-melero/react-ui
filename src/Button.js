@@ -26,8 +26,8 @@ export default class Button extends Component {
         large: false,
         loading: false,
         marginBottom: false,
-        onClick: (e) => e.preventDefault(),
-        onMouseDown: (e) => e.preventDefault(),
+        onClick: null,
+        onMouseDown: null,
         type: 'button',
     }
 
