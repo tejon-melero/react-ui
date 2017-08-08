@@ -40,7 +40,7 @@ function createHighlightNode(text, highlight) {
 }
 
 /**
- * Determine if two options arrays are the same (depp-style equiality).
+ * Determine if two options arrays are the same (deep-style equality).
  *
  * As this function is meant to check options arrays, the measure of equality is the following.
  *
@@ -49,12 +49,14 @@ function createHighlightNode(text, highlight) {
  * - Both are arrays
  * - And are referentially the same, or:
  *     - Have the same length
- *     - And the same value for [].value at each index
+ *     - And the same value for `[].value` at each index
  *
  * They are equal. Otherwise they are not.
  *
  * @param {array} a The first array to compare.
  * @param {array} b The second array to compare.
+ *
+ * @returns {bool} Whether all options are equal in the two arrays.
  */
 function areOptionsEqual(a, b) {
     if (Array.isArray(a) && Array.isArray(b)) {
