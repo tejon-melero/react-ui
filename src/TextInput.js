@@ -187,7 +187,7 @@ export default class TextInput extends Component {
         if (this.props.type === 'textarea') {
             field = (
                 <textarea
-                    autoFocus={this.props.autoFocus}
+                    autoFocus={ this.props.autoFocus }
                     className="form__text form__textarea"
                     disabled={ this.props.disabled }
                     id={ inputId }
@@ -207,7 +207,7 @@ export default class TextInput extends Component {
         } else {
             field = (
                 <input
-                    autoFocus={this.props.autoFocus}
+                    autoFocus={ this.props.autoFocus }
                     className="form__text"
                     disabled={ this.props.disabled }
                     id={ inputId }
