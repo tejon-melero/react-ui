@@ -6,6 +6,7 @@ export {
 } from './Utils'
 
 export FieldError from './Utils/FieldError'
+export GroupError from './Utils/GroupError'
 export Help from './Utils/Help'
 export SubHelp from './Utils/SubHelp'
 
