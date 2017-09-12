@@ -1,35 +1,19 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import classnames from 'classnames'
 
-export default class Label extends Component {
-    static propTypes = {
-        children: PropTypes.node,
-        className: PropTypes.string,
-        inline: PropTypes.bool,
+export default function Label({ children, className, ...labelProps }) {
+    if (! children) {
+        return null
     }
 
-    static defaultProps = {
-        inline: false,
-    }
+    return (
+        <label { ...labelProps } className={ `form__label ${ className || '' }` }>
+            { children }
+        </label>
+    )
+}
 
-    render() {
-        const { children, className, inline, ...labelProps } = this.props
-
-        if (! children) {
-            return null
-        }
-
-        const labelClasses = classnames(
-            className,
-            'form__label',
-            { 'form__label--inline': inline }
-        )
-
-        return (
-            <label { ...labelProps } className={ labelClasses }>
-                { children }
-            </label>
-        )
-    }
+Label.propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
 }

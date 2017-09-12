@@ -4,9 +4,10 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
 
-import GroupError from './Utils/GroupError'
+import SubContent from './Utils/SubContent'
 
 import Checkbox from './Checkbox'
+import Label from './Label'
 
 export default class MultipleCheckbox extends Component {
     static propTypes = {
@@ -18,7 +19,6 @@ export default class MultipleCheckbox extends Component {
 
     static defaultProps = {
         columns: 1,
-        controlOnly: false,
         disabled: false,
     }
 
@@ -53,7 +53,7 @@ export default class MultipleCheckbox extends Component {
     render() {
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
 
         const columnisedOptionsList = []
@@ -64,7 +64,6 @@ export default class MultipleCheckbox extends Component {
             optionList = this.props.options.map(
                 (option) => (
                     <Checkbox
-                        controlOnly
                         disabled={ this.props.disabled }
                         key={ option.value }
                         label={ option.label }
@@ -95,29 +94,23 @@ export default class MultipleCheckbox extends Component {
             columnisedOptionsList.push(optionList)
         }
 
-        const control = (
-            <div>
-                <table width="100%">
-                    <tbody>
-                        <tr>
-                            { columnisedOptionsList.map((column, index) => (
-                                <td key={ index }>{ column }</td>
-                            )) }
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
         return (
             <div className={ groupClasses }>
-                <GroupError error={ this.props.error } />
+                <Label>{ this.props.label }</Label>
 
-                { control }
+                <div className="form__control">
+                    <table width="100%">
+                        <tbody>
+                            <tr>
+                                { columnisedOptionsList.map((column, index) => (
+                                    <td key={ index }>{ column }</td>
+                                )) }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <SubContent errors={ this.props.errors } />
             </div>
         )
     }

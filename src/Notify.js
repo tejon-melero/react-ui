@@ -82,11 +82,11 @@ export default class Notify extends Component {
     }
 
     handleCloseOver(e) {
-        e.target.style.color = 'rgba(255,255,255,1)'
+        e.target.style.color = 'rgba(255, 255, 255, 1)'
     }
 
     handleCloseOut(e) {
-        e.target.style.color = 'rgba(255,255,255,0.7)'
+        e.target.style.color = 'rgba(255, 255, 255, 0.7)'
     }
 
     render() {

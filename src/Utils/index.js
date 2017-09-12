@@ -3,9 +3,8 @@ import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 
 export const formControlPropTypes = {
-    controlOnly: PropTypes.bool,
     disabled: PropTypes.bool,
-    error: PropTypes.string,
+    errors: PropTypes.arrayOf(PropTypes.node),
     help: PropTypes.node,
     innerRef: PropTypes.func,
     label: PropTypes.node,
@@ -28,53 +27,62 @@ export const focussablePropTypes = {
     handleFocus: PropTypes.func,
 }
 
-/*
- * Handle any data change in a form.
+export function generateId(name) {
+    return `id-${ name }-${ Math.floor(Math.random() * 1e4) }`
+}
+
+/**
+ * Mixin-style method to handle any data change in a form.
+ *
+ * @param {object} data - The data to store in the state.
+ *
+ * @return {void}
+ *
+ * It is worth noting that this a mixin style method, hence uses `this`. As such, another important
+ * 'parameter' that this method uses is `this.state.data.{itemsKey}` - this contains an array of
+ * the inner forms, each of which is an object.
  */
 export function updateValue(data) {
-    // generate new data by taking a copy of the current state data and
-    // overriding keys defined in incoming data
-    const newState = {
+    // Generate new data by taking a copy of the current state data and overriding keys defined in
+    // incoming data.
+    this.setState({
         data: {
             ...this.state.data,
             ...data,
         },
-    }
-
-    this.setState(newState)
+    })
 }
 
 /**
- * Handle addition of an item in a nested form.
+ * Mixin-style method to handle addition of an item in a nested form.
  *
- * @param {string} itemsKey - The key of the field on *this* form, located in `this.state.data` to find the inner
- *     forms.
+ * @param {string} itemsKey - The key of the field on *this* form, located in `this.state.data` to
+ *                            find the inner forms.
  * @param {object} defaultData - The default data with which to populate the form.
  *
- * @return {void} Nothing
+ * @return {void}
  *
- * It is worth noting that this a mixin style method, hence uses `this`. As such, another important 'parametr' that
- * this method uses is `this.state.data.{itemsKey}` - this contains an array of the inner forms, each of which is an
- * object.
+ * It is worth noting that this a mixin style method, hence uses `this`. As such, another important
+ * 'parameter' that this method uses is `this.state.data.{itemsKey}` - this contains an array of
+ * the inner forms, each of which is an object.
  */
 export function handleAddInnerForm(itemsKey, defaultData) {
-    // get a local copy of the item list
+    // Get a copy of the item list.
     let itemList = [ ...this.state.data[itemsKey] ]
 
-    // Change the state of the component to insert the new form data
+    // Change the state of the component to insert the new form data.
     if (itemList) {
         itemList.push(defaultData)
     } else {
         itemList = [ defaultData ]
     }
 
-    // Pass the state data as the new nested form data to be updated by the
-    // parent component
+    // Pass the state data as the new nested form data to be updated by the parent component.
     this.props.updateValue({ [itemsKey]: itemList })
 }
 
 /**
- * Handle changes to a nested form.
+ * Mixin-style method to handle changes to a nested form.
  *
  * @param {string} itemsKey - The key of the field on *this* form, located in `this.state.data` to find the inner
  *     forms.
@@ -82,11 +90,11 @@ export function handleAddInnerForm(itemsKey, defaultData) {
  * @param {object} data - The data that changed on that form.
  * @param {object} errors - Any errors occurring.
  *
- * @return {void} Nothing
+ * @return {void}
  *
- * It is worth noting that this a mixin style method, hence uses `this`. As such, another important 'parametr' that
- * this method uses is `this.state.data.{itemsKey}` - this contains an array of the inner forms, each of which is an
- * object.
+ * It is worth noting that this a mixin style method, hence uses `this`. As such, another important
+ * 'parameter' that this method uses is `this.state.data.{itemsKey}` - this contains an array of
+ * the inner forms, each of which is an object.
  */
 export function handleChangeInnerForm(itemsKey, index, data, errors) {
     // Create a new list of items with submitted item
@@ -109,29 +117,29 @@ export function handleChangeInnerForm(itemsKey, index, data, errors) {
 /**
  * Handle deletion of an item from a nested form.
  *
- * @param {string} itemsKey - The key of the field on *this* form, located in `this.state.data` to find the inner
- *     forms.
+ * @param {string} itemsKey - The key of the field on *this* form, located in `this.state.data` to
+ *                            find the inner forms.
  * @param {number} index - The index of the inner form to delete.
  *
  * @return {void} Nothing
  *
- * It is worth noting that this a mixin style method, hence uses `this`. As such, another important 'parametr' that
- * this method uses is `this.state.data.{itemsKey}` - this contains an array of the inner forms, each of which is an
- * object.
+ * It is worth noting that this a mixin style method, hence uses `this`. As such, another important
+ * 'parameter' that this method uses is `this.state.data.{itemsKey}` - this contains an array of
+ * the inner forms, each of which is an object.
  */
 export function handleDeleteInnerForm(itemsKey, index) {
-    // go through each inner form field and 'filter out' any items that have the same index as to be deleted
+    // Go through each inner form field and 'filter out' any items that have the same index as the
+    // one to be deleted.
     const itemList = this.state.data[itemsKey].filter(
         (item) => item.index !== index
     )
 
-    // Pass the state data as the new nested form data to be updated by the
-    // parent component
+    // Pass the state data as the new nested form data to be updated by the parent component.
     this.props.updateValue({ [itemsKey]: itemList })
 }
 
 /**
- * Get a property from an object optionally following a path and also providing a default.
+ * Get a property from an object, optionally following a path and also providing a default.
  *
  * The `key` parameter can take a dot-separated path to a deeply-nested key.
  *

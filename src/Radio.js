@@ -3,9 +3,7 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
 
-import GroupError from './Utils/GroupError'
-import Help from './Utils/Help'
-import SubHelp from './Utils/SubHelp'
+import SubContent from './Utils/SubContent'
 
 import Label from './Label'
 
@@ -70,17 +68,9 @@ export default class Radio extends Component {
 
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
 
-        const controlClasses = classnames(
-            'form__control',
-            'form__control--radio',
-        )
-
-        /*
-         * Add a default option for no selection
-         */
         let optionList = null
 
         if (this.state.options.length > 0) {
@@ -109,31 +99,17 @@ export default class Radio extends Component {
             })
         }
 
-        const control = (
-            <div className={ controlClasses }>
-                <Label>{ this.props.label }</Label>
-
-                <ul className="control-radio__options" >{ optionList }</ul>
-
-                <Help
-                    help={ this.props.help }
-                    on={ this.state.showTooltip && ! this.props.error }
-                    position={ this.state.tooltipPosition }
-                />
-
-                <SubHelp help={ this.props.subHelp }/>
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
         return (
             <div className={ groupClasses }>
-                <GroupError error={ this.props.error } />
+                <Label>{ this.props.label }</Label>
 
-                { control }
+                <div className="form__control">
+                    <ul className="control-radio__options" >
+                        { optionList }
+                    </ul>
+                </div>
+
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }

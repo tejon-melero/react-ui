@@ -2,22 +2,23 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-import GroupError from './Utils/GroupError'
+import { formControlPropTypes } from './Utils'
+
+import SubContent from './Utils/SubContent'
 
 import FileUpload from './FileUpload'
 
 export default class MultipleFileUpload extends Component {
     static propTypes = {
         appendValue: PropTypes.func.isRequired,
-        controlOnly: PropTypes.bool,
         data: PropTypes.object,
-        disabled: PropTypes.bool,
-        error: PropTypes.string,
+        disabled: formControlPropTypes.disabled,
         errorAction: PropTypes.func.isRequired,
-        helpText: PropTypes.node,
-        name: PropTypes.string.isRequired,
+        errors: formControlPropTypes.errors,
+        help: formControlPropTypes.help,
+        name: formControlPropTypes.name,
         uploadAction: PropTypes.func.isRequired,
-        value: PropTypes.array,
+        value: PropTypes.arrayOf(PropTypes.string),
     }
 
     static defaultProps = {
@@ -37,7 +38,7 @@ export default class MultipleFileUpload extends Component {
     render() {
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
 
         let existingFiles = null
@@ -56,32 +57,23 @@ export default class MultipleFileUpload extends Component {
             )
         }
 
-        const control = (
-            <div>
-                { existingFiles }
-
-                <FileUpload
-                    controlOnly
-                    data={ this.props.data }
-                    disabled={ this.props.disabled }
-                    errorAction={ this.props.errorAction }
-                    helpText={ this.props.helpText }
-                    name={ this.props.name }
-                    updateValue={ this._updateValue }
-                    uploadAction={ this.props.uploadAction }
-                />
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
         return (
             <div className={ groupClasses }>
-                <GroupError error={ this.props.error } />
+                <div className="form__control">
+                    { existingFiles }
 
-                { control }
+                    { /* controlOnly TODO: Make this work somehow... */ }
+                    <FileUpload
+                        data={ this.props.data }
+                        disabled={ this.props.disabled }
+                        errorAction={ this.props.errorAction }
+                        name={ this.props.name }
+                        updateValue={ this._updateValue }
+                        uploadAction={ this.props.uploadAction }
+                    />
+                </div>
+
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }

@@ -3,10 +3,9 @@ import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import moment from 'moment'
 
-import { formControlPropTypes, focussablePropTypes } from './Utils'
+import { formControlPropTypes, focussablePropTypes, generateId } from './Utils'
 
-import GroupError from './Utils/GroupError'
-import SubHelp from './Utils/SubHelp'
+import SubContent from './Utils/SubContent'
 
 import DatePicker from './DatePicker'
 import Label from './Label'
@@ -27,7 +26,6 @@ export default class DatePickerInput extends Component {
     }
 
     static defaultProps = {
-        controlOnly: false,
         disabled: false,
         placeholder: '',
         weekDayStart: 1,
@@ -80,7 +78,7 @@ export default class DatePickerInput extends Component {
     }
 
     closeDatePicker = () => {
-        this.setState({ datePickerOn: false })
+        this.setState({ datePickerOn: false, tooltipPosition: null })
         this.stopListenDatePickerClick()
         this.handleBlur()
     }
@@ -97,12 +95,6 @@ export default class DatePickerInput extends Component {
      * Handle blur
      */
     handleBlur = () => {
-        if (! this.state.datePickerOn) {
-            this.setState({
-                tooltipPosition: null,
-            })
-        }
-
         this.props.handleBlur && this.props.handleBlur()
     }
 
@@ -115,17 +107,15 @@ export default class DatePickerInput extends Component {
     }
 
     /*
-     * Start listening to click events, if the user click out of the date picker,
-     * then hide it.
+     * Start listening to click events, if the user clicks out of the date picker, then hide it.
      */
     listenDatePickerClick() {
         document.addEventListener('click', this.validateMousePosition)
     }
 
     /*
-     * Stop listening to click events
+     * Stop listening to click events.
      */
-
     stopListenDatePickerClick() {
         document.removeEventListener('click', this.validateMousePosition)
     }
@@ -146,43 +136,32 @@ export default class DatePickerInput extends Component {
             const mouseY = e.clientY
 
             if (pDP.left < mouseX && mouseX < pDP.right && pDP.top < mouseY && mouseY < pDP.bottom) {
-                // mouse is within the date picker
-                // do nothing, just handy to use the positive test to get our else condition
+                // Mouse is within the date picker.
+                // Do nothing, just handy to use the positive test to get our else condition.
             } else if (pFC.left < mouseX && mouseX < pFC.right && pFC.top < mouseY && mouseY < pFC.bottom) {
-                // mouse is within the form control div
-                // also do nothing, but wait for it...
+                // Mouse is within the form control div.
+                // Also do nothing, but wait for it...
             } else {
-                // mouse is both ouside of the date picker and the form control, hide the date picker
+                // Mouse is both ouside of the date picker and the form control, hide the date picker.
                 this.closeDatePicker()
             }
         }
     }
 
-    /*
-     * Define the HTML for the field
-     */
     render() {
-        const inputId = `id_${ this.props.name }`
+        const inputId = generateId(this.props.name)
 
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
 
-        const controlClasses = classnames({
-            'form__control': true,
-            'form__control--text': true,
-            'form__control--text-success': this.props.success,
-            'form__control--text-error': this.props.error,
-        })
-
-        const control = (
-            <div>
+        return (
+            <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className={ controlClasses } ref={ this.storeFormControlRef }>
+                <div className="form__control" ref={ this.storeFormControlRef }>
                     <input
-                        className="form__text"
                         disabled={ this.props.disabled }
                         id={ inputId }
                         name={ this.props.name }
@@ -211,21 +190,7 @@ export default class DatePickerInput extends Component {
                     }
                 </div>
 
-                <SubHelp help={ this.props.subHelp } />
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
-        return (
-            <div className={ groupClasses }>
-                <GroupError
-                    error={ this.props.error }
-                />
-
-                { control }
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }

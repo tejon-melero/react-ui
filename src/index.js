@@ -5,10 +5,7 @@ export {
     handleDeleteInnerForm,
 } from './Utils'
 
-export FieldError from './Utils/FieldError'
-export GroupError from './Utils/GroupError'
-export Help from './Utils/Help'
-export SubHelp from './Utils/SubHelp'
+export SubContent from './Utils/SubContent'
 
 export Button from './Button'
 export Boolean from './Boolean'

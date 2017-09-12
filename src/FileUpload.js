@@ -2,33 +2,38 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-import GroupError from './Utils/GroupError'
+import { formControlPropTypes, generateId } from './Utils'
+
+import SubContent from './Utils/SubContent'
+
+import Label from './Label'
 
 const FIVE_MEBIBYTES = 5242880
 
-class FileUpload extends Component {
+export default class FileUpload extends Component {
     static propTypes = {
-        controlOnly: PropTypes.bool,
+        accept: PropTypes.string,
         data: PropTypes.object,
-        disabled: PropTypes.bool,
-        error: PropTypes.string,
+        disabled: formControlPropTypes.disabled,
         errorAction: PropTypes.func.isRequired,
-        helpText: PropTypes.node,
+        errors: formControlPropTypes.errors,
+        help: formControlPropTypes.help,
+        label: formControlPropTypes.label,
         maxFilesize: PropTypes.number,
         maxFilesizeHuman: PropTypes.string,
-        name: PropTypes.string.isRequired,
-        updateValue: PropTypes.func.isRequired,
+        name: formControlPropTypes.name,
+        updateValue: formControlPropTypes.updateValue,
         uploadAction: PropTypes.func.isRequired,
         value: PropTypes.string,
     }
 
     static defaultProps = {
-        controlOnly: false,
+        accept: 'application/pdf,image/png',
         data: {},
         disabled: false,
-        helpText: (
+        help: (
             <p>
-                { 'Please upload the file in PDF format. ' }
+                { 'Please upload a file in PDF/PNG format. ' }
                 { 'The file size must not exceed 5MB.' }
             </p>
         ),
@@ -70,15 +75,12 @@ class FileUpload extends Component {
     }
 
     render() {
+        const inputId = generateId(this.props.name)
+
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
-
-        const controlClasses = classnames(
-            'form__control',
-            'form__control--file',
-        )
 
         let content = null
 
@@ -96,7 +98,7 @@ class FileUpload extends Component {
             if (this.state.progress === null) {
                 content = (
                     <input
-                        accept="application/pdf,image/png"
+                        accept={ this.props.accept }
                         disabled={ this.props.disabled }
                         onChange={ this._onFileChange }
                         type="file"
@@ -115,26 +117,16 @@ class FileUpload extends Component {
             }
         }
 
-        const control = (
-            <div className={ controlClasses }>
-                { content }
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
         return (
             <div className={ groupClasses }>
-                <GroupError error={ this.props.error } />
+                <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                { this.props.helpText }
+                <div className="form__control">
+                    { content }
+                </div>
 
-                { control }
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }
 }
-
-export default FileUpload

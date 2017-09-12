@@ -4,7 +4,7 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, hasOptionsPropTypes } from './Utils'
 
-import GroupError from './Utils/GroupError'
+import SubContent from './Utils/SubContent'
 
 export default class MultipleYesNo extends Component {
     static propTypes = {
@@ -50,14 +50,8 @@ export default class MultipleYesNo extends Component {
     render() {
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
-
-        const controlClasses = classnames(
-            'form__control',
-            'form__control--multiple',
-            'form__control--boolean',
-        )
 
         let optionList = null
 
@@ -74,25 +68,17 @@ export default class MultipleYesNo extends Component {
             )
         }
 
-        const control = (
-            <div className={ controlClasses }>
-                <table className="table table--multipleyesno">
-                    <tbody>
-                        { optionList }
-                    </tbody>
-                </table>
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
         return (
             <div className={ groupClasses }>
-                <GroupError error={ this.props.error } />
+                <div className="form__control">
+                    <table className="table table--multipleyesno">
+                        <tbody>
+                            { optionList }
+                        </tbody>
+                    </table>
+                </div>
 
-                { control }
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }

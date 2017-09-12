@@ -7,11 +7,10 @@ import {
     hasOptionsPropTypes,
     focussablePropTypes,
     getProperty,
+    generateId,
 } from './Utils'
 
-import FieldError from './Utils/FieldError'
-import Help from './Utils/Help'
-import SubHelp from './Utils/SubHelp'
+import SubContent from './Utils/SubContent'
 
 import Label from './Label'
 
@@ -95,7 +94,6 @@ export default class Select extends Component {
         dropdownTakesSpace: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         helpOnFocus: PropTypes.bool,
-        helpOnHover: PropTypes.bool,
         innerRef: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.node,
@@ -113,7 +111,6 @@ export default class Select extends Component {
         disabled: false,
         dropdownTakesSpace: false,
         helpOnFocus: true,
-        helpOnHover: false,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
@@ -139,9 +136,6 @@ export default class Select extends Component {
 
             // Whether the field is currently focussed due to user interaction.
             focussed: false,
-
-            // Whether the field is currently being hovered over.
-            hovering: false,
 
             // Tnis applies only when a search function is provided.
             searching: false,
@@ -600,20 +594,8 @@ export default class Select extends Component {
         return this.props.noOptionPlaceholder
     }
 
-    handleMouseOver = () => {
-        if (this.props.helpOnHover) {
-            this.setState({ hovering: true })
-        }
-    }
-
-    handleMouseOut = () => {
-        if (this.props.helpOnHover) {
-            this.setState({ hovering: false })
-        }
-    }
-
     render() {
-        const inputId = `id_${ this.props.name }`
+        const inputId = generateId(this.props.name)
 
         // displayValue is just concerned with what should be displayed, not what we should be
         // using to search on, also we don't care about the inputValue if it is empty - in that
@@ -639,14 +621,14 @@ export default class Select extends Component {
         // Define the classes for the form group
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
 
         // Define the classes for the form control
         const controlClasses = classnames({
             'form__control': true,
             'form__control--select': true,
-            'form__control--select-error': this.props.error,
+            'form__control--select-error': this.props.errors && this.props.errors.length,
             'control-select': true,
             'control-select--focus': this.state.focussed,
         })
@@ -720,8 +702,8 @@ export default class Select extends Component {
             }
         }
 
-        const control = (
-            <div onMouseOut={ this.handleMouseOut } onMouseOver={ this.handleMouseOver }>
+        return (
+            <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
                 <div className={ controlClasses } ref={ this.storeFormControlRef }>
@@ -730,6 +712,7 @@ export default class Select extends Component {
                         type="hidden"
                         value={ actualValue }
                     />
+
                     <input
                         className="form__select"
                         disabled={ this.props.disabled }
@@ -745,6 +728,7 @@ export default class Select extends Component {
                         type={ this.props.type || 'text' }
                         value={ displayValue }
                     />
+
                     <div
                         className="control-select__options"
                         ref={ this.storeOptionListRef }
@@ -752,38 +736,9 @@ export default class Select extends Component {
                     >
                         { optionList }
                     </div>
-                    <FieldError
-                        error={ this.props.error }
-                        on={
-                            (this.props.helpOnFocus && this.state.focussed) ||
-                            (this.props.helpOnHover && this.state.hovering)
-                        }
-                        position={ this.state.tooltipPosition }
-                    />
-                    <Help
-                        help={ this.props.help }
-                        on={
-                            ! this.props.error &&
-                            (
-                                (this.props.helpOnFocus && this.state.focussed) ||
-                                (this.props.helpOnHover && this.state.hovering)
-                            )
-                        }
-                        position={ this.state.tooltipPosition }
-                    />
                 </div>
 
-                <SubHelp help={ this.props.subHelp } />
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
-        return (
-            <div className={ groupClasses }>
-                { control }
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }

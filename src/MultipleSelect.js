@@ -31,7 +31,6 @@ export default class MultipleSelect extends Component {
     }
 
     static defaultProps = {
-        controlOnly: false,
         disabled: false,
         displaySelections: true,
         values: [],
@@ -100,7 +99,7 @@ export default class MultipleSelect extends Component {
     render() {
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
 
         let selectedItems = null
@@ -120,43 +119,35 @@ export default class MultipleSelect extends Component {
             ))
         }
 
-        const control = (
-            <div className={ this.props.className }>
-                <Select
-                    closeOnSelect={ false }
-                    controlOnly
-                    defaultOptions={ this.props.defaultOptions }
-                    disabled={ this.props.disabled }
-                    error={ this.props.error }
-                    getFilteredOptions={ this.props.getFilteredOptions }
-                    handleBlur={ this.props.handleBlur }
-                    handleFocus={ this.props.handleFocus }
-                    help={ this.props.help }
-                    label={ this.props.label }
-                    minCharSearch={ this.props.minCharSearch }
-                    name={ this.props.name }
-                    noOptionPlaceholder={ this.props.noOptionPlaceholder }
-                    noResultsPlaceholder={ this.props.noResultsPlaceholder }
-                    options={ this._getFormattedOptions() }
-                    placeholder={ this.props.placeholder }
-                    searchOptions={ this.props.searchOptions }
-                    searchingPlaceholder={ this.props.searchingPlaceholder }
-                    type={ this.props.type }
-                    updateValue={ this._updateValue }
-                    value={ this.props.values.map(valueMapper) }
-                />
-
-                { selectedItems }
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
         return (
             <div className={ groupClasses }>
-                { control }
+                <div className={ this.props.className }>
+                    { /* controlOnly TODO: Make this work somehow... */ }
+                    <Select
+                        closeOnSelect={ false }
+                        defaultOptions={ this.props.defaultOptions }
+                        disabled={ this.props.disabled }
+                        error={ this.props.error }
+                        getFilteredOptions={ this.props.getFilteredOptions }
+                        handleBlur={ this.props.handleBlur }
+                        handleFocus={ this.props.handleFocus }
+                        help={ this.props.help }
+                        label={ this.props.label }
+                        minCharSearch={ this.props.minCharSearch }
+                        name={ this.props.name }
+                        noOptionPlaceholder={ this.props.noOptionPlaceholder }
+                        noResultsPlaceholder={ this.props.noResultsPlaceholder }
+                        options={ this._getFormattedOptions() }
+                        placeholder={ this.props.placeholder }
+                        searchOptions={ this.props.searchOptions }
+                        searchingPlaceholder={ this.props.searchingPlaceholder }
+                        type={ this.props.type }
+                        updateValue={ this._updateValue }
+                        value={ this.props.values.map(valueMapper) }
+                    />
+
+                    { selectedItems }
+                </div>
             </div>
         )
     }

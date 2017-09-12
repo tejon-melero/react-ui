@@ -4,8 +4,7 @@ import classnames from 'classnames'
 
 import { formControlPropTypes, focussablePropTypes } from './Utils'
 
-import GroupError from './Utils/GroupError'
-import SubHelp from './Utils/SubHelp'
+import SubContent from './Utils/SubContent'
 
 import Button from './Button'
 import Label from './Label'
@@ -62,12 +61,12 @@ export default class MultipleTextInput extends Component {
     render() {
         const groupClasses = classnames({
             'form__group': true,
-            'form__group--error': this.props.error,
+            'form__group--error': this.props.errors && this.props.errors.length,
         })
 
         let fields = null
 
-        const value = this.state.value
+        const { value } = this.state.value
 
         if (value && value.length) {
             fields = value.map((item, index) => (
@@ -85,11 +84,13 @@ export default class MultipleTextInput extends Component {
             ))
         }
 
-        const control = (
-            <div>
+        return (
+            <div className={ groupClasses }>
                 <Label>{ this.props.label }</Label>
 
-                { fields }
+                <div className="form__control">
+                    { fields }
+                </div>
 
                 <div className="grid grid--break-mobile">
                     <div className="pull-right">
@@ -104,19 +105,7 @@ export default class MultipleTextInput extends Component {
                     </div>
                 </div>
 
-                <SubHelp help={ this.props.subHelp } />
-            </div>
-        )
-
-        if (this.props.controlOnly) {
-            return control
-        }
-
-        return (
-            <div className={ groupClasses }>
-                <GroupError error={ this.props.error } />
-
-                { control }
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }
