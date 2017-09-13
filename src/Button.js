@@ -10,10 +10,8 @@ export default function Button({
     fullWidth,
     large,
     loading,
-    onClick,
-    onMouseDown,
     status,
-    type,
+    ...props
 }) {
     const buttonClasses = classnames(
         'btn',
@@ -28,11 +26,9 @@ export default function Button({
 
     const button = (
         <button
+            { ...props }
             className={ buttonClasses }
             disabled={ disabled || loading }
-            onClick={ onClick }
-            onMouseDown={ onMouseDown }
-            type={ type }
         >
             { children }
         </button>
