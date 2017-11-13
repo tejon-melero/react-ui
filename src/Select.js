@@ -714,6 +714,7 @@ export default class Select extends Component {
                     />
 
                     <input
+                        autoComplete="off"
                         className="form__select"
                         disabled={ this.props.disabled }
                         id={ inputId }
