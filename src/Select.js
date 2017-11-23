@@ -324,6 +324,14 @@ export default class Select extends Component {
                 }
                 break
             case KEY_ENTER:
+                // If the dropdown is currently showing, we don't want pressing enter in the input
+                // to actually submit any form that the Select component is part of, but instead
+                // just select the focussed option. So let's prevent the default action in that
+                // case.
+                if (this.state.focussed) {
+                    e.preventDefault()
+                }
+
                 this._selectFocussedOption()
                 break
             case KEY_UP:
