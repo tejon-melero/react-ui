@@ -32,6 +32,7 @@ export default class DatePicker extends Component {
         moment.updateLocale('en', {
             week: {
                 dow: this.props.weekDayStart,
+
                 // Just use the moment default (https://github.com/moment/moment/blob/develop/src/lib/units/week.js#L46)
                 // here, but this shouldn't affect us either way as we don't care about week numbers.
                 doy: 6,

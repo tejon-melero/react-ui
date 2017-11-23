@@ -124,7 +124,6 @@ export default class DatePickerInput extends Component {
      * Check if the mouse click is within the date picker or form-control area
      * If the mouse click is outside of the area, then we hide the date picker
      */
-
     validateMousePosition = (e) => {
         if (this.state.datePickerOn) {
             // Get the area covered by the date picker
