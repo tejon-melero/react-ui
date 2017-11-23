@@ -362,9 +362,6 @@ export default class Select extends Component {
         }
     }
 
-    /*
-     * Assigned the value upstream
-     */
     _assignValue(option) {
         if (this.props.closeOnSelect) {
             this.setState({
@@ -378,7 +375,7 @@ export default class Select extends Component {
     }
 
     /*
-     * Get an option label from its value
+     * Given a value, get the label for that value.
      */
     _getOptionLabelForValue = (value) => {
         const allOptions = this.props.options.concat(this.props.defaultOptions)
