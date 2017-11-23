@@ -86,7 +86,11 @@ export default class MultipleSelect extends Component {
             if (values.includes(item.value)) {
                 return {
                     ...item,
-                    richLabel: (<span>{ '✓ ' }{ item.label }</span>),
+                    richLabel: item.richLabel ? (
+                      <item.richLabel selected />
+                    ) : (
+                      <span>{ '✓ ' }{ item.label }</span>
+                    ),
                     classes: `${ item.classes || '' } control-select__option--focused`,
                 }
             }
