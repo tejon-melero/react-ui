@@ -60,7 +60,7 @@ Button.propTypes = {
     onClick: PropTypes.func,
     onMouseDown: PropTypes.func,
     size: PropTypes.oneOf([ 'small', 'large' ]),
-    status: PropTypes.oneOf([ 'primary', 'create', 'change', 'cancel', 'link' ]),
+    status: PropTypes.oneOf([ 'primary', 'create', 'change', 'cancel', 'delete' ]),
     type: PropTypes.oneOf([ 'submit', 'button', 'reset', 'menu' ]),
 }
 
