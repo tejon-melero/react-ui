@@ -7,9 +7,10 @@ export default function Button({
     children,
     className,
     disabled,
+    display,
     fullWidth,
-    large,
     loading,
+    size,
     status,
     ...props
 }) {
@@ -17,9 +18,10 @@ export default function Button({
         'btn',
         className,
         {
+            [`btn--${ display }`]: display,
             [`btn--${ status }`]: status,
+            [`btn--${ size }`]: size,
             'btn--full-width': fullWidth,
-            'btn--large': large,
             'btn--loading': loading,
         }
     )
@@ -52,12 +54,13 @@ Button.propTypes = {
     children: PropTypes.node.isRequired,
     className: PropTypes.string,
     disabled: PropTypes.bool,
+    display: PropTypes.oneOf([ 'outline', 'link' ]),
     fullWidth: PropTypes.bool,
-    large: PropTypes.bool,
     loading: PropTypes.bool,
     onClick: PropTypes.func,
     onMouseDown: PropTypes.func,
-    status: PropTypes.oneOf([ 'primary', 'create', 'change', 'cancel', 'delete' ]),
+    size: PropTypes.oneOf([ 'small', 'large' ]),
+    status: PropTypes.oneOf([ 'primary', 'create', 'change', 'cancel', 'link' ]),
     type: PropTypes.oneOf([ 'submit', 'button', 'reset', 'menu' ]),
 }
 
@@ -70,6 +73,5 @@ Button.defaultProps = {
     loading: false,
     onClick: () => {},
     onMouseDown: () => {},
-    status: null,
     type: 'button',
 }
