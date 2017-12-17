@@ -31,8 +31,8 @@
     "lib"
   ],
   "peerDependencies": {
-    "react": "^16.0",
-    "react-dom": "^16.0"
+    "react": "^15.5,^16.0",
+    "react-dom": "^15.5,^16.0"
   },
   "dependencies": {
     "classnames": "^2.2.5",
@@ -51,8 +51,8 @@
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^6.10.3",
     "npm-run-all": "^4.0.2",
-    "react": "^16.0",
-    "react-dom": "^16.0",
+    "react": "^15.5",
+    "react-dom": "^15.5",
     "rimraf": "^2.6.1",
     "webpack": "^1.14.0"
   }
