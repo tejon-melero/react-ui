@@ -69,7 +69,6 @@ Button.defaultProps = {
     className: '',
     disabled: false,
     fullWidth: false,
-    large: false,
     loading: false,
     onClick: () => {},
     onMouseDown: () => {},
