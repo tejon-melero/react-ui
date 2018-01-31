@@ -477,7 +477,7 @@ export default class Select extends Component {
 
                 // Otherwise, keep searching for the curretly-selected option. If found, set
                 // selectNext to true,
-                if (option.value === this.state.focussedOption.value) {
+                if (this.state.focussedOption && (option.value === this.state.focussedOption.value)) {
                     selectNext = true
                 }
             }
@@ -498,7 +498,7 @@ export default class Select extends Component {
         for (const options of Object.values(this.state.categorisedOptions)) {
             for (const option of options) {
                 // if the current option is the currently selected one, return the previous option.
-                if (previous && (option.value === this.state.focussedOption.value)) {
+                if (previous && this.state.focussedOption && (option.value === this.state.focussedOption.value)) {
                     return previous
                 }
 
