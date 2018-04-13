@@ -163,7 +163,7 @@ export default class TextInput extends Component {
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ label }</Label>
 
-                <div className="form__control">
+                <div className="form__control form__control--input">
                     { field }
                 </div>
 

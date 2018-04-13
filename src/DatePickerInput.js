@@ -159,7 +159,7 @@ export default class DatePickerInput extends Component {
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className="form__control" ref={ this.storeFormControlRef }>
+                <div className="form__control form__control--input" ref={ this.storeFormControlRef }>
                     <input
                         disabled={ this.props.disabled }
                         id={ inputId }
