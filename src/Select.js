@@ -124,27 +124,33 @@ export default class Select extends Component {
         value: null,
     }
 
-    constructor(props) {
-        super(props)
+    state = {
+        // The bottom position of the tooltip.
+        tooltipPosition: null,
 
-        this.state = {
-            // The bottom position of the tooltip.
-            tooltipPosition: null,
+        // The value currently inputted by the user in the text field.
+        inputValue: null,
 
-            // The value currently inputted by the user in the text field.
-            inputValue: null,
+        // Whether the field is currently focussed due to user interaction.
+        focussed: false,
 
-            // Whether the field is currently focussed due to user interaction.
-            focussed: false,
+        // Tnis applies only when a search function is provided. Stores whether we are currently
+        // waiting for an async search response.
+        searching: false,
 
-            // Tnis applies only when a search function is provided.
-            searching: false,
-        }
+        // Options from props.options pre-categorised by the category key's value.
+        categorisedOptions: {},
 
-        setTimeout(() => {
-            this._resolveSelectedOption()
-            this._resolveFilteredOptions()
-        }, 0)
+        // The currently-focussed option.
+        focussedOption: null,
+
+        // The number of actual options after applying filtering.
+        numFilteredOptions: 0,
+    }
+
+    componentDidMount() {
+        this._resolveSelectedOption()
+        this._resolveFilteredOptions()
     }
 
     componentWillReceiveProps(nextProps) {
