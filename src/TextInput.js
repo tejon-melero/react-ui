@@ -38,14 +38,10 @@ export default class TextInput extends Component {
         updateValueOnBlur: true,
     }
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            focussed: false,
-            tooltipPosition: null,
-            value: props.value || '',
-        }
+    state = {
+        focussed: false,
+        tooltipPosition: null,
+        value: this.props.value || '',
     }
 
     componentWillReceiveProps(nextProps) {
@@ -55,6 +51,7 @@ export default class TextInput extends Component {
             })
         }
     }
+
     handleChange = (e) => {
         const value = e.target.value
 
