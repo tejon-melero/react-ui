@@ -641,7 +641,8 @@ export default class Select extends Component {
         const controlClasses = classnames({
             'form__control': true,
             'form__control--select': true,
-            'form__control--select-error': this.props.errors && this.props.errors.length,
+            'form__control--select-arrow-suffix': this.props.suffix,
+            'form__control--input-addon': this.props.prefix || this.props.suffix,
             'control-select': true,
             'control-select--focus': this.state.focussed,
         })
@@ -750,6 +751,17 @@ export default class Select extends Component {
                     >
                         { optionList }
                     </div>
+
+                    { this.props.prefix && (
+                        <div className="input-addon input-addon--prefix">
+                            { this.props.prefix }
+                        </div>
+                    )}
+                    { this.props.suffix && (
+                        <div className="input-addon input-addon--suffix">
+                            { this.props.suffix }
+                        </div>
+                    )}
                 </div>
 
                 <SubContent errors={ this.props.errors } help={ this.props.help } />

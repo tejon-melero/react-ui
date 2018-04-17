@@ -9,7 +9,9 @@ export const formControlPropTypes = {
     innerRef: PropTypes.func,
     label: PropTypes.node,
     name: PropTypes.string.isRequired,
+    prefix: PropTypes.node,
     subHelp: PropTypes.node,
+    suffix: PropTypes.node,
     updateValue: PropTypes.func.isRequired,
     value: PropTypes.any,
 }

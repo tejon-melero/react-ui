@@ -155,11 +155,17 @@ export default class DatePickerInput extends Component {
             'form__group--error': this.props.errors && this.props.errors.length,
         })
 
+        const controlClasses = classnames({
+            'form__control': true,
+            'form__control--input': true,
+            'form__control--input-addon': this.props.prefix || this.props.suffix,
+        })
+
         return (
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className="form__control form__control--input" ref={ this.storeFormControlRef }>
+                <div className={ controlClasses } ref={ this.storeFormControlRef }>
                     <input
                         disabled={ this.props.disabled }
                         id={ inputId }
@@ -187,6 +193,17 @@ export default class DatePickerInput extends Component {
                             weekDayStart={ this.props.weekDayStart || null }
                         />
                     }
+
+                    { this.props.prefix && (
+                        <div className="input-addon input-addon--prefix">
+                            { this.props.prefix }
+                        </div>
+                    )}
+                    { this.props.suffix && (
+                        <div className="input-addon input-addon--suffix">
+                            { this.props.suffix }
+                        </div>
+                    )}
                 </div>
 
                 <SubContent errors={ this.props.errors } help={ this.props.help } />

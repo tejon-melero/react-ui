@@ -113,6 +113,12 @@ export default class TextInput extends Component {
             'form__group--success': success,
         })
 
+        const controlClasses = classnames({
+            'form__control': true,
+            'form__control--input': true,
+            'form__control--input-addon': this.props.prefix || this.props.suffix,
+        })
+
         let field = null
 
         if (type === 'textarea') {
@@ -163,8 +169,19 @@ export default class TextInput extends Component {
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ label }</Label>
 
-                <div className="form__control form__control--input">
+                <div className={ controlClasses }>
                     { field }
+
+                    { this.props.prefix && (
+                        <div className="input-addon input-addon--prefix">
+                            { this.props.prefix }
+                        </div>
+                    )}
+                    { this.props.suffix && (
+                        <div className="input-addon input-addon--suffix">
+                            { this.props.suffix }
+                        </div>
+                    )}
                 </div>
 
                 <SubContent errors={ errors } help={ help } />

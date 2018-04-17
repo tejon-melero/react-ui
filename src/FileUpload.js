@@ -121,7 +121,7 @@ export default class FileUpload extends Component {
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className="form__control">
+                <div className="form__control form__control--borderless">
                     { content }
                 </div>
 
