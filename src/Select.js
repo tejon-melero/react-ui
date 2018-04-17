@@ -90,6 +90,7 @@ export default class Select extends Component {
 
         categoriseBy: PropTypes.string,
         closeOnSelect: PropTypes.bool,
+        controlClassName: PropTypes.string,
         controlOnly: PropTypes.bool,
         defaultOptions: PropTypes.array,
         dropdownTakesSpace: PropTypes.bool,
@@ -639,14 +640,17 @@ export default class Select extends Component {
         })
 
         // Define the classes for the form control
-        const controlClasses = classnames({
-            'form__control': true,
-            'form__control--select': true,
-            'form__control--select-arrow-suffix': this.props.suffix,
-            'form__control--input-addon': this.props.prefix || this.props.suffix,
-            'control-select': true,
-            'control-select--focus': this.state.focussed,
-        })
+        const controlClasses = classnames(
+            'form__control',
+            'form__control--select',
+            this.props.controlClassName,
+            'control-select',
+            {
+                'form__control--select-arrow-suffix': this.props.suffix,
+                'form__control--input-addon': this.props.prefix || this.props.suffix,
+                'control-select--focus': this.state.focussed,
+            }
+        )
 
         // Define the position of the option list
         const optionsStyle = {}

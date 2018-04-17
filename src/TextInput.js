@@ -14,6 +14,7 @@ export default class TextInput extends Component {
         ...focussablePropTypes,
 
         autoFocus: PropTypes.bool,
+        controlClassName: PropTypes.string,
         controlOnly: PropTypes.bool,
         max: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
         min: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
@@ -90,6 +91,7 @@ export default class TextInput extends Component {
         const {
             autoFocus,
             disabled,
+            controlClassName,
             controlOnly,
             errors,
             help,
@@ -116,11 +118,14 @@ export default class TextInput extends Component {
             'form__group--success': success,
         })
 
-        const controlClasses = classnames({
-            'form__control': true,
-            'form__control--input': true,
-            'form__control--input-addon': this.props.prefix || this.props.suffix,
-        })
+        const controlClasses = classnames(
+            'form__control',
+            'form__control--input',
+            controlClassName,
+            {
+                'form__control--input-addon': this.props.prefix || this.props.suffix,
+            }
+        )
 
         let field = null
 
