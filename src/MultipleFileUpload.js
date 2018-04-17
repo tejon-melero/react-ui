@@ -61,8 +61,8 @@ export default class MultipleFileUpload extends Component {
                 <div className="form__control">
                     { existingFiles }
 
-                    { /* controlOnly TODO: Make this work somehow... */ }
                     <FileUpload
+                        controlOnly
                         data={ this.props.data }
                         disabled={ this.props.disabled }
                         errorAction={ this.props.errorAction }

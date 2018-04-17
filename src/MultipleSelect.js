@@ -126,9 +126,9 @@ export default class MultipleSelect extends Component {
         return (
             <div className={ groupClasses }>
                 <div className={ this.props.className }>
-                    { /* controlOnly TODO: Make this work somehow... */ }
                     <Select
                         closeOnSelect={ false }
+                        controlOnly
                         defaultOptions={ this.props.defaultOptions }
                         disabled={ this.props.disabled }
                         error={ this.props.error }
