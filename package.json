@@ -8,7 +8,7 @@
     "url": "https://code.cotidia.com/cotidia/react-ui.git"
   },
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "prebuild": "rimraf lib dist",
     "build:main": "babel -d lib ./src",
     "_build:umd": "webpack --output-filename index.umd.js",
