@@ -90,6 +90,7 @@ export default class Select extends Component {
 
         categoriseBy: PropTypes.string,
         closeOnSelect: PropTypes.bool,
+        controlOnly: PropTypes.bool,
         defaultOptions: PropTypes.array,
         dropdownTakesSpace: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
@@ -716,53 +717,61 @@ export default class Select extends Component {
             }
         }
 
+        const control = (
+            <div className={ controlClasses } ref={ this.storeFormControlRef }>
+                <input
+                    name={ this.props.name }
+                    type="hidden"
+                    value={ actualValue }
+                />
+
+                <input
+                    autoComplete="off"
+                    className="form__select"
+                    disabled={ this.props.disabled }
+                    id={ inputId }
+                    name={ `${ this.props.name }_selector` }
+                    onBlur={ this._handleInputBlurred }
+                    onChange={ this._handleInputChanged }
+                    onFocus={ this._handleInputFocussed }
+                    onKeyDown={ this._handleInputKeyDown }
+                    onMouseDown={ this._handleInputMousePressedDown }
+                    placeholder={ this.props.placeholder }
+                    ref={ this.storeTextInputRef }
+                    type={ this.props.type || 'text' }
+                    value={ displayValue }
+                />
+
+                <div
+                    className="control-select__options"
+                    ref={ this.storeOptionListRef }
+                    style={ optionsStyle }
+                >
+                    { optionList }
+                </div>
+
+                { this.props.prefix && (
+                    <div className="input-addon input-addon--prefix">
+                        { this.props.prefix }
+                    </div>
+                )}
+                { this.props.suffix && (
+                    <div className="input-addon input-addon--suffix">
+                        { this.props.suffix }
+                    </div>
+                )}
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
         return (
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className={ controlClasses } ref={ this.storeFormControlRef }>
-                    <input
-                        name={ this.props.name }
-                        type="hidden"
-                        value={ actualValue }
-                    />
-
-                    <input
-                        autoComplete="off"
-                        className="form__select"
-                        disabled={ this.props.disabled }
-                        id={ inputId }
-                        name={ `${ this.props.name }_selector` }
-                        onBlur={ this._handleInputBlurred }
-                        onChange={ this._handleInputChanged }
-                        onFocus={ this._handleInputFocussed }
-                        onKeyDown={ this._handleInputKeyDown }
-                        onMouseDown={ this._handleInputMousePressedDown }
-                        placeholder={ this.props.placeholder }
-                        ref={ this.storeTextInputRef }
-                        type={ this.props.type || 'text' }
-                        value={ displayValue }
-                    />
-
-                    <div
-                        className="control-select__options"
-                        ref={ this.storeOptionListRef }
-                        style={ optionsStyle }
-                    >
-                        { optionList }
-                    </div>
-
-                    { this.props.prefix && (
-                        <div className="input-addon input-addon--prefix">
-                            { this.props.prefix }
-                        </div>
-                    )}
-                    { this.props.suffix && (
-                        <div className="input-addon input-addon--suffix">
-                            { this.props.suffix }
-                        </div>
-                    )}
-                </div>
+                { control }
 
                 <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>

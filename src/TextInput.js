@@ -14,6 +14,7 @@ export default class TextInput extends Component {
         ...focussablePropTypes,
 
         autoFocus: PropTypes.bool,
+        controlOnly: PropTypes.bool,
         max: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
         min: PropTypes.oneOfType([ PropTypes.string, PropTypes.number ]),
         onKeyPress: PropTypes.func,
@@ -28,6 +29,7 @@ export default class TextInput extends Component {
 
     static defaultProps = {
         autoFocus: false,
+        controlOnly: false,
         disabled: false,
         placeholder: '',
         rows: 6,
@@ -88,6 +90,7 @@ export default class TextInput extends Component {
         const {
             autoFocus,
             disabled,
+            controlOnly,
             errors,
             help,
             label,
@@ -165,24 +168,32 @@ export default class TextInput extends Component {
             )
         }
 
+        const control = (
+            <div className={ controlClasses }>
+                { field }
+
+                { this.props.prefix && (
+                    <div className="input-addon input-addon--prefix">
+                        { this.props.prefix }
+                    </div>
+                )}
+                { this.props.suffix && (
+                    <div className="input-addon input-addon--suffix">
+                        { this.props.suffix }
+                    </div>
+                )}
+            </div>
+        )
+
+        if (controlOnly) {
+            return control
+        }
+
         return (
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ label }</Label>
 
-                <div className={ controlClasses }>
-                    { field }
-
-                    { this.props.prefix && (
-                        <div className="input-addon input-addon--prefix">
-                            { this.props.prefix }
-                        </div>
-                    )}
-                    { this.props.suffix && (
-                        <div className="input-addon input-addon--suffix">
-                            { this.props.suffix }
-                        </div>
-                    )}
-                </div>
+                { control }
 
                 <SubContent errors={ errors } help={ help } />
             </div>

@@ -13,6 +13,7 @@ const FIVE_MEBIBYTES = 5242880
 export default class FileUpload extends Component {
     static propTypes = {
         accept: PropTypes.string,
+        controlOnly: PropTypes.bool,
         data: PropTypes.object,
         disabled: formControlPropTypes.disabled,
         errorAction: PropTypes.func.isRequired,
@@ -29,6 +30,7 @@ export default class FileUpload extends Component {
 
     static defaultProps = {
         accept: 'application/pdf,image/png',
+        controlOnly: false,
         data: {},
         disabled: false,
         help: (
@@ -117,13 +119,21 @@ export default class FileUpload extends Component {
             }
         }
 
+        const control = (
+            <div className="form__control form__control--borderless">
+                { content }
+            </div>
+        )
+
+        if (this.props.controlOnly) {
+            return control
+        }
+
         return (
             <div className={ groupClasses }>
                 <Label htmlFor={ inputId }>{ this.props.label }</Label>
 
-                <div className="form__control form__control--borderless">
-                    { content }
-                </div>
+                { control }
 
                 <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
