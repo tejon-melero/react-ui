@@ -15,7 +15,6 @@ export default class Radio extends Component {
     }
 
     static defaultProps = {
-        controlOnly: false,
         disabled: false,
     }
 

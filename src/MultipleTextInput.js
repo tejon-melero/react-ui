@@ -20,7 +20,6 @@ export default class MultipleTextInput extends Component {
     }
 
     static defaultProps = {
-        controlOnly: false,
         disabled: false,
         type: 'text',
     }

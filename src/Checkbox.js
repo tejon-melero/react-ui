@@ -17,7 +17,6 @@ export default class Checkbox extends Component {
     }
 
     static defaultProps = {
-        controlOnly: false,
         disabled: false,
         hidden: false,
         value: false,

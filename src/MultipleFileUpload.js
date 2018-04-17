@@ -22,7 +22,6 @@ export default class MultipleFileUpload extends Component {
     }
 
     static defaultProps = {
-        controlOnly: false,
         data: {},
         disabled: false,
         errors: [],

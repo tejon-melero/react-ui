@@ -13,7 +13,6 @@ export default class MultipleYesNo extends Component {
     }
 
     static defaultProps = {
-        controlOnly: false,
         disabled: false,
     }
 
