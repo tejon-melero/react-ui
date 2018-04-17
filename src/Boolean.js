@@ -5,6 +5,8 @@ import { formControlPropTypes, generateId } from './Utils'
 
 import SubContent from './Utils/SubContent'
 
+import Label from './Label'
+
 export default class Boolean extends Component {
     static propTypes = {
         ...formControlPropTypes,
@@ -28,56 +30,50 @@ export default class Boolean extends Component {
 
         const controlClasses = classnames(
             'form__control',
-            'form__control--boolean',
+            'form__control--radio',
+            'form__control--inline',
         )
 
         const inputId = generateId(this.props.name)
 
         return (
             <div className={ groupClasses }>
-                <div className={ controlClasses }>
-                    <table className="table table--boolean">
-                        <tbody>
-                            <tr className="table-row">
-                                { this.props.label &&
-                                    <td className="table-cell">
-                                        <label>{ this.props.label }</label>
-                                    </td>
-                                }
-                                <td className="table-cell" width="80">
-                                    <label htmlFor={ `${ inputId }-yes` }>
-                                        <input
-                                            checked={ this.props.value === true }
-                                            disabled={ this.props.disabled }
-                                            id={ `${ inputId }-yes` }
-                                            name={ `${ this.props.name }` }
-                                            onChange={ this._handleChange }
-                                            type="radio"
-                                            value="1"
-                                        />
-                                        { 'Yes' }
-                                    </label>
-                                </td>
-                                <td className="table-cell" width="80">
-                                    <label htmlFor={ `${ inputId }-no` }>
-                                        <input
-                                            checked={ this.props.value === false }
-                                            disabled={ this.props.disabled }
-                                            id={ `${ inputId }-no` }
-                                            name={ `${ this.props.name }` }
-                                            onChange={ this._handleChange }
-                                            type="radio"
-                                            value="0"
-                                        />
-                                        { 'No' }
-                                    </label>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <Label>{ this.props.label }</Label>
 
-                    <SubContent errors={ this.props.errors } help={ this.props.help } />
+                <div className={ controlClasses }>
+                    <ul>
+                        <li>
+                            <input
+                                checked={ this.props.value === true }
+                                disabled={ this.props.disabled }
+                                id={ `${ inputId }-yes` }
+                                name={ this.props.name }
+                                onChange={ this._handleChange }
+                                type="radio"
+                                value="1"
+                            />
+                            <label className="form__option-label" htmlFor={ `${ inputId }-yes` }>
+                                Yes
+                            </label>
+                        </li>
+                        <li>
+                            <input
+                                checked={ this.props.value === false }
+                                disabled={ this.props.disabled }
+                                id={ `${ inputId }-no` }
+                                name={ this.props.name }
+                                onChange={ this._handleChange }
+                                type="radio"
+                                value="0"
+                            />
+                            <label className="form__option-label" htmlFor={ `${ inputId }-no` }>
+                                No
+                            </label>
+                        </li>
+                    </ul>
                 </div>
+
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }
