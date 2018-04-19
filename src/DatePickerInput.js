@@ -64,13 +64,16 @@ export default class DatePickerInput extends Component {
 
         const newState = {
             datePickerOn: true,
-            tooltipPosition: position.height,
         }
 
+        // If the middle of the form control is in the upper half of the window, hang the date
+        // picker down to the bottom.
         if ((position.top + position.height / 2) < window.innerHeight / 2) {
             newState.datePickerAlignment = 'bottom'
+            newState.tooltipPosition = `calc(${ this.formControl.offsetTop + this.formControl.offsetHeight }px + 0.25rem)`
         } else {
             newState.datePickerAlignment = 'top'
+            newState.tooltipPosition = `calc(100% - ${ this.formControl.offsetTop }px + 0.25rem)`
         }
 
         this.setState(newState)
@@ -125,7 +128,7 @@ export default class DatePickerInput extends Component {
      * If the mouse click is outside of the area, then we hide the date picker
      */
     validateMousePosition = (e) => {
-        if (this.state.datePickerOn) {
+        if (this.state.datePickerOn && this.formControl && this.datePicker) {
             // Get the area covered by the date picker
             const pDP = this.datePicker.getBoundingClientRect()
             const pFC = this.formControl.getBoundingClientRect()
@@ -159,6 +162,7 @@ export default class DatePickerInput extends Component {
             'form__control': true,
             'form__control--input': true,
             'form__control--input-addon': this.props.prefix || this.props.suffix,
+            'form__control--date': true,
         })
 
         return (

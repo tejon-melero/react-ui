@@ -5,7 +5,6 @@ import { extendMoment } from 'moment-range'
 
 const moment = extendMoment(Moment)
 
-const VERTICAL_PADDING_PX = 6
 const WEEKS_TO_DISPLAY = 6
 
 export default class DatePicker extends Component {
@@ -17,7 +16,7 @@ export default class DatePicker extends Component {
         max: PropTypes.instanceOf(moment),
         min: PropTypes.instanceOf(moment),
         onChange: PropTypes.func.isRequired,
-        position: PropTypes.number,
+        position: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]),
         weekDayStart: PropTypes.number,
     }
 
@@ -275,9 +274,9 @@ export default class DatePicker extends Component {
 
         if (this.props.position) {
             if (this.props.alignment === 'bottom') {
-                datePickerStyles.top = this.props.position + VERTICAL_PADDING_PX
+                datePickerStyles.top = this.props.position
             } else {
-                datePickerStyles.bottom = this.props.position + VERTICAL_PADDING_PX
+                datePickerStyles.bottom = this.props.position
             }
 
             datePickerStyles.display = 'block'
