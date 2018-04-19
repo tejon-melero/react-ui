@@ -332,7 +332,11 @@ export default class Select extends Component {
                     this.props.updateValue({ [this.props.name]: null })
                 }
                 break
+
             case KEY_TAB:
+                this._selectFocussedOption()
+                break
+
             case KEY_ENTER:
                 // If the dropdown is currently showing, we don't want pressing enter in the input
                 // to actually submit any form that the Select component is part of, but instead
@@ -344,15 +348,19 @@ export default class Select extends Component {
 
                 this._selectFocussedOption()
                 break
+
             case KEY_UP:
                 this._focusPreviousOption()
                 break
+
             case KEY_DOWN:
                 this._focusNextOption()
                 break
+
             case KEY_ESCAPE:
                 this._handleBlur()
                 break
+
             default:
                 break
         }
