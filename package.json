@@ -1,6 +1,6 @@
 {
   "name": "@cotidia/react-ui",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "UI Components for React",
   "main": "lib/index.js",
   "repository": {

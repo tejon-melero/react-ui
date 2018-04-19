@@ -5,7 +5,7 @@ export default function SubContent({ errors, help }) {
     return (
         <div className="form__help">
             { errors && errors.map((error, index) => (
-                <div key={ index }>{ error }</div>
+                <span key={ index }>{ error }</span>
             )) }
 
             { ! (errors && errors.length > 0) && help }
