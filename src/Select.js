@@ -15,6 +15,7 @@ import SubContent from './Utils/SubContent'
 import Label from './Label'
 
 const KEY_BACKSPACE = 8
+const KEY_TAB = 9
 const KEY_ENTER = 13
 const KEY_UP = 38
 const KEY_DOWN = 40
@@ -331,6 +332,7 @@ export default class Select extends Component {
                     this.props.updateValue({ [this.props.name]: null })
                 }
                 break
+            case KEY_TAB:
             case KEY_ENTER:
                 // If the dropdown is currently showing, we don't want pressing enter in the input
                 // to actually submit any form that the Select component is part of, but instead
