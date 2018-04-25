@@ -102,6 +102,7 @@ export default class Select extends Component {
         noOptionPlaceholder: PropTypes.node,
         noResultsPlaceholder: PropTypes.node,
         placeholder: PropTypes.string,
+        searchDebounceMs: PropTypes.number,
         searchOptions: PropTypes.func,
         searchingPlaceholder: PropTypes.node,
         type: PropTypes.string,
@@ -118,6 +119,7 @@ export default class Select extends Component {
         noOptionPlaceholder: 'No options available',
         noResultsPlaceholder: 'No results found',
         placeholder: 'Select item',
+        searchDebounceMs: 250,
         searchingPlaceholder: (
             <span>
                 <span className="loader loader--small" />
@@ -154,15 +156,17 @@ export default class Select extends Component {
     componentDidMount() {
         this._resolveSelectedOption()
         this._resolveFilteredOptions()
+
+        this.mounted = true
     }
 
     componentWillReceiveProps(nextProps) {
         const newState = {}
 
-        // If there is a searchOptions callback specified and we have different options coming in,
-        // then we can assume that we were searching and these new props have ended the search (by
-        // returning results).
-        if (this.props.searchOptions && ! areOptionsEqual(nextProps.options, this.props.options)) {
+        // If there we are currently searching and the new options coming in are different to our
+        // existing ones, we can infer that searching is complete. (We can and do also use any
+        // promise returned by the call to `props.searchOptions` as a better source of this info.)
+        if (this.state.searching && ! areOptionsEqual(nextProps.options, this.props.options)) {
             newState.searching = false
         }
 
@@ -179,6 +183,13 @@ export default class Select extends Component {
             this._resolveFilteredOptions()
         })
     }
+
+    componentWillUnmount() {
+        this.mounted = false
+    }
+
+    mounted = false
+    searchTimeout = null
 
     ignoreNextBlur = false
 
@@ -251,14 +262,27 @@ export default class Select extends Component {
             if (inputValue && (inputValue.length >= this.props.minCharSearch)) {
                 this.setState({ searching: true })
 
-                // the following debounces the search function with a 250ms timeout
+                // the following debounces the search function with the specified timeout (default 250ms)
                 if (this.searchTimeout) {
                     clearTimeout(this.searchTimeout)
                 }
 
                 this.searchTimeout = setTimeout(() => {
-                    this.props.searchOptions(inputValue)
-                }, 250)
+                    const p = this.props.searchOptions(inputValue)
+
+                    // If we got a promise back from searchOptions, add a finally callback to it
+                    // that sets our state's "searching" to false. After all, if the promise
+                    // resolves (or rejects), searching is done.
+                    if (p && p.finally) {
+                        p.finally(() => {
+                            // Mounted check just in case the component was unmounted while the
+                            // search promise was waiting.
+                            if (this.mounted) {
+                                this.setState({ searching: false })
+                            }
+                        })
+                    }
+                }, this.props.searchDebounceMs)
             }
         }
     }
