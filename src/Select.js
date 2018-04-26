@@ -449,9 +449,9 @@ export default class Select extends Component {
                     // Create a new option with highlighted match if no rich label is present
                     return {
                         ...option,
-                        label: option.richLabel ? (
-                          <option.richLabel match={ search } />
-                        ) : createHighlightNode(option.label, search),
+                        label: option.richLabel ?
+                            React.cloneElement(option.richLabel, { match: search }) :
+                            createHighlightNode(option.label, search),
                     }
                 })
             }
