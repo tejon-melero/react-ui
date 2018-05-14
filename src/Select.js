@@ -95,6 +95,7 @@ export default class Select extends Component {
         controlOnly: PropTypes.bool,
         defaultOptions: PropTypes.array,
         dropdownTakesSpace: PropTypes.bool,
+        filterStartsWithOnly: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         helpOnFocus: PropTypes.bool,
         innerRef: PropTypes.func,
@@ -114,6 +115,7 @@ export default class Select extends Component {
         defaultOptions: [],
         disabled: false,
         dropdownTakesSpace: false,
+        filterStartsWithOnly: false,
         helpOnFocus: true,
         minCharSearch: 3,
         noOptionPlaceholder: 'No options available',
@@ -444,6 +446,8 @@ export default class Select extends Component {
                 options = this.props.getFilteredOptions(search)
             } else {
                 options = this.props.options.filter((option) => (
+                    this.props.filterStartsWithOnly ?
+                    option.label.toLowerCase().indexOf(search) === 0 :
                     option.label.toLowerCase().indexOf(search) !== -1
                 )).map((option) => {
                     // Create a new option with highlighted match if no rich label is present
