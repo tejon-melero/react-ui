@@ -131,6 +131,8 @@ export default class Select extends Component {
         value: null,
     }
 
+    static createHighlightNode = createHighlightNode
+
     state = {
         // The bottom position of the tooltip.
         tooltipPosition: null,
