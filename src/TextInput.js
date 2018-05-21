@@ -41,7 +41,7 @@ export default class TextInput extends Component {
     state = {
         focussed: false,
         tooltipPosition: null,
-        value: this.props.value || '',
+        value: this.props.value == null ? '' : this.props.value,
     }
 
     componentWillReceiveProps(nextProps) {
@@ -142,7 +142,6 @@ export default class TextInput extends Component {
                     ref={ this.storeTextInputRef }
                     required={ required }
                     rows={ rows }
-                    type={ type }
                     value={ value }
                 />
             )
