@@ -2,8 +2,15 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
+import {
+    formControlPropTypes,
+    hasOptionsPropTypes,
+    focussablePropTypes,
+} from './Utils'
 
+import SubContent from './Utils/SubContent'
+
+import Label from './Label'
 import Select from './Select'
 
 const valueMapper = (item) => item.value
@@ -101,6 +108,7 @@ export default class MultipleSelect extends Component {
     }
 
     render() {
+        // Define the classes for the form group
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.errors && this.props.errors.length,
@@ -123,35 +131,40 @@ export default class MultipleSelect extends Component {
             ))
         }
 
+        const control = (
+            <div className={ this.props.className }>
+                <Select
+                    closeOnSelect={ false }
+                    controlOnly
+                    defaultOptions={ this.props.defaultOptions }
+                    disabled={ this.props.disabled }
+                    getFilteredOptions={ this.props.getFilteredOptions }
+                    handleBlur={ this.props.handleBlur }
+                    handleFocus={ this.props.handleFocus }
+                    minCharSearch={ this.props.minCharSearch }
+                    name={ this.props.name }
+                    noOptionPlaceholder={ this.props.noOptionPlaceholder }
+                    noResultsPlaceholder={ this.props.noResultsPlaceholder }
+                    options={ this._getFormattedOptions() }
+                    placeholder={ this.props.placeholder }
+                    searchOptions={ this.props.searchOptions }
+                    searchingPlaceholder={ this.props.searchingPlaceholder }
+                    type={ this.props.type }
+                    updateValue={ this._updateValue }
+                    value={ this.props.values.map(valueMapper) }
+                />
+
+                { selectedItems }
+            </div>
+        )
+
         return (
             <div className={ groupClasses }>
-                <div className={ this.props.className }>
-                    <Select
-                        closeOnSelect={ false }
-                        controlOnly
-                        defaultOptions={ this.props.defaultOptions }
-                        disabled={ this.props.disabled }
-                        error={ this.props.error }
-                        getFilteredOptions={ this.props.getFilteredOptions }
-                        handleBlur={ this.props.handleBlur }
-                        handleFocus={ this.props.handleFocus }
-                        help={ this.props.help }
-                        label={ this.props.label }
-                        minCharSearch={ this.props.minCharSearch }
-                        name={ this.props.name }
-                        noOptionPlaceholder={ this.props.noOptionPlaceholder }
-                        noResultsPlaceholder={ this.props.noResultsPlaceholder }
-                        options={ this._getFormattedOptions() }
-                        placeholder={ this.props.placeholder }
-                        searchOptions={ this.props.searchOptions }
-                        searchingPlaceholder={ this.props.searchingPlaceholder }
-                        type={ this.props.type }
-                        updateValue={ this._updateValue }
-                        value={ this.props.values.map(valueMapper) }
-                    />
+                <Label>{ this.props.label }</Label>
 
-                    { selectedItems }
-                </div>
+                { control }
+
+                <SubContent errors={ this.props.errors } help={ this.props.help } />
             </div>
         )
     }
