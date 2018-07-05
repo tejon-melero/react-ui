@@ -113,7 +113,7 @@ export default class TextInput extends Component {
             'form__group': true,
             'form__group--error': errors && errors.length,
             'form__group--success': success,
-        })
+        }, this.props.extraGroupClasses)
 
         const controlClasses = classnames(
             'form__control',

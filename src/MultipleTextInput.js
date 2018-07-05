@@ -61,7 +61,7 @@ export default class MultipleTextInput extends Component {
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.errors && this.props.errors.length,
-        })
+        }, this.props.extraGroupClasses)
 
         let fields = null
 

@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 export const formControlPropTypes = {
     disabled: PropTypes.bool,
     errors: PropTypes.arrayOf(PropTypes.node),
+    extraGroupClasses: PropTypes.arrayOf(PropTypes.string),
     help: PropTypes.node,
     innerRef: PropTypes.func,
     label: PropTypes.node,

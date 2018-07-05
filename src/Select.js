@@ -677,7 +677,7 @@ export default class Select extends Component {
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.errors && this.props.errors.length,
-        })
+        }, this.props.extraGroupClasses)
 
         // Define the classes for the form control
         const controlClasses = classnames(
