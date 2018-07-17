@@ -25,6 +25,7 @@ export default class MultipleSelect extends Component {
         className: PropTypes.string,
         defaultOptions: PropTypes.array,
         displaySelections: PropTypes.bool,
+        dropdownTakesSpace: PropTypes.bool,
         getFilteredOptions: PropTypes.func,
         minCharSearch: PropTypes.number,
         noOptionPlaceholder: PropTypes.string,
@@ -40,6 +41,7 @@ export default class MultipleSelect extends Component {
     static defaultProps = {
         disabled: false,
         displaySelections: true,
+        dropdownTakesSpace: false,
         values: [],
     }
 
@@ -138,6 +140,7 @@ export default class MultipleSelect extends Component {
                     controlOnly
                     defaultOptions={ this.props.defaultOptions }
                     disabled={ this.props.disabled }
+                    dropdownTakesSpace={ this.props.dropdownTakesSpace }
                     getFilteredOptions={ this.props.getFilteredOptions }
                     handleBlur={ this.props.handleBlur }
                     handleFocus={ this.props.handleFocus }

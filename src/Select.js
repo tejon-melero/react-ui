@@ -764,17 +764,10 @@ export default class Select extends Component {
         const control = (
             <div className={ controlClasses } ref={ this.storeFormControlRef }>
                 <input
-                    name={ this.props.name }
-                    type="hidden"
-                    value={ actualValue }
-                />
-
-                <input
                     autoComplete="off"
                     className="form__select"
                     disabled={ this.props.disabled }
                     id={ inputId }
-                    name={ `${ this.props.name }_selector` }
                     onBlur={ this._handleInputBlurred }
                     onChange={ this._handleInputChanged }
                     onFocus={ this._handleInputFocussed }
