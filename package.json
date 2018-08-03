@@ -13,7 +13,8 @@
     "build:main": "babel -d lib ./src",
     "_build:umd": "webpack --output-filename index.umd.js",
     "_build:umd.min": "webpack --output-filename index.umd.min.js -p",
-    "build": "npm-run-all --parallel build:*"
+    "build": "npm-run-all --parallel build:*",
+    "watch": "babel -d lib ./src --watch"
   },
   "author": {
     "name": "Guillaume Piot",
