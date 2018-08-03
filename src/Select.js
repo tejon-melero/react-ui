@@ -100,8 +100,8 @@ export default class Select extends Component {
         // The value currently inputted by the user in the text field.
         inputValue: null,
 
-        // Whether the field is currently focussed due to user interaction.
-        focussed: false,
+        // Whether the field is currently open due to user interaction.
+        open: false,
 
         // Tnis applies only when a search function is provided. Stores whether we are currently
         // waiting for an async search response.
@@ -155,7 +155,9 @@ export default class Select extends Component {
     mounted = false
     searchTimeout = null
 
-    ignoreNextBlur = false
+    blurTimeout = null
+
+    inputId = generateId(this.props.name)
 
     // Refs
     textInput = null
@@ -252,57 +254,48 @@ export default class Select extends Component {
     }
 
     handleInputMousePressedDown = () => {
-        if (this.state.focussed) {
+        // If we're open and the text input is clicked, close dropdown.
+        if (this.state.open) {
+            // Set an immediate timeout because if we blue while the mousedown event is firing, the
+            // text input will just regain focus.
             setTimeout(() => {
-                this.handleBlur()
-            }, 0)
-        } else {
-            this.handleFocus()
+                this.textInput && this.textInput.blur()
+            })
         }
     }
 
-    handleInputFocussed = () => {
-        this.handleFocus()
+    handleComponentFocussed = (e) => {
+        clearTimeout(this.blurTimeout)
+
+        this.openDropdown()
     }
 
-    handleInputBlurred = () => {
-        if (this.ignoreNextBlur !== true) {
-            // The `activeElement` code is to differentiate between blurring caused by actually
-            // focussing another element and blurring caused by the window itself losing focus.
-            // The `setTimeout` part is to ensure that the browser has correctly set the
-            // `activeElement` property, as its value is somewhat undefined during the actual
-            // handling of a blur event!
-            setTimeout(() => {
-                if (document.activeElement !== this.textInput) {
-                    this.handleBlur()
-                }
-            }, 0)
+    handleComponentBlurred = (e) => {
+        // @see https://reactjs.org/docs/accessibility.html#mouse-and-pointer-events for why we set
+        // a timeout in blur and clear it in focus.
+        this.blurTimeout = setTimeout(() => {
+            console.log('Handling blur')
+            this.closeDropdown()
+        })
+    }
+
+    openDropdown = () => {
+        if (! this.state.open) {
+            this.textInput && this.textInput.select()
+
+            this.setState({
+                open: true,
+                focussedOption: this.getSelectedOption(),
+            }, this.setOptionScrollValue)
+
+            this.props.handleFocus && this.props.handleFocus()
         }
-
-        this.ignoreNextBlur = false
     }
 
-    /*
-     * Handles field focus
-     */
-    handleFocus = () => {
-        this.textInput && this.textInput.select()
-
-        this.setState({
-            focussed: true,
-            focussedOption: this.getSelectedOption(),
-        }, this.setOptionScrollValue)
-
-        this.props.handleFocus && this.props.handleFocus()
-    }
-
-    /*
-     * Handles field blur
-     */
-    handleBlur = () => {
+    closeDropdown = () => {
         this.setState({
             inputValue: null,
-            focussed: false,
+            open: false,
         })
 
         this.textInput && this.textInput.blur()
@@ -310,9 +303,6 @@ export default class Select extends Component {
         this.props.handleBlur && this.props.handleBlur()
     }
 
-    /*
-     * Handles user enter key up
-     */
     handleInputKeyDown = (e) => {
         switch (e.keyCode) {
             case KEY_BACKSPACE:
@@ -330,7 +320,7 @@ export default class Select extends Component {
                 // to actually submit any form that the Select component is part of, but instead
                 // just select the focussed option. So let's prevent the default action in that
                 // case.
-                if (this.state.focussed) {
+                if (this.state.open) {
                     e.preventDefault()
                 }
 
@@ -346,7 +336,7 @@ export default class Select extends Component {
                 break
 
             case KEY_ESCAPE:
-                this.handleBlur()
+                this.closeDropdown()
                 break
 
             default:
@@ -357,21 +347,21 @@ export default class Select extends Component {
     handleOptionClicked(option) {
         this.assignValue(option)
 
-        this.ignoreNextBlur = true
-
-        // setTimout because setting the focus as part of the blur process (which clicking on an
-        // item will be for the text input) doesn't work. Gah DOM events!
         if (! this.props.closeOnSelect) {
-            setTimeout(() => {
-                this.textInput && this.textInput.focus()
-            }, 0)
+            this.textInput && this.textInput.focus()
+        }
+    }
+
+    handleOptionKeyPressed(option, e) {
+        if (e.which === KEY_ENTER) {
+            this.handleOptionClicked(option)
         }
     }
 
     assignValue(option) {
         if (this.props.closeOnSelect) {
             this.setState({
-                focussed: false,
+                open: false,
                 inputValue: null,
                 searching: false,
             })
@@ -520,7 +510,7 @@ export default class Select extends Component {
     }
 
     /*
-     * Focus on the next option or first one if none
+     * Focus on the next option or first one if none.
      */
     focusNextOption = () => {
         this.setState({
@@ -529,7 +519,7 @@ export default class Select extends Component {
     }
 
     /*
-     * Focus on the previous option
+     * Focus on the previous optionof last one if none.
      */
     focusPreviousOption = () => {
         this.setState({
@@ -541,7 +531,7 @@ export default class Select extends Component {
      * Submit the value that is currently focussed
      */
     selectFocussedOption = () => {
-        if (! this.state.focussedOption) {
+        if (! (this.state.open && this.state.focussedOption)) {
             return
         }
 
@@ -610,8 +600,6 @@ export default class Select extends Component {
     }
 
     render() {
-        const inputId = generateId(this.props.name)
-
         // displayValue is just concerned with what should be displayed, not what we should be
         // using to search on, also we don't care about the inputValue if it is empty - in that
         // case we prefer the currently selected value (if it exists)
@@ -648,12 +636,14 @@ export default class Select extends Component {
             {
                 'form__control--select-arrow-suffix': this.props.suffix,
                 'form__control--input-addon': this.props.prefix || this.props.suffix,
-                'control-select--focus': this.state.focussed,
+                'control-select--focus': this.state.open,
             }
         )
 
         // Define the position of the option list
-        const optionsStyle = {}
+        const optionsStyle = {
+            userSelect: 'none',
+        }
 
         if (this.state.tooltipPosition) {
             optionsStyle.top = this.state.tooltipPosition
@@ -669,7 +659,7 @@ export default class Select extends Component {
         // Define the list of options available to choose from
         let optionList = null
 
-        if (this.state.focussed) {
+        if (this.state.open) {
             if (this.state.numFilteredOptions) {
                 optionList = []
 
@@ -702,7 +692,9 @@ export default class Select extends Component {
                                             className={ optionClasses }
                                             data-value={ option.value }
                                             key={ option.value }
-                                            onMouseDown={ this.handleOptionClicked.bind(this, option) }
+                                            onClick={ this.handleOptionClicked.bind(this, option) }
+                                            onKeyPress={ this.handleOptionKeyPressed.bind(this, option) }
+                                            tabIndex="0"
                                         >
                                             { option.label }
                                         </div>
@@ -722,15 +714,18 @@ export default class Select extends Component {
         }
 
         const control = (
-            <div className={ controlClasses } ref={ this.storeFormControlRef }>
+            <div
+                className={ controlClasses }
+                onBlur={ this.handleComponentBlurred }
+                onFocus={ this.handleComponentFocussed }
+                ref={ this.storeFormControlRef }
+            >
                 <input
                     autoComplete="off"
                     className="form__select"
                     disabled={ this.props.disabled }
-                    id={ inputId }
-                    onBlur={ this.handleInputBlurred }
+                    id={ this.inputId }
                     onChange={ this.handleInputChanged }
-                    onFocus={ this.handleInputFocussed }
                     onKeyDown={ this.handleInputKeyDown }
                     onMouseDown={ this.handleInputMousePressedDown }
                     placeholder={ this.props.placeholder }
@@ -766,7 +761,7 @@ export default class Select extends Component {
 
         return (
             <div className={ groupClasses }>
-                <Label htmlFor={ inputId }>{ this.props.label }</Label>
+                <Label htmlFor={ this.inputId }>{ this.props.label }</Label>
 
                 { control }
 
