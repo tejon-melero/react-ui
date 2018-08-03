@@ -118,8 +118,8 @@ export default class Select extends Component {
     }
 
     componentDidMount() {
-        this._resolveSelectedOption()
-        this._resolveFilteredOptions()
+        this.resolveSelectedOption()
+        this.resolveFilteredOptions()
 
         this.mounted = true
     }
@@ -143,8 +143,8 @@ export default class Select extends Component {
         }
 
         this.setState(newState, () => {
-            this._resolveSelectedOption()
-            this._resolveFilteredOptions()
+            this.resolveSelectedOption()
+            this.resolveFilteredOptions()
         })
     }
 
@@ -184,26 +184,26 @@ export default class Select extends Component {
 
     storeOptionListRef = (ref) => this.optionList = ref
 
-    _resolveSelectedOption = () => {
+    resolveSelectedOption = () => {
         this.setState({
-            focussedOption: this._getSelectedOption(),
-            selectedOption: this._getSelectedOption(),
+            focussedOption: this.getSelectedOption(),
+            selectedOption: this.getSelectedOption(),
         })
     }
 
-    _resolveFilteredOptions = () => {
-        const filteredOptions = this._getFilteredOptions()
+    resolveFilteredOptions = () => {
+        const filteredOptions = this.getFilteredOptions()
 
         this.setState({
             numFilteredOptions: filteredOptions.length,
-            categorisedOptions: this._categoriseOptions(filteredOptions, this.props.categoriseBy),
+            categorisedOptions: this.categoriseOptions(filteredOptions, this.props.categoriseBy),
         })
     }
 
     /*
      * Find the selected option from the current value
      */
-    _getSelectedOption = () => {
+    getSelectedOption = () => {
         let option = this.props.options.find((option) => option.value === this.props.value)
 
         if ((! option) && this.props.options.length) {
@@ -216,10 +216,10 @@ export default class Select extends Component {
     /*
      * Handles the change of value from the input field
      */
-    _handleInputChanged = (e) => {
+    handleInputChanged = (e) => {
         const inputValue = e.target.value
 
-        this.setState({ inputValue }, this._resolveFilteredOptions)
+        this.setState({ inputValue }, this.resolveFilteredOptions)
 
         // If a search function is provided then we need to call it with the value as a query argument
         if (this.props.searchOptions) {
@@ -251,21 +251,21 @@ export default class Select extends Component {
         }
     }
 
-    _handleInputMousePressedDown = () => {
+    handleInputMousePressedDown = () => {
         if (this.state.focussed) {
             setTimeout(() => {
-                this._handleBlur()
+                this.handleBlur()
             }, 0)
         } else {
-            this._handleFocus()
+            this.handleFocus()
         }
     }
 
-    _handleInputFocussed = () => {
-        this._handleFocus()
+    handleInputFocussed = () => {
+        this.handleFocus()
     }
 
-    _handleInputBlurred = () => {
+    handleInputBlurred = () => {
         if (this.ignoreNextBlur !== true) {
             // The `activeElement` code is to differentiate between blurring caused by actually
             // focussing another element and blurring caused by the window itself losing focus.
@@ -274,7 +274,7 @@ export default class Select extends Component {
             // handling of a blur event!
             setTimeout(() => {
                 if (document.activeElement !== this.textInput) {
-                    this._handleBlur()
+                    this.handleBlur()
                 }
             }, 0)
         }
@@ -285,13 +285,13 @@ export default class Select extends Component {
     /*
      * Handles field focus
      */
-    _handleFocus = () => {
+    handleFocus = () => {
         this.textInput && this.textInput.select()
 
         this.setState({
             focussed: true,
-            focussedOption: this._getSelectedOption(),
-        }, this._setOptionScrollValue)
+            focussedOption: this.getSelectedOption(),
+        }, this.setOptionScrollValue)
 
         this.props.handleFocus && this.props.handleFocus()
     }
@@ -299,7 +299,7 @@ export default class Select extends Component {
     /*
      * Handles field blur
      */
-    _handleBlur = () => {
+    handleBlur = () => {
         this.setState({
             inputValue: null,
             focussed: false,
@@ -313,7 +313,7 @@ export default class Select extends Component {
     /*
      * Handles user enter key up
      */
-    _handleInputKeyDown = (e) => {
+    handleInputKeyDown = (e) => {
         switch (e.keyCode) {
             case KEY_BACKSPACE:
                 if (this.props.value) {
@@ -322,7 +322,7 @@ export default class Select extends Component {
                 break
 
             case KEY_TAB:
-                this._selectFocussedOption()
+                this.selectFocussedOption()
                 break
 
             case KEY_ENTER:
@@ -334,19 +334,19 @@ export default class Select extends Component {
                     e.preventDefault()
                 }
 
-                this._selectFocussedOption()
+                this.selectFocussedOption()
                 break
 
             case KEY_UP:
-                this._focusPreviousOption()
+                this.focusPreviousOption()
                 break
 
             case KEY_DOWN:
-                this._focusNextOption()
+                this.focusNextOption()
                 break
 
             case KEY_ESCAPE:
-                this._handleBlur()
+                this.handleBlur()
                 break
 
             default:
@@ -354,8 +354,8 @@ export default class Select extends Component {
         }
     }
 
-    _handleOptionClicked(option) {
-        this._assignValue(option)
+    handleOptionClicked(option) {
+        this.assignValue(option)
 
         this.ignoreNextBlur = true
 
@@ -368,7 +368,7 @@ export default class Select extends Component {
         }
     }
 
-    _assignValue(option) {
+    assignValue(option) {
         if (this.props.closeOnSelect) {
             this.setState({
                 focussed: false,
@@ -383,7 +383,7 @@ export default class Select extends Component {
     /*
      * Given a value, get the label for that value.
      */
-    _getOptionLabelForValue = (value) => {
+    getOptionLabelForValue = (value) => {
         const allOptions = this.props.options.concat(this.props.defaultOptions)
 
         const option = allOptions.find((option) => option.value === value)
@@ -398,7 +398,7 @@ export default class Select extends Component {
     /*
      * Compile a list of all options filtered by the search text.
      */
-    _getFilteredOptions = () => {
+    getFilteredOptions = () => {
         if (this.state.inputValue) {
             let options = []
 
@@ -433,7 +433,7 @@ export default class Select extends Component {
         })
     }
 
-    _categoriseOptions(options, categoriseBy) {
+    categoriseOptions(options, categoriseBy) {
         if (categoriseBy) {
             // This will store all options in their categories
             const categorisedOptions = {
@@ -458,7 +458,7 @@ export default class Select extends Component {
         }
     }
 
-    _getNextOption() {
+    getNextOption() {
         // We store the first option visited so that if the last option is the one that matches the
         // current one, the next option is the first. Or if the option is not found, the first
         // option seems like a sensible 'next' option.
@@ -495,7 +495,7 @@ export default class Select extends Component {
         return first
     }
 
-    _getPreviousOption() {
+    getPreviousOption() {
         // As we iterate through the options, we will constantly be keeping track of the last option
         // visited so that when we find the currently-selected option, we can return the one
         // previous to it.
@@ -522,25 +522,25 @@ export default class Select extends Component {
     /*
      * Focus on the next option or first one if none
      */
-    _focusNextOption = () => {
+    focusNextOption = () => {
         this.setState({
-            focussedOption: this._getNextOption(),
-        }, this._setOptionScrollValue)
+            focussedOption: this.getNextOption(),
+        }, this.setOptionScrollValue)
     }
 
     /*
      * Focus on the previous option
      */
-    _focusPreviousOption = () => {
+    focusPreviousOption = () => {
         this.setState({
-            focussedOption: this._getPreviousOption(),
-        }, this._setOptionScrollValue)
+            focussedOption: this.getPreviousOption(),
+        }, this.setOptionScrollValue)
     }
 
     /*
      * Submit the value that is currently focussed
      */
-    _selectFocussedOption = () => {
+    selectFocussedOption = () => {
         if (! this.state.focussedOption) {
             return
         }
@@ -554,14 +554,14 @@ export default class Select extends Component {
 
         // And just on the offchance we didn't find the option, let's be cautious...
         if (option) {
-            this._assignValue(option)
+            this.assignValue(option)
         }
     }
 
     /*
      * Adjust the scroll value of the option list to show the selected item
      */
-    _setOptionScrollValue = () => {
+    setOptionScrollValue = () => {
         const option = this.state.focussedOption
 
         // By default, let's go to the top.
@@ -594,7 +594,7 @@ export default class Select extends Component {
      * Get the placeholder when there's no options, depending on whether
      * it's a search select or standard fixed list
      */
-    _getNoOptionPlaceholder = () => {
+    getNoOptionPlaceholder = () => {
         // If we are currently searching, return the "searching..." placeholder.
         if (this.state.searching === true) {
             return this.props.searchingPlaceholder
@@ -619,7 +619,7 @@ export default class Select extends Component {
         let actualValue = this.props.value
 
         if (this.state.inputValue === null) {
-            displayValue = this._getOptionLabelForValue(this.props.value)
+            displayValue = this.getOptionLabelForValue(this.props.value)
         } else {
             displayValue = this.state.inputValue
         }
@@ -702,7 +702,7 @@ export default class Select extends Component {
                                             className={ optionClasses }
                                             data-value={ option.value }
                                             key={ option.value }
-                                            onMouseDown={ this._handleOptionClicked.bind(this, option) }
+                                            onMouseDown={ this.handleOptionClicked.bind(this, option) }
                                         >
                                             { option.label }
                                         </div>
@@ -715,7 +715,7 @@ export default class Select extends Component {
             } else {
                 optionList = (
                     <div className="control-select__option">
-                        { this._getNoOptionPlaceholder() }
+                        { this.getNoOptionPlaceholder() }
                     </div>
                 )
             }
@@ -728,11 +728,11 @@ export default class Select extends Component {
                     className="form__select"
                     disabled={ this.props.disabled }
                     id={ inputId }
-                    onBlur={ this._handleInputBlurred }
-                    onChange={ this._handleInputChanged }
-                    onFocus={ this._handleInputFocussed }
-                    onKeyDown={ this._handleInputKeyDown }
-                    onMouseDown={ this._handleInputMousePressedDown }
+                    onBlur={ this.handleInputBlurred }
+                    onChange={ this.handleInputChanged }
+                    onFocus={ this.handleInputFocussed }
+                    onKeyDown={ this.handleInputKeyDown }
+                    onMouseDown={ this.handleInputMousePressedDown }
                     placeholder={ this.props.placeholder }
                     ref={ this.storeTextInputRef }
                     type={ this.props.type || 'text' }
