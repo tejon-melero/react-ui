@@ -307,3 +307,45 @@ export function OutsideEventListener(Target, listeners = []) {
         }
     }
 }
+
+
+/**
+ * Determine if two options arrays are the same (deep-style equality).
+ *
+ * As this function is meant to check options arrays, the measure of equality is the following.
+ *
+ * If:
+ *
+ * - Both are arrays
+ * - And are referentially the same, or:
+ *     - Have the same length
+ *     - And the same value for `[].value` at each index
+ *
+ * They are equal. Otherwise they are not.
+ *
+ * @param {array} a The first array to compare.
+ * @param {array} b The second array to compare.
+ *
+ * @returns {bool} Whether all options are equal in the two arrays.
+ */
+export function areOptionsEqual(a, b) {
+    if (Array.isArray(a) && Array.isArray(b)) {
+        if (a === b) {
+            return true
+        }
+
+        if (a.length !== b.length) {
+            return false
+        }
+
+        for (let i = 0; i < a.length; i++) {
+            if (a[i].value !== b[i].value) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    return false
+}
