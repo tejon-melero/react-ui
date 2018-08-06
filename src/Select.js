@@ -15,8 +15,6 @@ import SubContent from './Utils/SubContent'
 
 import Label from './Label'
 
-const KEY_BACKSPACE = 8
-const KEY_TAB = 9
 const KEY_ENTER = 13
 const KEY_UP = 38
 const KEY_DOWN = 40
@@ -110,7 +108,7 @@ export default class Select extends Component {
         // Options from props.options pre-categorised by the category key's value.
         categorisedOptions: {},
 
-        // The currently-focussed option.
+        // The currently-focussed option. (Which may differ from value in props is user has used up/down.)
         focussedOption: null,
 
         // The number of actual options after applying filtering.
@@ -118,7 +116,6 @@ export default class Select extends Component {
     }
 
     componentDidMount() {
-        this.resolveSelectedOption()
         this.resolveFilteredOptions()
 
         this.mounted = true
@@ -143,7 +140,6 @@ export default class Select extends Component {
         }
 
         this.setState(newState, () => {
-            this.resolveSelectedOption()
             this.resolveFilteredOptions()
         })
     }
@@ -186,38 +182,29 @@ export default class Select extends Component {
 
     storeOptionListRef = (ref) => this.optionList = ref
 
-    resolveSelectedOption = () => {
-        this.setState({
-            focussedOption: this.getSelectedOption(),
-            selectedOption: this.getSelectedOption(),
-        })
-    }
-
-    resolveFilteredOptions = () => {
+    resolveFilteredOptions = (cb) => {
         const filteredOptions = this.getFilteredOptions()
 
         this.setState({
             numFilteredOptions: filteredOptions.length,
             categorisedOptions: this.categoriseOptions(filteredOptions, this.props.categoriseBy),
-        })
+            focussedOption: this.getSelectedOption(filteredOptions),
+        }, cb)
     }
 
     /*
-     * Find the selected option from the current value
+     * Find the selected option from the current value, or default to the first option otherwise.
      */
-    getSelectedOption = () => {
-        let option = this.props.options.find((option) => option.value === this.props.value)
+    getSelectedOption = (options) => {
+        let option = options.find((option) => option.value === this.props.value)
 
-        if ((! option) && this.props.options.length) {
-            option = this.props.options[0]
+        if ((! option) && options.length) {
+            option = options[0]
         }
 
         return option
     }
 
-    /*
-     * Handles the change of value from the input field
-     */
     handleInputChanged = (e) => {
         const inputValue = e.target.value
 
@@ -273,20 +260,16 @@ export default class Select extends Component {
     handleComponentBlurred = (e) => {
         // @see https://reactjs.org/docs/accessibility.html#mouse-and-pointer-events for why we set
         // a timeout in blur and clear it in focus.
-        this.blurTimeout = setTimeout(() => {
-            console.log('Handling blur')
-            this.closeDropdown()
-        })
+        this.blurTimeout = setTimeout(this.closeDropdown)
     }
 
     openDropdown = () => {
         if (! this.state.open) {
             this.textInput && this.textInput.select()
 
-            this.setState({
-                open: true,
-                focussedOption: this.getSelectedOption(),
-            }, this.setOptionScrollValue)
+            this.setState({ open: true })
+
+            this.resolveFilteredOptions(this.setOptionScrollValue)
 
             this.props.handleFocus && this.props.handleFocus()
         }
@@ -295,6 +278,8 @@ export default class Select extends Component {
     closeDropdown = () => {
         this.setState({
             inputValue: null,
+            focussedOption: null,
+            searching: false,
             open: false,
         })
 
@@ -303,18 +288,10 @@ export default class Select extends Component {
         this.props.handleBlur && this.props.handleBlur()
     }
 
+    clearSelection = () => this.props.value && this.props.updateValue({ [this.props.name]: null })
+
     handleInputKeyDown = (e) => {
         switch (e.keyCode) {
-            case KEY_BACKSPACE:
-                if (this.props.value) {
-                    this.props.updateValue({ [this.props.name]: null })
-                }
-                break
-
-            case KEY_TAB:
-                this.selectFocussedOption()
-                break
-
             case KEY_ENTER:
                 // If the dropdown is currently showing, we don't want pressing enter in the input
                 // to actually submit any form that the Select component is part of, but instead
@@ -360,11 +337,7 @@ export default class Select extends Component {
 
     assignValue(option) {
         if (this.props.closeOnSelect) {
-            this.setState({
-                open: false,
-                inputValue: null,
-                searching: false,
-            })
+            this.closeDropdown()
         }
 
         this.props.updateValue({ [this.props.name]: option.value })
@@ -733,6 +706,24 @@ export default class Select extends Component {
                     type={ this.props.type || 'text' }
                     value={ displayValue }
                 />
+
+                { this.props.value && (
+                    <button
+                        onMouseDown={ this.clearSelection }
+                        style={{
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '1em',
+                            marginTop: 'calc(-1em / 2)',
+                            opacity: 0.6,
+                            position: 'absolute',
+                            right: '3em',
+                            top: '50%',
+                        }}
+                    >
+                        &times;
+                    </button>
+                ) }
 
                 <div
                     className="control-select__options"
