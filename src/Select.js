@@ -717,7 +717,6 @@ export default class Select extends Component {
                             opacity: 0.6,
                             position: 'absolute',
                             right: 'calc(10px + 0.5rem)',
-                            top: 0,
                         }}
                         type="button"
                     >
