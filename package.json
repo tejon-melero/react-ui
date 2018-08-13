@@ -36,10 +36,10 @@
     "react-dom": "^15.5 || ^16.0"
   },
   "dependencies": {
-    "classnames": "^2.2.5",
-    "moment": "^2.15.0",
-    "moment-range": "^3.0.3",
-    "prop-types": "^15.5.7"
+    "classnames": "^2.2.6",
+    "moment": "^2.22.2",
+    "moment-range": "^4.0.1",
+    "prop-types": "^15.6.2"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
