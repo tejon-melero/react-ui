@@ -52,6 +52,8 @@ export default class TextInput extends Component {
         }
     }
 
+    inputId = generateId(this.props.name)
+
     handleChange = (e) => {
         const value = e.target.value
 
@@ -107,8 +109,6 @@ export default class TextInput extends Component {
 
         const { value } = this.state
 
-        const inputId = generateId(name)
-
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': errors && errors.length,
@@ -132,7 +132,7 @@ export default class TextInput extends Component {
                     autoFocus={ autoFocus }
                     className="form__text form__textarea"
                     disabled={ disabled }
-                    id={ inputId }
+                    id={ this.inputId }
                     name={ name }
                     onBlur={ this.handleBlur }
                     onChange={ this.handleChange }
@@ -151,7 +151,7 @@ export default class TextInput extends Component {
                     autoFocus={ autoFocus }
                     className="form__text"
                     disabled={ disabled }
-                    id={ inputId }
+                    id={ this.inputId }
                     max={ max }
                     min={ min }
                     name={ name }
@@ -192,7 +192,7 @@ export default class TextInput extends Component {
 
         return (
             <div className={ groupClasses }>
-                <Label htmlFor={ inputId }>{ label }</Label>
+                <Label htmlFor={ this.inputId }>{ label }</Label>
 
                 { control }
 
