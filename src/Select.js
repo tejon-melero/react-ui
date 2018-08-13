@@ -707,21 +707,21 @@ export default class Select extends Component {
                     value={ displayValue }
                 />
 
-                { this.props.value && (
+                { this.props.value && (this.props.value.length > 0) && (
                     <button
                         onMouseDown={ this.clearSelection }
                         style={{
                             border: 'none',
                             cursor: 'pointer',
                             fontSize: '1em',
-                            marginTop: 'calc(-1em / 2)',
                             opacity: 0.6,
                             position: 'absolute',
-                            right: '3em',
-                            top: '50%',
+                            right: 'calc(10px + 0.5rem)',
+                            top: 0,
                         }}
+                        type="button"
                     >
-                        &times;
+                        { '×' }
                     </button>
                 ) }
 
