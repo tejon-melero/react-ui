@@ -7,16 +7,19 @@ const moment = extendMoment(Moment)
 
 const WEEKS_TO_DISPLAY = 6
 
+const isDateDifferent = (prev, next) => (
+    (prev && ! next) ||
+    (! prev && next) ||
+    (prev && next && (prev - next !== 0))
+)
+
 export default class DatePicker extends Component {
     static propTypes = {
-        alignment: PropTypes.oneOf([ 'top', 'bottom' ]),
-        date: PropTypes.instanceOf(moment),
+        date: PropTypes.instanceOf(Date),
         dateFormat: PropTypes.string,
-        innerRef: PropTypes.func,
-        max: PropTypes.instanceOf(moment),
-        min: PropTypes.instanceOf(moment),
+        max: PropTypes.instanceOf(Date),
+        min: PropTypes.instanceOf(Date),
         onChange: PropTypes.func.isRequired,
-        position: PropTypes.oneOfType([ PropTypes.number, PropTypes.string ]),
         weekDayStart: PropTypes.number,
     }
 
@@ -42,7 +45,7 @@ export default class DatePicker extends Component {
 
         let prototypeMonth = moment()
 
-        if (props.date && props.date.isValid()) {
+        if (props.date && moment(props.date).isValid()) {
             prototypeMonth = moment(props.date)
         }
 
@@ -56,9 +59,9 @@ export default class DatePicker extends Component {
         // (within min and max) and if that's different to the date we have, we need to "set" it in
         // order to tell the parent about the new date we wish to use.
         if (
-            this.props.min !== nextProps.min ||
-            this.props.max !== nextProps.max ||
-            this.props.date !== nextProps.date
+            isDateDifferent(this.props.min, nextProps.min) ||
+            isDateDifferent(this.props.max, nextProps.max) ||
+            isDateDifferent(this.props.date, nextProps.date)
         ) {
             const validDate = this.getValidDate(nextProps.date, nextProps.min, nextProps.max)
 
@@ -75,36 +78,50 @@ export default class DatePicker extends Component {
         // the original date if the comparisons return `true`.
 
         // First just ensure that we have a usable date, because without one it's going to be
-        // difficult to do any comparisons. If we don't, just return it as-is.
-        if (! (date && date instanceof moment)) {
-            return date
+        // difficult to do any comparisons. If we don't, just return null as we don't understand the
+        // date we have been given.
+        if (date && date instanceof Date) {
+            date = moment(date)
+        } else if (! (date && date instanceof moment)) {
+            return null
+        }
+
+        // Ensure min and max are given and actual dates. This saves a lot of `instanceof` later on
+        // too.
+        if (min && min instanceof Date) {
+            min = moment(min)
+        } else {
+            min = null
+        }
+
+        if (max && max instanceof Date) {
+            max = moment(max)
+        } else {
+            max = null
         }
 
         // If we have a usable min and max and they're in the nonstandard order (i.e. disallow a
         // given range, but all history and future is valid):
-        if (min && max && min instanceof moment && max instanceof moment) {
-            if (max.isBefore(min, 'day') && date.isBetween(min, max, 'day', '()')) {
-                // In this case, we set date to its closest out of min and max, with min winning
-                // a tie.
+        if (min && max && max.isBefore(min, 'day') && date.isBetween(min, max, 'day', '()')) {
+            // In this case, we set date to its closest out of min and max, with min winning a tie.
 
-                const maxDiff = date.diff(max, 'days', true)
-                const minDiff = min.diff(date, 'days', true)
+            const maxDiff = date.diff(max, 'days', true)
+            const minDiff = min.diff(date, 'days', true)
 
-                if (maxDiff < minDiff) {
-                    return max
-                }
-
-                return min
+            if (maxDiff < minDiff) {
+                return max
             }
+
+            return min
         }
 
         // Okay if we got here, it's a normal date range where min is before max (though either may
         // be unspecified).
 
         // In this case, just set date to min if before min, max if after max.
-        if (min && min instanceof moment && date.isBefore(min, 'day')) {
+        if (min && date.isBefore(min, 'day')) {
             return min
-        } else if (max & max instanceof moment && date.isAfter(max, 'day')) {
+        } else if (max && date.isAfter(max, 'day')) {
             return max
         }
 
@@ -116,30 +133,43 @@ export default class DatePicker extends Component {
         // See above for the basis of the logic here. This function only has to determine if the
         // date is out of bounds, so doesn't have quite as much code, but uses the same basic
         // checks.
-
-        if (! (date && date instanceof moment)) {
+        if (date && date instanceof Date) {
+            date = moment(date)
+        } else if (! (date && date instanceof moment)) {
             return false
+        }
+
+        // Ensure min and max are given and actual dates. This saves a lot of `instanceof` later on
+        // too.
+        if (min && min instanceof Date) {
+            min = moment(min)
+        } else {
+            min = null
+        }
+
+        if (max && max instanceof Date) {
+            max = moment(max)
+        } else {
+            max = null
         }
 
         // Inverted min/max (window of invalid as opposed to window of valid). Check if date is in
         // that invalid window.
-        if (min && max && min instanceof moment && max instanceof moment && max.isBefore(min, 'day')) {
-            return (! date.isBetween(min, max, 'day', '()'))
+        if (min && max && max.isBefore(min, 'day')) {
+            return ! date.isBetween(min, max, 'day', '()')
         }
 
         // Normal date range with optional min/max
 
-        if (min && min instanceof moment && date.isBefore(min, 'day')) {
+        if (min && date.isBefore(min, 'day')) {
             return false
-        } else if (max && max instanceof moment && date.isAfter(max, 'day')) {
+        } else if (max && date.isAfter(max, 'day')) {
             return false
         }
 
         // Normal date range, date in range.
         return true
     }
-
-    storeContainerRef = (ref) => this.props.innerRef && this.props.innerRef(ref)
 
     getCalendar(month) {
         // Calendar will be our list of week ranges,
@@ -178,7 +208,7 @@ export default class DatePicker extends Component {
     }
 
     setDate(date) {
-        this.props.onChange(date.format(this.props.dateFormat || 'YYYY-MM-DD'))
+        this.props.onChange(date && date.toDate())
     }
 
     nextMonth = (e) => {
@@ -265,58 +295,39 @@ export default class DatePicker extends Component {
             return <tr key={ weekIndex }>{ days }</tr>
         })
 
-        // Date Picker styles
-        const datePickerStyles = {
-            position: 'absolute',
-            display: 'none',
-            zIndex: '10000',
-        }
-
-        if (this.props.position) {
-            if (this.props.alignment === 'bottom') {
-                datePickerStyles.top = this.props.position
-            } else {
-                datePickerStyles.bottom = this.props.position
-            }
-
-            datePickerStyles.display = 'block'
-        }
-
         return (
-            <div ref={ this.storeContainerRef } style={ datePickerStyles }>
-                <div className="datepicker">
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>
-                                    <a
-                                        className="datepicker__nav datepicker__nav--previous"
-                                        href="#"
-                                        onClick={ this.previousMonth }
-                                    />
-                                </td>
-                                <td colSpan="5">
-                                    <span className="datepicker__selected-date">
-                                        { month.format('MMMM') }
-                                        { ' ' }
-                                        { month.format('YYYY') }
-                                    </span>
-                                </td>
-                                <td>
-                                    <a
-                                        className="datepicker__nav datepicker__nav--next"
-                                        href="#"
-                                        onClick={ this.nextMonth }
-                                    />
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { weekDays }
-                            { weeks }
-                        </tbody>
-                    </table>
-                </div>
+            <div className="datepicker">
+                <table>
+                    <thead>
+                        <tr>
+                            <td>
+                                <a
+                                    className="datepicker__nav datepicker__nav--previous"
+                                    href="#"
+                                    onClick={ this.previousMonth }
+                                />
+                            </td>
+                            <td colSpan="5">
+                                <span className="datepicker__selected-date">
+                                    { month.format('MMMM') }
+                                    { ' ' }
+                                    { month.format('YYYY') }
+                                </span>
+                            </td>
+                            <td>
+                                <a
+                                    className="datepicker__nav datepicker__nav--next"
+                                    href="#"
+                                    onClick={ this.nextMonth }
+                                />
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { weekDays }
+                        { weeks }
+                    </tbody>
+                </table>
             </div>
         )
     }
