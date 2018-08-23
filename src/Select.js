@@ -709,15 +709,8 @@ export default class Select extends Component {
 
                 { this.props.value && (this.props.value.length > 0) && (
                     <button
+                        className="control-select__clear-button"
                         onMouseDown={ this.clearSelection }
-                        style={{
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontSize: '1em',
-                            opacity: 0.6,
-                            position: 'absolute',
-                            right: 'calc(10px + 0.5rem)',
-                        }}
                         type="button"
                     >
                         { '×' }
