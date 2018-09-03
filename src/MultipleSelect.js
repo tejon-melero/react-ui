@@ -23,6 +23,7 @@ export default class MultipleSelect extends Component {
 
         categoriseBy: PropTypes.string,
         className: PropTypes.string,
+        controlOnly: PropTypes.bool,
         defaultOptions: PropTypes.array,
         displaySelections: PropTypes.bool,
         dropdownTakesSpace: PropTypes.bool,
@@ -39,6 +40,7 @@ export default class MultipleSelect extends Component {
     }
 
     static defaultProps = {
+        controlOnly: false,
         disabled: false,
         displaySelections: true,
         dropdownTakesSpace: false,
@@ -154,12 +156,16 @@ export default class MultipleSelect extends Component {
                     searchingPlaceholder={ this.props.searchingPlaceholder }
                     type={ this.props.type }
                     updateValue={ this._updateValue }
-                    value={ this.props.values.map(valueMapper) }
+                    value={ null }
                 />
 
                 { selectedItems }
             </div>
         )
+
+        if (this.props.controlOnly) {
+            return control
+        }
 
         return (
             <div className={ groupClasses }>
