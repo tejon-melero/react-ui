@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import classnames from 'classnames'
 
-import { formControlPropTypes, hasOptionsPropTypes, focussablePropTypes } from './Utils'
+import {
+    focussablePropTypes,
+    formControlPropTypes,
+    generateId,
+    hasOptionsPropTypes,
+} from './Utils'
 
 import SubContent from './Utils/SubContent'
 
@@ -47,6 +52,8 @@ export default class Radio extends Component {
         }
     }
 
+    inputId = this.props.id || generateId(this.props.name)
+
     _handleChange = (value) => {
         this.setState(
             { value },
@@ -63,8 +70,6 @@ export default class Radio extends Component {
     }
 
     render() {
-        const input_id = `id_${ this.props.name }`
-
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.errors && this.props.errors.length,
@@ -74,16 +79,16 @@ export default class Radio extends Component {
 
         if (this.state.options.length > 0) {
             optionList = this.state.options.map((item, index) => {
-                const option_id = `${ input_id }-${ index }`
+                const optionId = `${ this.inputId }-${ index }`
 
                 return (
                     <li key={ item.value }>
-                        <label htmlFor={ option_id }>
+                        <label htmlFor={ optionId }>
                             <input
                                 checked={ item.value === this.state.value }
                                 className="form__radio"
                                 disabled={ this.props.disabled }
-                                id={ option_id }
+                                id={ optionId }
                                 name={ this.props.name }
                                 onBlur={ this._handleBlur }
                                 onChange={ () => this._handleChange(item.value) }

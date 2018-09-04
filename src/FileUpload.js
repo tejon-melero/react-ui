@@ -18,7 +18,9 @@ export default class FileUpload extends Component {
         disabled: formControlPropTypes.disabled,
         errorAction: PropTypes.func.isRequired,
         errors: formControlPropTypes.errors,
+        extraGroupClasses: PropTypes.arrayOf(PropTypes.string),
         help: formControlPropTypes.help,
+        id: PropTypes.string,
         label: formControlPropTypes.label,
         maxFilesize: PropTypes.number,
         maxFilesizeHuman: PropTypes.string,
@@ -47,6 +49,8 @@ export default class FileUpload extends Component {
     state = {
         progress: null,
     }
+
+    inputId = this.props.id || generateId(this.props.name)
 
     _onFileChange = (e) => {
         if (e.target.files.length) {
@@ -77,8 +81,6 @@ export default class FileUpload extends Component {
     }
 
     render() {
-        const inputId = generateId(this.props.name)
-
         const groupClasses = classnames({
             'form__group': true,
             'form__group--error': this.props.errors && this.props.errors.length,
@@ -131,7 +133,7 @@ export default class FileUpload extends Component {
 
         return (
             <div className={ groupClasses }>
-                <Label htmlFor={ inputId }>{ this.props.label }</Label>
+                <Label htmlFor={ this.inputId }>{ this.props.label }</Label>
 
                 { control }
 

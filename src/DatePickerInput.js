@@ -39,7 +39,7 @@ export default class DatePickerInput extends Component {
         datePickerVerticalOffset: null,
     }
 
-    inputId = generateId(this.props.name)
+    inputId = this.props.id || generateId(this.props.name)
 
     textInput = null
     formControl = null

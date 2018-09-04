@@ -153,7 +153,7 @@ export default class Select extends Component {
 
     blurTimeout = null
 
-    inputId = generateId(this.props.name)
+    inputId = this.props.id || generateId(this.props.name)
 
     // Refs
     textInput = null

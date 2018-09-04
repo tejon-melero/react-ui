@@ -52,7 +52,7 @@ export default class TextInput extends Component {
         }
     }
 
-    inputId = generateId(this.props.name)
+    inputId = this.props.id || generateId(this.props.name)
 
     handleChange = (e) => {
         const value = e.target.value

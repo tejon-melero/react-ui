@@ -7,6 +7,7 @@ export const formControlPropTypes = {
     errors: PropTypes.arrayOf(PropTypes.node),
     extraGroupClasses: PropTypes.arrayOf(PropTypes.string),
     help: PropTypes.node,
+    id: PropTypes.string,
     innerRef: PropTypes.func,
     label: PropTypes.node,
     name: PropTypes.string.isRequired,

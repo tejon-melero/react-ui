@@ -10,6 +10,7 @@ export default class Checkbox extends Component {
     static propTypes = {
         disabled: formControlPropTypes.disabled,
         hidden: PropTypes.bool,
+        id: PropTypes.string,
         label: formControlPropTypes.label,
         name: formControlPropTypes.name,
         updateValue: formControlPropTypes.updateValue,
@@ -21,6 +22,8 @@ export default class Checkbox extends Component {
         hidden: false,
         value: false,
     }
+
+    inputId = this.props.id || generateId(this.props.name)
 
     handleChange = () => {
         // Tell parent to update value with whatever the opposite of the current value is.
@@ -35,15 +38,13 @@ export default class Checkbox extends Component {
             'sr-only': hidden,
         })
 
-        const inputId = generateId(name)
-
         return (
-            <Label htmlFor={ inputId }>
+            <Label htmlFor={ this.inputId }>
                 <input
                     checked={ value }
                     className={ inputClasses }
                     disabled={ disabled }
-                    id={ inputId }
+                    id={ this.inputId }
                     name={ name }
                     onChange={ this.handleChange }
                     type="checkbox"

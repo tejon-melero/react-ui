@@ -16,6 +16,8 @@ export default class Boolean extends Component {
         disabled: false,
     }
 
+    inputId = this.props.id || generateId(this.props.name)
+
     _handleChange = (e) => {
         const value = (e.target.value === '1')
 
@@ -34,8 +36,6 @@ export default class Boolean extends Component {
             'form__control--inline',
         )
 
-        const inputId = generateId(this.props.name)
-
         return (
             <div className={ groupClasses }>
                 <Label>{ this.props.label }</Label>
@@ -46,13 +46,13 @@ export default class Boolean extends Component {
                             <input
                                 checked={ this.props.value === true }
                                 disabled={ this.props.disabled }
-                                id={ `${ inputId }-yes` }
+                                id={ `${ this.inputId }-yes` }
                                 name={ this.props.name }
                                 onChange={ this._handleChange }
                                 type="radio"
                                 value="1"
                             />
-                            <label className="form__option-label" htmlFor={ `${ inputId }-yes` }>
+                            <label className="form__option-label" htmlFor={ `${ this.inputId }-yes` }>
                                 Yes
                             </label>
                         </li>
@@ -60,13 +60,13 @@ export default class Boolean extends Component {
                             <input
                                 checked={ this.props.value === false }
                                 disabled={ this.props.disabled }
-                                id={ `${ inputId }-no` }
+                                id={ `${ this.inputId }-no` }
                                 name={ this.props.name }
                                 onChange={ this._handleChange }
                                 type="radio"
                                 value="0"
                             />
-                            <label className="form__option-label" htmlFor={ `${ inputId }-no` }>
+                            <label className="form__option-label" htmlFor={ `${ this.inputId }-no` }>
                                 No
                             </label>
                         </li>
