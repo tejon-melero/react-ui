@@ -362,11 +362,15 @@ export default class Select extends Component {
      * Compile a list of all options filtered by the search text.
      */
     getFilteredOptions = () => {
-        if (this.state.inputValue) {
+        if (this.state.inputValue && (! this.props.searchOptions)) {
+            // If we have a search input value (and don't have an external search provider), try to
+            // filter the options we have.
             let options = []
 
             const search = this.state.inputValue.toString().toLowerCase()
 
+            // If getFilteredOptions was provided, use that to filter the results down. Otherwise,
+            // just do a simple search-within-the-label.
             if (this.props.getFilteredOptions) {
                 options = this.props.getFilteredOptions(search)
             } else {
@@ -374,20 +378,24 @@ export default class Select extends Component {
                     this.props.filterStartsWithOnly ?
                     option.label.toLowerCase().indexOf(search) === 0 :
                     option.label.toLowerCase().indexOf(search) !== -1
-                )).map((option) => {
-                    // Create a new option with highlighted match if no rich label is present
-                    return {
-                        ...option,
-                        label: option.richLabel ?
-                            React.cloneElement(option.richLabel, { match: search }) :
-                            createHighlightNode(option.label, search),
-                    }
-                })
+                ))
             }
 
-            return options
+            // Augment the label to be either the richlabel if it exists, or a simple highlighted
+            // version of the standard label if not.
+            return options.map((option) => {
+                // Create a new option with highlighted match if no rich label is present
+                return {
+                    ...option,
+                    label: option.richLabel ?
+                        React.cloneElement(option.richLabel, { match: search }) :
+                        createHighlightNode(option.label, search),
+                }
+            })
         }
 
+        // If no search input value, just augment the label to be either the richlabel if it
+        // exists, or  the standard label if not.
         return this.props.options.map((option) => {
             return {
                 ...option,
