@@ -16,7 +16,6 @@ const isDateDifferent = (prev, next) => (
 export default class DatePicker extends Component {
     static propTypes = {
         date: PropTypes.instanceOf(Date),
-        dateFormat: PropTypes.string,
         max: PropTypes.instanceOf(Date),
         min: PropTypes.instanceOf(Date),
         onChange: PropTypes.func.isRequired,
