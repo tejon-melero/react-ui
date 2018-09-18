@@ -212,10 +212,10 @@ export default class DatePickerInput extends Component {
                     { this.state.datePickerOn &&
                         <div ref={ this.storeDatePickerRef } style={ datePickerStyles }>
                             <DatePicker
-                                date={ value && new Date(value) }
+                                date={ value && moment(value).toDate() }
                                 dateFormat={ dateFormat || null }
-                                max={ max && new Date(max) }
-                                min={ min && new Date(min) }
+                                max={ max && moment(max).toDate() }
+                                min={ min && moment(min).toDate() }
                                 onChange={ this.handleDateChange }
                                 weekDayStart={ weekDayStart || null }
                             />
