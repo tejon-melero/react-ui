@@ -124,13 +124,6 @@ export default class Select extends Component {
     componentWillReceiveProps(nextProps) {
         const newState = {}
 
-        // If there we are currently searching and the new options coming in are different to our
-        // existing ones, we can infer that searching is complete. (We can and do also use any
-        // promise returned by the call to `props.searchOptions` as a better source of this info.)
-        if (this.state.searching && ! areOptionsEqual(nextProps.options, this.props.options)) {
-            newState.searching = false
-        }
-
         // If the value has changed, refresh our idea of which option should be focussed.
         if (nextProps.value !== this.props.value) {
             // Also, if the value is empty, we should clear the 'selected text' value.
@@ -213,8 +206,6 @@ export default class Select extends Component {
         // If a search function is provided then we need to call it with the value as a query argument
         if (this.props.searchOptions) {
             if (inputValue && (inputValue.length >= this.props.minCharSearch)) {
-                this.setState({ searching: true })
-
                 // the following debounces the search function with the specified timeout (default 250ms)
                 if (this.searchTimeout) {
                     clearTimeout(this.searchTimeout)
@@ -227,6 +218,10 @@ export default class Select extends Component {
                     // that sets our state's "searching" to false. After all, if the promise
                     // resolves (or rejects), searching is done.
                     if (p && p.finally) {
+                        if (this.mounted) {
+                            this.setState({ searching: true })
+                        }
+
                         p.finally(() => {
                             // Mounted check just in case the component was unmounted while the
                             // search promise was waiting.
