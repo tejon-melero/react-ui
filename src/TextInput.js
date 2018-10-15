@@ -179,7 +179,7 @@ export default class TextInput extends Component {
                     onBlur={ this.handleBlur }
                     onChange={ this.handleChange }
                     onFocus={ this.handleFocus }
-                    onKeyPress={ this.hanldeKeyPress }
+                    onKeyPress={ this.handleKeyPress }
                     placeholder={ placeholder }
                     ref={ this.storeTextInputRef }
                     required={ required }
