@@ -26,6 +26,7 @@ export default class TextInput extends Component {
         success: PropTypes.bool,
         type: PropTypes.string,
         updateValueOnBlur: PropTypes.bool,
+        updateValueOnEnter: PropTypes.bool,
     }
 
     static defaultProps = {
@@ -36,6 +37,7 @@ export default class TextInput extends Component {
         rows: 6,
         type: 'text',
         updateValueOnBlur: true,
+        updateValueOnEnter: false, // as it, will prevent a form submit, which may be more desirable
     }
 
     state = {
@@ -86,6 +88,26 @@ export default class TextInput extends Component {
         this.props.handleBlur && this.props.handleBlur()
     }
 
+    handleKeypress = (e) => {
+        if (this.props.onKeypress) {
+            this.props.onKeyPress(e)
+            return
+        }
+
+        // If Enter was pressed, and we're not in a textarea and we have updateValueOnEnter set,
+        // commit the current value and prevent default on the event (which may otherwise submit a
+        // form, which would alomst certainly be an unintended side-effect).
+        if (
+            e.key === 'Enter' &&
+            this.props.type !== 'textarea' &&
+            this.props.updateValueOnEnter === true
+        ) {
+            this.updateValue(this.state.value)
+
+            e.preventDefault()
+        }
+    }
+
     render() {
         const {
             autoFocus,
@@ -98,7 +120,6 @@ export default class TextInput extends Component {
             max,
             min,
             name,
-            onKeyPress,
             placeholder,
             required,
             rows,
@@ -137,7 +158,7 @@ export default class TextInput extends Component {
                     onBlur={ this.handleBlur }
                     onChange={ this.handleChange }
                     onFocus={ this.handleFocus }
-                    onKeyPress={ onKeyPress }
+                    onKeyPress={ this.handleKeyPress }
                     placeholder={ placeholder }
                     ref={ this.storeTextInputRef }
                     required={ required }
@@ -158,7 +179,7 @@ export default class TextInput extends Component {
                     onBlur={ this.handleBlur }
                     onChange={ this.handleChange }
                     onFocus={ this.handleFocus }
-                    onKeyPress={ onKeyPress }
+                    onKeyPress={ this.hanldeKeyPress }
                     placeholder={ placeholder }
                     ref={ this.storeTextInputRef }
                     required={ required }
