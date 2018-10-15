@@ -88,7 +88,7 @@ export default class TextInput extends Component {
         this.props.handleBlur && this.props.handleBlur()
     }
 
-    handleKeypress = (e) => {
+    handleKeyPress = (e) => {
         if (this.props.onKeypress) {
             this.props.onKeyPress(e)
             return
