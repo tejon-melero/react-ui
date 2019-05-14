@@ -1,11 +1,12 @@
 {
   "name": "matyaskar-forked-react-ui",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "A forked version of with support for fallback options in the Select.js Component of https://github.com/Cotidia/react-ui",
-  "main": "webpack.config.babel.js",
-  "directories": {
-    "lib": "lib"
-  },
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib"
+  ],
   "peerDependencies": {
     "react": "^15.5 || ^16.0",
     "react-dom": "^15.5 || ^16.0"
