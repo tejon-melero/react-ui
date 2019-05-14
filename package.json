@@ -1,35 +1,11 @@
 {
-  "name": "@cotidia/react-ui",
-  "version": "1.0.3",
-  "description": "UI Components for React",
-  "main": "lib/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://code.cotidia.com/cotidia/react-ui.git"
+  "name": "matyaskar-forked-react-ui",
+  "version": "1.0.1",
+  "description": "A forked version of with support for fallback options in the Select.js Component of https://github.com/Cotidia/react-ui",
+  "main": "webpack.config.babel.js",
+  "directories": {
+    "lib": "lib"
   },
-  "scripts": {
-    "prepublish": "npm run build",
-    "prebuild": "rimraf lib dist",
-    "build:main": "babel -d lib ./src",
-    "_build:umd": "webpack --output-filename index.umd.js",
-    "_build:umd.min": "webpack --output-filename index.umd.min.js -p",
-    "build": "npm-run-all --parallel build:*"
-  },
-  "author": {
-    "name": "Guillaume Piot",
-    "email": "guillaume@cotidia.com"
-  },
-  "contributors": [
-    {
-      "name": "Alex Russell",
-      "email": "alex.russell@cotidia.com"
-    }
-  ],
-  "license": "ISC",
-  "files": [
-    "dist",
-    "lib"
-  ],
   "peerDependencies": {
     "react": "^15.5 || ^16.0",
     "react-dom": "^15.5 || ^16.0"
@@ -55,5 +31,15 @@
     "react-dom": "^15.5",
     "rimraf": "^2.6.1",
     "webpack": "^1.14.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tejon-melero/react-ui.git"
+  },
+  "author": "Matyas Karacsonyi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tejon-melero/react-ui/issues"
+  },
+  "homepage": "https://github.com/tejon-melero/react-ui#readme"
 }
