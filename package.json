@@ -1,6 +1,6 @@
 {
   "name": "matyaskar-forked-react-ui",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A forked version of with support for fallback options in the Select.js Component of https://github.com/Cotidia/react-ui",
   "main": "lib/index.js",
   "files": [
