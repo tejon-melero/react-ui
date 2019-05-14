@@ -395,7 +395,7 @@ export default class Select extends Component {
     _getFilteredOptions = () => {
         if (this.state.inputValue) {
             let options = []
-
+            console.log('getting filtered options now!');
             const search = this.state.inputValue.toString().toLowerCase()
 
             if (this.props.getFilteredOptions) {
