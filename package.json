@@ -1,6 +1,6 @@
 {
   "name": "@matyas/matyaskar-forked-react-ui",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "A forked version of with support for fallback options in the Select.js Component of https://github.com/Cotidia/react-ui",
   "main": "lib/index.js",
   "files": [
@@ -32,10 +32,6 @@
     "react-dom": "^15.5",
     "rimraf": "^2.6.1",
     "webpack": "^1.14.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tejon-melero/react-ui.git"
   },
   "author": "Matyas Karacsonyi",
   "license": "ISC",
