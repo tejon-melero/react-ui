@@ -395,15 +395,30 @@ export default class Select extends Component {
     _getFilteredOptions = () => {
         if (this.state.inputValue) {
             let options = []
-            console.log('getting filtered options now!');
+            console.log('getting filtered options now!')
             const search = this.state.inputValue.toString().toLowerCase()
+            let fallBackOptionsMatch = false; // checks if a specific search string matches the fallback options
+            // a fallback option is an option that has the same key as a regular option but another (fallbac) value
 
             if (this.props.getFilteredOptions) {
                 options = this.props.getFilteredOptions(search)
             } else {
-                options = this.props.options.filter((option) => (
-                    option.label.toLowerCase().indexOf(search) !== -1
-                )).map((option) => {
+                options = this.props.options.filter((option) => {
+                    let regularOptionMatchesSearchString = option.label.toLowerCase().indexOf(search) !== -1;
+                        for(let i=0;i<this.props.fallbackOptions.length;i++){
+                            console.log('checking:', this.props.fallbackOptions[i]);
+                            if(this.props.fallbackOptions[i].label.toLowerCase().indexOf(search) !== -1){
+                                // in the case that the regular option did not match the search
+                                if(this.props.fallbackOptions[i].uuid !== option.uuid){
+                                    fallBackOptionsMatch = true;
+                                    console.log('matched fallback option:', option, this.props.fallbackOptions[i]);
+                                }
+                            }
+                        };
+
+                    let match = regularOptionMatchesSearchString || fallBackOptionsMatch;
+                    return match;
+                }).map((option) => {
                     // Create a new option with highlighted match if no rich label is present
                     return {
                         ...option,
